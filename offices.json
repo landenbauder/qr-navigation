@@ -1,0 +1,34 @@
+{
+  "buildingCenter": {
+    "lat": 41.750197,
+    "lng": -87.937808,
+    "name": "Willowbrook Office Building"
+  },
+  "offices": [
+    {
+      "name": "Precise Bioscience, LLC",
+      "lat": 41.751081,
+      "lng": -87.937631,
+      "description": "First Floor"
+    },
+    {
+      "name": "Advanced Physicians, SC",
+      "lat": 41.750801,
+      "lng": -87.937620,
+      "description": "First Floor"
+    },
+    {
+      "name": "VACANT",
+      "lat": 41.750802, 
+      "lng": -87.937747,
+      "description": "First Floor"
+    },
+    {
+      "name": "Ecodrive, Inc.",
+      "lat": 41.750736, 
+      "lng": -87.937680,
+      "description": "First Floor"
+    }
+  ]
+}
+
