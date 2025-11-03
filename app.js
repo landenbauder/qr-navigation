@@ -141,8 +141,8 @@ class NavigationApp {
         // Initialize Leaflet map
         this.map = L.map('map').setView([this.buildingCenter.lat, this.buildingCenter.lng], 18);
         
-        // Add dark/grey map tiles (CartoDB Dark Matter style)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        // Add light grey map tiles (CartoDB Positron style - lighter grey)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
             subdomains: 'abcd',
             maxZoom: 19
@@ -455,12 +455,12 @@ class NavigationApp {
         
         if (browser === 'safari') {
             instructions = 
-                '<h3 style="color: #f44336; margin-top: 0;">📍 Enable Location for Safari</h3>' +
+                '<h3 style="color: #f44336; margin-top: 0;">Enable Location for Safari</h3>' +
                 '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
                 '<p><strong>Safari requires location access in TWO places. Both must be enabled:</strong></p>' +
                 
                 '<div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">' +
-                '<strong style="font-size: 16px;">📍 Step 1: Website-Specific Permission</strong><br><br>' +
+                '<strong style="font-size: 16px;">Step 1: Website-Specific Permission</strong><br><br>' +
                 '1. Tap the <strong>AA icon</strong> (left of URL bar)<br>' +
                 '2. Tap <strong>"Website Settings"</strong><br>' +
                 '3. Find <strong>"Location"</strong><br>' +
@@ -469,14 +469,14 @@ class NavigationApp {
                 '</div>' +
                 
                 '<div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0;">' +
-                '<strong style="font-size: 16px;">📍 Step 2: System-Level Permission (IMPORTANT!)</strong><br><br>' +
+                '<strong style="font-size: 16px;">Step 2: System-Level Permission (IMPORTANT!)</strong><br><br>' +
                 '1. Go to iPhone <strong>Settings</strong> app<br>' +
                 '2. Tap <strong>Privacy & Security</strong><br>' +
                 '3. Tap <strong>Location Services</strong><br>' +
                 '4. Scroll down and find <strong>"Safari Websites"</strong><br>' +
                 '5. Tap on <strong>"Safari Websites"</strong><br>' +
                 '6. Select <strong>"Ask Next Time Or When I Share"</strong> OR <strong>"While Using the App"</strong><br>' +
-                '<strong style="color: #f44336;">⚠️ DO NOT select "Never" - this will block location!</strong>' +
+                '<strong style="color: #f44336;">DO NOT select "Never" - this will block location!</strong>' +
                 '</div>' +
                 
                 '<div style="background: #f3e5f5; padding: 15px; border-radius: 8px; margin: 15px 0;">' +
@@ -495,7 +495,7 @@ class NavigationApp {
                 '</div>';
         } else if (browser === 'android') {
             instructions = 
-                '<h3>📍 Enable Location for Android</h3>' +
+                '<h3>Enable Location for Android</h3>' +
                 '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
                 '1. Tap the <strong>menu icon</strong> (3 dots) in your browser<br>' +
                 '2. Go to <strong>Settings</strong> → <strong>Site settings</strong><br>' +
@@ -506,7 +506,7 @@ class NavigationApp {
                 '</div>';
         } else if (browser === 'chrome') {
             instructions = 
-                '<h3>📍 Enable Location for Chrome</h3>' +
+                '<h3>Enable Location for Chrome</h3>' +
                 '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
                 '1. Click the <strong>lock icon</strong> in the address bar<br>' +
                 '2. Find <strong>"Location"</strong><br>' +
@@ -515,7 +515,7 @@ class NavigationApp {
                 '</div>';
         } else if (browser === 'firefox') {
             instructions = 
-                '<h3>📍 Enable Location for Firefox</h3>' +
+                '<h3>Enable Location for Firefox</h3>' +
                 '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
                 '1. Click the <strong>shield icon</strong> in the address bar<br>' +
                 '2. Find <strong>"Permissions"</strong><br>' +
@@ -524,11 +524,11 @@ class NavigationApp {
                 '</div>';
         } else if (browser === 'unsupported') {
             instructions = 
-                '<h3>⚠️ Geolocation Not Supported</h3>' +
+                '<h3>Geolocation Not Supported</h3>' +
                 '<p>Your browser does not support location services. Please use a modern browser.</p>';
         } else {
             instructions = 
-                '<h3>📍 Enable Location</h3>' +
+                '<h3>Enable Location</h3>' +
                 '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
                 '1. Check your browser settings for location permissions<br>' +
                 '2. Ensure location services are enabled on your device<br><br>' +
@@ -799,7 +799,7 @@ class NavigationApp {
         // Add protocol info if not HTTPS
         if (protocol !== 'https:') {
             instructions += '<br><br><div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-top: 10px;">';
-            instructions += '<strong>⚠️ HTTPS Issue Detected</strong><br>';
+            instructions += '<strong>HTTPS Issue Detected</strong><br>';
             instructions += 'Current protocol: ' + protocol + '<br>';
             instructions += 'Geolocation requires HTTPS. Make sure your Netlify URL starts with https://';
             instructions += '</div>';

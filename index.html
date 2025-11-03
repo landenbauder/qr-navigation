@@ -26,7 +26,9 @@
                     autocomplete="off"
                 >
                 <button id="viewAllBtn" class="view-all-btn" title="View all offices">
-                    📋
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/>
+                    </svg>
                 </button>
                 <div id="searchResults" class="search-results"></div>
             </div>
@@ -36,7 +38,7 @@
         <!-- Location Permission Prompt (shown initially, hidden after permission granted) -->
         <div id="locationPrompt" class="location-prompt">
             <div class="location-prompt-content">
-                <h3>📍 Enable Location</h3>
+                <h3>Enable Location</h3>
                 <p>To help you navigate, we need your current location.</p>
                 <button id="enableLocationBtn" class="enable-location-btn">
                     Enable Location
