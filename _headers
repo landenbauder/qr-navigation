@@ -1,0 +1,5 @@
+/*
+  Permissions-Policy: geolocation=*
+  
+  Feature-Policy: geolocation *
+

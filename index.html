@@ -25,9 +25,24 @@
                     placeholder="Search for an office or suite..."
                     autocomplete="off"
                 >
+                <button id="viewAllBtn" class="view-all-btn" title="View all offices">
+                    📋
+                </button>
                 <div id="searchResults" class="search-results"></div>
             </div>
             <button id="clearRoute" class="clear-btn" style="display: none;">Clear Route</button>
+        </div>
+
+        <!-- Location Permission Prompt (shown initially, hidden after permission granted) -->
+        <div id="locationPrompt" class="location-prompt">
+            <div class="location-prompt-content">
+                <h3>📍 Enable Location</h3>
+                <p>To help you navigate, we need your current location.</p>
+                <button id="enableLocationBtn" class="enable-location-btn">
+                    Enable Location
+                </button>
+                <p class="location-prompt-note">This allows us to show you the best route to your destination.</p>
+            </div>
         </div>
 
         <!-- Map Container -->
