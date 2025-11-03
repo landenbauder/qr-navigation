@@ -129,6 +129,16 @@
       "name": "Troop Contracting, Inc.",
       "lat": 41.750408,
       "lng": -87.938720
+    },
+    {
+      "name": "Front Door",
+      "lat": 36.152983,
+      "lng": -86.782853
+    },
+    {
+      "name": "Grass",
+      "lat": 36.152559,
+      "lng": -86.781381
     }
   ]
 }
