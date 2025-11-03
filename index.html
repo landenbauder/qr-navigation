@@ -2,9 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Office Building Navigation - Find your way to any office location">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Office Building Navigation - Find your way to any office location using real-time GPS tracking and walking directions">
+    <meta name="theme-color" content="#2c2c2c">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Office Building Navigation">
+    <meta property="og:description" content="Find your way to any office location using real-time GPS tracking">
+    <meta property="og:site_name" content="Office Navigation">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Office Building Navigation">
+    <meta name="twitter:description" content="Find your way to any office location using real-time GPS tracking">
+    
     <title>Office Navigation</title>
+    
+    <!-- Preconnect to external resources for faster loading -->
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://raw.githubusercontent.com">
+    <link rel="preconnect" href="https://router.project-osrm.org">
+    <link rel="preconnect" href="https://basemaps.cartocdn.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://router.project-osrm.org">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>??</text></svg>">
     
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -19,28 +48,32 @@
         <!-- Search Bar -->
         <div class="search-container">
             <div class="search-wrapper">
+                <label for="officeSearch" class="sr-only">Search for an office</label>
                 <input 
                     type="text" 
                     id="officeSearch" 
                     placeholder="Search for an office or suite..."
                     autocomplete="off"
+                    aria-label="Search for an office or suite"
+                    aria-describedby="searchInstructions"
                 >
-                <button id="viewAllBtn" class="view-all-btn" title="View all offices">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <button id="viewAllBtn" class="view-all-btn" title="View all offices" aria-label="View all offices">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                         <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/>
                     </svg>
                 </button>
-                <div id="searchResults" class="search-results"></div>
+                <div id="searchResults" class="search-results" role="listbox" aria-label="Search results"></div>
+                <span id="searchInstructions" class="sr-only">Type to search for offices. Use arrow keys to navigate results.</span>
             </div>
-            <button id="clearRoute" class="clear-btn" style="display: none;">Clear Route</button>
+            <button id="clearRoute" class="clear-btn" style="display: none;" aria-label="Clear route">Clear Route</button>
         </div>
 
         <!-- Location Permission Prompt (shown initially, hidden after permission granted) -->
-        <div id="locationPrompt" class="location-prompt">
+        <div id="locationPrompt" class="location-prompt" role="dialog" aria-labelledby="locationPromptTitle" aria-modal="true">
             <div class="location-prompt-content">
-                <h3>Enable Location</h3>
+                <h3 id="locationPromptTitle">Enable Location</h3>
                 <p>To help you navigate, we need your current location.</p>
-                <button id="enableLocationBtn" class="enable-location-btn">
+                <button id="enableLocationBtn" class="enable-location-btn" aria-label="Enable location services">
                     Enable Location
                 </button>
                 <p class="location-prompt-note">This allows us to show you the best route to your destination.</p>
@@ -48,10 +81,10 @@
         </div>
 
         <!-- Map Container -->
-        <div id="map"></div>
+        <div id="map" role="application" aria-label="Interactive map showing office locations and navigation routes"></div>
 
         <!-- Status Message -->
-        <div id="statusMessage" class="status-message"></div>
+        <div id="statusMessage" class="status-message" role="status" aria-live="polite" aria-atomic="true"></div>
 
         <!-- Instructions -->
         <div class="instructions">
@@ -60,12 +93,12 @@
     </div>
 
     <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
     
     <!-- Leaflet Routing Machine JS -->
-    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js" defer></script>
     
-    <script src="app.js"></script>
+    <script src="app.js" defer></script>
 </body>
 </html>
 

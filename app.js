@@ -116,7 +116,19 @@ class NavigationApp {
 
     async loadOffices() {
         try {
-            const response = await fetch('offices.json');
+            // Show loading state
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = 'Loading office locations...';
+            statusEl.classList.add('show');
+            
+            const response = await fetch('offices.json', {
+                cache: 'default'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             const data = await response.json();
             this.offices = data.offices;
             
@@ -129,9 +141,12 @@ class NavigationApp {
                     lng: this.offices[0].lng
                 };
             }
+            
+            // Hide loading state
+            statusEl.classList.remove('show');
         } catch (error) {
             console.error('Error loading offices:', error);
-            this.showStatus('Error loading office locations.');
+            this.showStatus('Error loading office locations. Please refresh the page.');
             // Use default empty data
             this.offices = [];
         }
@@ -174,6 +189,9 @@ class NavigationApp {
         const searchInput = document.getElementById('officeSearch');
         const searchResults = document.getElementById('searchResults');
         const viewAllBtn = document.getElementById('viewAllBtn');
+        
+        // Debounce search for better performance
+        let searchTimeout = null;
 
         // Show all offices when clicking "View All" button
         if (viewAllBtn) {
@@ -189,10 +207,7 @@ class NavigationApp {
                 this.showAllOffices();
             } else {
                 const query = searchInput.value.toLowerCase().trim();
-                const filtered = this.offices.filter(office => 
-                    office.name.toLowerCase().includes(query) ||
-                    (office.description && office.description.toLowerCase().includes(query))
-                );
+                const filtered = this.filterOffices(query);
                 this.displaySearchResults(filtered);
             }
         });
@@ -200,28 +215,66 @@ class NavigationApp {
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
             
-            if (query.length === 0) {
-                // Show all offices when search is cleared
-                this.showAllOffices();
-                return;
+            // Clear existing timeout
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
             }
+            
+            // Debounce search for better performance (300ms delay)
+            searchTimeout = setTimeout(() => {
+                if (query.length === 0) {
+                    // Show all offices when search is cleared
+                    this.showAllOffices();
+                    return;
+                }
 
-            const filtered = this.offices.filter(office => 
-                office.name.toLowerCase().includes(query) ||
-                (office.description && office.description.toLowerCase().includes(query))
-            );
-
-            this.displaySearchResults(filtered);
+                const filtered = this.filterOffices(query);
+                this.displaySearchResults(filtered);
+            }, 300);
         });
 
         // Close search results when clicking outside
         document.addEventListener('click', (e) => {
             if (!searchInput.contains(e.target) && 
                 !searchResults.contains(e.target) && 
-                !viewAllBtn.contains(e.target)) {
+                !viewAllBtn?.contains(e.target)) {
                 searchResults.classList.remove('active');
             }
         });
+        
+        // Keyboard navigation for accessibility
+        searchInput.addEventListener('keydown', (e) => {
+            const items = searchResults.querySelectorAll('.search-result-item');
+            if (items.length === 0) return;
+            
+            let currentIndex = Array.from(items).findIndex(item => 
+                item === document.activeElement || item.classList.contains('keyboard-focused')
+            );
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                items.forEach(item => item.classList.remove('keyboard-focused'));
+                currentIndex = (currentIndex + 1) % items.length;
+                items[currentIndex].classList.add('keyboard-focused');
+                items[currentIndex].focus();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                items.forEach(item => item.classList.remove('keyboard-focused'));
+                currentIndex = currentIndex <= 0 ? items.length - 1 : currentIndex - 1;
+                items[currentIndex].classList.add('keyboard-focused');
+                items[currentIndex].focus();
+            } else if (e.key === 'Enter' && currentIndex >= 0) {
+                e.preventDefault();
+                items[currentIndex].click();
+            }
+        });
+    }
+    
+    filterOffices(query) {
+        return this.offices.filter(office => 
+            office.name.toLowerCase().includes(query) ||
+            (office.description && office.description.toLowerCase().includes(query))
+        );
     }
 
     showAllOffices() {
@@ -241,6 +294,8 @@ class NavigationApp {
             this.offices.forEach(office => {
                 const item = document.createElement('div');
                 item.className = 'search-result-item';
+                item.setAttribute('role', 'option');
+                item.setAttribute('tabindex', '0');
                 item.innerHTML = `
                     <div class="search-result-name">${office.name}</div>
                     ${office.description ? `<div class="search-result-description">${office.description}</div>` : ''}
@@ -249,6 +304,12 @@ class NavigationApp {
                     this.selectOffice(office);
                     document.getElementById('officeSearch').value = office.name;
                     searchResults.classList.remove('active');
+                });
+                item.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        item.click();
+                    }
                 });
                 searchResults.appendChild(item);
             });
@@ -273,6 +334,8 @@ class NavigationApp {
             results.forEach(office => {
                 const item = document.createElement('div');
                 item.className = 'search-result-item';
+                item.setAttribute('role', 'option');
+                item.setAttribute('tabindex', '0');
                 item.innerHTML = `
                     <div class="search-result-name">${office.name}</div>
                     ${office.description ? `<div class="search-result-description">${office.description}</div>` : ''}
@@ -281,6 +344,12 @@ class NavigationApp {
                     this.selectOffice(office);
                     document.getElementById('officeSearch').value = office.name;
                     searchResults.classList.remove('active');
+                });
+                item.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        item.click();
+                    }
                 });
                 searchResults.appendChild(item);
             });
@@ -316,14 +385,14 @@ class NavigationApp {
     // Helper function to calculate distance between two points in meters
     calculateDistance(lat1, lng1, lat2, lng2) {
         const R = 6371e3; // Earth's radius in meters
-        const φ1 = lat1 * Math.PI / 180;
-        const φ2 = lat2 * Math.PI / 180;
-        const Δφ = (lat2 - lat1) * Math.PI / 180;
-        const Δλ = (lng2 - lng1) * Math.PI / 180;
+        const ?1 = lat1 * Math.PI / 180;
+        const ?2 = lat2 * Math.PI / 180;
+        const ?? = (lat2 - lat1) * Math.PI / 180;
+        const ?? = (lng2 - lng1) * Math.PI / 180;
 
-        const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                  Math.cos(φ1) * Math.cos(φ2) *
-                  Math.sin(Δλ/2) * Math.sin(Δλ/2);
+        const a = Math.sin(??/2) * Math.sin(??/2) +
+                  Math.cos(?1) * Math.cos(?2) *
+                  Math.sin(??/2) * Math.sin(??/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
         return R * c; // Distance in meters
@@ -498,10 +567,10 @@ class NavigationApp {
                 '<h3>Enable Location for Android</h3>' +
                 '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
                 '1. Tap the <strong>menu icon</strong> (3 dots) in your browser<br>' +
-                '2. Go to <strong>Settings</strong> → <strong>Site settings</strong><br>' +
+                '2. Go to <strong>Settings</strong> ? <strong>Site settings</strong><br>' +
                 '3. Find this website and enable <strong>Location</strong> permissions<br><br>' +
                 '<strong>Also check:</strong><br>' +
-                'Phone Settings → Location → ON<br><br>' +
+                'Phone Settings ? Location ? ON<br><br>' +
                 '<button id="enableLocationBtn" class="enable-location-btn">Try Again</button>' +
                 '</div>';
         } else if (browser === 'chrome') {
@@ -661,7 +730,7 @@ class NavigationApp {
         
         if (accuracy > 50 && isIOS && isSafari && !this.preciseLocationWarningShown) {
             // Accuracy is poor - user might need to enable "Precise Location"
-            this.showStatus(`Location accuracy is ±${Math.round(accuracy)}m. For better navigation, enable Precise Location in Safari settings.`);
+            this.showStatus(`Location accuracy is ?${Math.round(accuracy)}m. For better navigation, enable Precise Location in Safari settings.`);
             this.preciseLocationWarningShown = true;
         }
 
@@ -776,17 +845,17 @@ class NavigationApp {
                 message = 'Location unavailable. Make sure GPS is enabled.';
                 instructions = this.getMobileLocationInstructions();
                 instructions += '<br><br><strong>Additional checks:</strong><br>';
-                instructions += '• Ensure Location Services is ON in Settings<br>';
-                instructions += '• Make sure you\'re outdoors or near a window<br>';
-                instructions += '• Check that Airplane Mode is OFF';
+                instructions += '? Ensure Location Services is ON in Settings<br>';
+                instructions += '? Make sure you\'re outdoors or near a window<br>';
+                instructions += '? Check that Airplane Mode is OFF';
                 break;
             case error.TIMEOUT:
                 message = 'Location request timed out. GPS may be slow to acquire signal.';
                 instructions = '<div style="text-align: left; max-width: 90%; margin: 0 auto;">';
                 instructions += '<strong>GPS signal timeout:</strong><br><br>';
-                instructions += '• Make sure you\'re outdoors (GPS works better outside)<br>';
-                instructions += '• Check that Location Services is enabled<br>';
-                instructions += '• Try moving to a location with better sky view<br>';
+                instructions += '? Make sure you\'re outdoors (GPS works better outside)<br>';
+                instructions += '? Check that Location Services is enabled<br>';
+                instructions += '? Try moving to a location with better sky view<br>';
                 instructions += '<br><button onclick="location.reload()" style="margin-top: 10px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Retry</button>';
                 instructions += '</div>';
                 break;
@@ -826,17 +895,17 @@ class NavigationApp {
             instructions += '3. Set <strong>Location</strong> to "Allow" (not "Ask" or "Deny")<br>';
             instructions += '4. Close this popup and refresh the page<br><br>';
             instructions += '<strong>System Settings:</strong><br>';
-            instructions += '• Settings → Privacy & Security → Location Services → ON<br>';
-            instructions += '• Settings → Safari → Location Services → ON<br><br>';
+            instructions += '? Settings ? Privacy & Security ? Location Services ? ON<br>';
+            instructions += '? Settings ? Safari ? Location Services ? ON<br><br>';
             instructions += '<strong>Diagnostic Info:</strong><br>';
             instructions += 'Protocol: ' + protocol + '<br>';
             instructions += 'URL: ' + url.substring(0, 50) + '...<br>';
         } else if (isAndroid) {
             instructions += '1. Tap the <strong>menu icon</strong> (3 dots) in your browser<br>';
-            instructions += '2. Go to <strong>Settings</strong> → <strong>Site settings</strong><br>';
+            instructions += '2. Go to <strong>Settings</strong> ? <strong>Site settings</strong><br>';
             instructions += '3. Find this site and enable <strong>Location</strong> permissions<br>';
             instructions += '4. Refresh this page<br><br>';
-            instructions += 'Also check: Phone Settings → Location → On';
+            instructions += 'Also check: Phone Settings ? Location ? On';
         } else {
             instructions += '1. Click the <strong>lock/padlock icon</strong> in the address bar<br>';
             instructions += '2. Enable <strong>Location</strong> permissions<br>';
