@@ -11,6 +11,8 @@ class NavigationApp {
         this.preciseLocationWarningShown = false;
         this.lastRouteUpdatePosition = null; // Track last position used for route update
         this.minRouteUpdateDistance = 15; // Minimum distance in meters to trigger route update
+        this.lastRouteUpdateTime = null; // Timestamp of last route update
+        this.minRouteUpdateInterval = 10000; // Minimum time between route updates (ms)
         this.routeDestinationName = null; // Store destination name to avoid showing status repeatedly
         
         // Default building location (will be updated from offices.json)
@@ -292,6 +294,7 @@ class NavigationApp {
     selectOffice(office) {
         this.selectedOffice = office;
         this.lastRouteUpdatePosition = null; // Reset route update tracking
+        this.lastRouteUpdateTime = null;
         document.getElementById('clearRoute').style.display = 'block';
         
         if (this.userMarker) {
@@ -316,14 +319,14 @@ class NavigationApp {
     // Helper function to calculate distance between two points in meters
     calculateDistance(lat1, lng1, lat2, lng2) {
         const R = 6371e3; // Earth's radius in meters
-        const φ1 = lat1 * Math.PI / 180;
-        const φ2 = lat2 * Math.PI / 180;
-        const Δφ = (lat2 - lat1) * Math.PI / 180;
-        const Δλ = (lng2 - lng1) * Math.PI / 180;
+        const ?1 = lat1 * Math.PI / 180;
+        const ?2 = lat2 * Math.PI / 180;
+        const ?? = (lat2 - lat1) * Math.PI / 180;
+        const ?? = (lng2 - lng1) * Math.PI / 180;
 
-        const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                  Math.cos(φ1) * Math.cos(φ2) *
-                  Math.sin(Δλ/2) * Math.sin(Δλ/2);
+        const a = Math.sin(??/2) * Math.sin(??/2) +
+                  Math.cos(?1) * Math.cos(?2) *
+                  Math.sin(??/2) * Math.sin(??/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
         return R * c; // Distance in meters
@@ -359,6 +362,9 @@ class NavigationApp {
 
         // Store destination name
         this.routeDestinationName = destinationName;
+        if (isInitialRoute) {
+            this.lastRouteUpdateTime = Date.now();
+        }
 
         // Create new route (only on initial route calculation)
         this.routingControl = L.Routing.control({
@@ -498,10 +504,10 @@ class NavigationApp {
                 '<h3>Enable Location for Android</h3>' +
                 '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
                 '1. Tap the <strong>menu icon</strong> (3 dots) in your browser<br>' +
-                '2. Go to <strong>Settings</strong> → <strong>Site settings</strong><br>' +
+                '2. Go to <strong>Settings</strong> ? <strong>Site settings</strong><br>' +
                 '3. Find this website and enable <strong>Location</strong> permissions<br><br>' +
                 '<strong>Also check:</strong><br>' +
-                'Phone Settings → Location → ON<br><br>' +
+                'Phone Settings ? Location ? ON<br><br>' +
                 '<button id="enableLocationBtn" class="enable-location-btn">Try Again</button>' +
                 '</div>';
         } else if (browser === 'chrome') {
@@ -661,7 +667,7 @@ class NavigationApp {
         
         if (accuracy > 50 && isIOS && isSafari && !this.preciseLocationWarningShown) {
             // Accuracy is poor - user might need to enable "Precise Location"
-            this.showStatus(`Location accuracy is ±${Math.round(accuracy)}m. For better navigation, enable Precise Location in Safari settings.`);
+            this.showStatus(`Location accuracy is ?${Math.round(accuracy)}m. For better navigation, enable Precise Location in Safari settings.`);
             this.preciseLocationWarningShown = true;
         }
 
@@ -725,8 +731,13 @@ class NavigationApp {
             }
             
             if (shouldUpdate) {
-                // Update route dynamically (not initial route)
-                this.calculateRoute(userPos, [this.selectedOffice.lat, this.selectedOffice.lng], this.selectedOffice.name, false);
+                const now = Date.now();
+                const intervalMet = !this.lastRouteUpdateTime || (now - this.lastRouteUpdateTime) >= this.minRouteUpdateInterval;
+                if (intervalMet) {
+                    this.lastRouteUpdateTime = now;
+                    // Update route dynamically (not initial route)
+                    this.calculateRoute(userPos, [this.selectedOffice.lat, this.selectedOffice.lng], this.selectedOffice.name, false);
+                }
             }
         }
     }
@@ -776,17 +787,17 @@ class NavigationApp {
                 message = 'Location unavailable. Make sure GPS is enabled.';
                 instructions = this.getMobileLocationInstructions();
                 instructions += '<br><br><strong>Additional checks:</strong><br>';
-                instructions += '• Ensure Location Services is ON in Settings<br>';
-                instructions += '• Make sure you\'re outdoors or near a window<br>';
-                instructions += '• Check that Airplane Mode is OFF';
+                instructions += '? Ensure Location Services is ON in Settings<br>';
+                instructions += '? Make sure you\'re outdoors or near a window<br>';
+                instructions += '? Check that Airplane Mode is OFF';
                 break;
             case error.TIMEOUT:
                 message = 'Location request timed out. GPS may be slow to acquire signal.';
                 instructions = '<div style="text-align: left; max-width: 90%; margin: 0 auto;">';
                 instructions += '<strong>GPS signal timeout:</strong><br><br>';
-                instructions += '• Make sure you\'re outdoors (GPS works better outside)<br>';
-                instructions += '• Check that Location Services is enabled<br>';
-                instructions += '• Try moving to a location with better sky view<br>';
+                instructions += '? Make sure you\'re outdoors (GPS works better outside)<br>';
+                instructions += '? Check that Location Services is enabled<br>';
+                instructions += '? Try moving to a location with better sky view<br>';
                 instructions += '<br><button onclick="location.reload()" style="margin-top: 10px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Retry</button>';
                 instructions += '</div>';
                 break;
@@ -826,17 +837,17 @@ class NavigationApp {
             instructions += '3. Set <strong>Location</strong> to "Allow" (not "Ask" or "Deny")<br>';
             instructions += '4. Close this popup and refresh the page<br><br>';
             instructions += '<strong>System Settings:</strong><br>';
-            instructions += '• Settings → Privacy & Security → Location Services → ON<br>';
-            instructions += '• Settings → Safari → Location Services → ON<br><br>';
+            instructions += '? Settings ? Privacy & Security ? Location Services ? ON<br>';
+            instructions += '? Settings ? Safari ? Location Services ? ON<br><br>';
             instructions += '<strong>Diagnostic Info:</strong><br>';
             instructions += 'Protocol: ' + protocol + '<br>';
             instructions += 'URL: ' + url.substring(0, 50) + '...<br>';
         } else if (isAndroid) {
             instructions += '1. Tap the <strong>menu icon</strong> (3 dots) in your browser<br>';
-            instructions += '2. Go to <strong>Settings</strong> → <strong>Site settings</strong><br>';
+            instructions += '2. Go to <strong>Settings</strong> ? <strong>Site settings</strong><br>';
             instructions += '3. Find this site and enable <strong>Location</strong> permissions<br>';
             instructions += '4. Refresh this page<br><br>';
-            instructions += 'Also check: Phone Settings → Location → On';
+            instructions += 'Also check: Phone Settings ? Location ? On';
         } else {
             instructions += '1. Click the <strong>lock/padlock icon</strong> in the address bar<br>';
             instructions += '2. Enable <strong>Location</strong> permissions<br>';
@@ -892,6 +903,7 @@ class NavigationApp {
         }
         this.selectedOffice = null;
         this.lastRouteUpdatePosition = null; // Reset route tracking
+        this.lastRouteUpdateTime = null;
         this.routeDestinationName = null;
         document.getElementById('officeSearch').value = '';
         document.getElementById('clearRoute').style.display = 'none';
