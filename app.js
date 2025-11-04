@@ -12,6 +12,10 @@ class NavigationApp {
         this.lastRouteUpdatePosition = null; // Track last position used for route update
         this.minRouteUpdateDistance = 15; // Minimum distance in meters to trigger route update
         this.routeDestinationName = null; // Store destination name to avoid showing status repeatedly
+        this.storageKey = 'navigation_offices_data';
+        this.buildingName = '';
+        this.instructionsEl = document.querySelector('.instructions p');
+        this.instructionsDefaultText = this.instructionsEl ? this.instructionsEl.textContent.trim() : '';
         
         // Default building location (will be updated from offices.json)
         this.buildingCenter = {
@@ -115,25 +119,96 @@ class NavigationApp {
     }
 
     async loadOffices() {
+        const storedData = this.getPersistedOfficeData();
+        if (storedData) {
+            this.applyOfficeData(storedData);
+            return;
+        }
+
         try {
-            const response = await fetch('offices.json');
+            const response = await fetch('offices.json', { cache: 'no-store' });
             const data = await response.json();
-            this.offices = data.offices;
-            
-            // Set building center from first office or use provided center
-            if (data.buildingCenter) {
-                this.buildingCenter = data.buildingCenter;
-            } else if (this.offices.length > 0) {
-                this.buildingCenter = {
-                    lat: this.offices[0].lat,
-                    lng: this.offices[0].lng
-                };
-            }
+            this.applyOfficeData(data);
         } catch (error) {
             console.error('Error loading offices:', error);
             this.showStatus('Error loading office locations.');
-            // Use default empty data
             this.offices = [];
+        }
+    }
+
+    getPersistedOfficeData() {
+        try {
+            const raw = window.localStorage?.getItem(this.storageKey);
+            if (!raw) return null;
+            return JSON.parse(raw);
+        } catch (error) {
+            console.warn('Stored office data invalid and will be ignored.', error);
+            return null;
+        }
+    }
+
+    applyOfficeData(data) {
+        if (!data || typeof data !== 'object') {
+            this.offices = [];
+            return;
+        }
+
+        const buildingCenter = data.buildingCenter || {};
+        const offices = Array.isArray(data.offices) ? data.offices.map((office, index) => {
+            const lat = this.parseCoordinate(office?.lat);
+            const lng = this.parseCoordinate(office?.lng);
+            if (lat === null || lng === null) {
+                console.warn('Skipping office with invalid coordinates:', office);
+                return null;
+            }
+            const name = office?.name ? office.name.toString().trim() : '';
+            return {
+                name: name || `Office ${index + 1}`,
+                lat,
+                lng,
+                description: office?.description ? office.description.toString() : ''
+            };
+        }).filter(Boolean) : [];
+
+        this.offices = offices;
+
+        const centerLat = this.parseCoordinate(buildingCenter.lat);
+        const centerLng = this.parseCoordinate(buildingCenter.lng);
+
+        if (centerLat !== null && centerLng !== null) {
+            this.buildingCenter = { lat: centerLat, lng: centerLng };
+        } else if (this.offices.length > 0) {
+            this.buildingCenter = {
+                lat: this.offices[0].lat,
+                lng: this.offices[0].lng
+            };
+        }
+
+        this.buildingName = buildingCenter.name ? buildingCenter.name.toString() : '';
+        this.updateBuildingCopy();
+    }
+
+    parseCoordinate(value) {
+        if (typeof value === 'number') {
+            return Number.isFinite(value) ? value : null;
+        }
+        if (typeof value === 'string') {
+            const trimmed = value.trim();
+            if (trimmed.length === 0) {
+                return null;
+            }
+            const parsed = parseFloat(trimmed);
+            return Number.isFinite(parsed) ? parsed : null;
+        }
+        return null;
+    }
+
+    updateBuildingCopy() {
+        if (!this.instructionsEl) return;
+        if (this.buildingName) {
+            this.instructionsEl.textContent = `Welcome to ${this.buildingName}. Search for an office above to get directions.`;
+        } else if (this.instructionsDefaultText) {
+            this.instructionsEl.textContent = this.instructionsDefaultText;
         }
     }
 

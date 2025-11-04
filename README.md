@@ -9,12 +9,22 @@ A mobile-friendly web application for navigating to office locations using QR co
 - **Real-time GPS Tracking**: Your current position is tracked and displayed on the map
 - **Walking Directions**: Get optimized walking routes to any office location
 - **Mobile Optimized**: Responsive design that works great on smartphones
+- **Admin Dashboard**: Drag-and-drop interface for editing offices and exporting data
 
 ## Setup Instructions
 
 ### 1. Update Office Locations
 
-Edit `offices.json` with your actual office locations:
+You can update location data in two ways:
+
+**Option A – Use the built-in admin dashboard (recommended)**
+
+1. Open `admin.html` in your browser (for example `https://your-site.com/admin.html` or `http://localhost:8080/admin.html`).
+2. Drag markers on the map or edit the list to update names, descriptions, and coordinates.
+3. Click **Save to browser** to keep changes locally while you test.
+4. When you are ready to publish, click **Download JSON** and replace the existing `offices.json` in this project (and redeploy, if applicable).
+
+**Option B – Edit `offices.json` manually**
 
 ```json
 {
@@ -40,6 +50,8 @@ Edit `offices.json` with your actual office locations:
 3. Make sure to get coordinates for:
    - The building center (where to center the map)
    - Each office/unit location (where routes will navigate to)
+
+> **Tip:** The visitor map automatically loads the most recent browser save. Use **Reset changes** inside the admin dashboard to discard local edits and fall back to the bundled `offices.json`.
 
 ### 2. Test Locally
 
@@ -107,6 +119,15 @@ QRLocation/
 - **Leaflet Routing Machine**: Route calculation (uses free OSRM service)
 - **Browser Geolocation API**: GPS tracking
 - **Vanilla JavaScript**: No framework dependencies
+- **Admin Dashboard**: Drag-and-drop interface for editing offices and exporting data
+
+## Admin Dashboard
+
+- Access the dashboard at `admin.html` (same origin as the visitor map).
+- Drag markers on the map or edit the list to adjust office metadata.
+- Use **Save to browser** to persist changes in `localStorage` on the current device.
+- Use **Download JSON** to generate a ready-to-commit `offices.json` file.
+- Use **Reset changes** to clear browser storage and reload the baseline data shipped with the site.
 
 ## Customization
 
