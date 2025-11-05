@@ -5,10 +5,13 @@ A mobile-friendly web application for navigating to office locations using QR co
 ## Features
 
 - **QR Code Access**: Scan a QR code to instantly access the navigation interface
-- **Office Search**: Search for offices with autocomplete functionality
-- **Real-time GPS Tracking**: Your current position is tracked and displayed on the map
-- **Walking Directions**: Get optimized walking routes to any office location
-- **Mobile Optimized**: Responsive design that works great on smartphones
+- **Office Search**: Search for offices with autocomplete functionality and "View All" button
+- **Real-time GPS Tracking**: Your current position is continuously tracked and displayed on the map with accuracy indicator
+- **Dynamic Route Updates**: Routes automatically update as you move (updates every 15+ meters)
+- **Walking Directions**: Get optimized walking routes to any office location using OSRM routing
+- **Browser-Specific Location Handling**: Smart prompts with detailed instructions for Safari, Chrome, Firefox, and Android browsers
+- **Mobile Optimized**: Responsive design optimized for smartphone use with touch-friendly controls
+- **Light Map Style**: Uses CartoDB Positron tiles for a clean, light grey map appearance ideal for outdoor navigation
 
 ## Setup Instructions
 
@@ -60,28 +63,21 @@ npx http-server --ssl --cert cert.pem --key key.pem
 
 ### 3. Deploy
 
-You can deploy this to any static hosting service:
-
-**GitHub Pages (Free)**
+**GitHub Pages (Recommended - Free)**
 1. Create a repository on GitHub
-2. Upload all files
+2. Upload all files to the repository
 3. Go to Settings → Pages
-4. Select your branch and click Save
+4. Select your branch (main) and click Save
 5. Your site will be at: `https://yourusername.github.io/repository-name/`
-
-**Netlify (Free)**
-1. Go to [netlify.com](https://www.netlify.com)
-2. Drag and drop the project folder
-3. Your site will be live instantly with HTTPS
+6. See `DEPLOYMENT.md` for detailed step-by-step instructions
 
 **Other Options:**
-- Vercel
-- GitHub Pages
-- Any web hosting service
+- Any static hosting service that supports HTTPS
+- GitHub Pages is recommended because it's free, provides HTTPS automatically, and makes updates easy
 
 ### 4. Generate QR Code
 
-1. Get your deployed URL (e.g., `https://yourdomain.com` or `https://yoursite.netlify.app`)
+1. Get your deployed URL (e.g., `https://yourusername.github.io/repository-name/`)
 2. Use a free QR code generator:
    - [QR Code Generator](https://www.qr-code-generator.com/)
    - [QRCode Monkey](https://www.qrcode-monkey.com/)
@@ -97,25 +93,35 @@ QRLocation/
 ├── app.js              # Application logic
 ├── offices.json        # Office location data
 ├── README.md           # This file
+├── DEPLOYMENT.md       # Deployment guide
 └── qr-code-info.md     # QR code generation guide
 ```
 
 ## Technologies Used
 
-- **Leaflet.js**: Open-source mapping library
-- **OpenStreetMap**: Free map tiles
-- **Leaflet Routing Machine**: Route calculation (uses free OSRM service)
-- **Browser Geolocation API**: GPS tracking
-- **Vanilla JavaScript**: No framework dependencies
+- **Leaflet.js** (v1.9.4): Open-source mapping library
+- **CartoDB Positron**: Light grey map tiles for better outdoor visibility
+- **Leaflet Routing Machine** (v3.2.12): Route calculation using free OSRM service
+- **OSRM Routing**: Walking route optimization via Project OSRM public API
+- **Browser Geolocation API**: Real-time GPS tracking with high accuracy support
+- **Vanilla JavaScript**: No framework dependencies - pure ES6+ JavaScript
 
 ## Customization
 
 ### Change Map Style
-Edit the tile layer in `app.js`:
+Edit the tile layer in `app.js` (currently using CartoDB Positron):
 ```javascript
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    // Options here
-})
+// Current: Light grey CartoDB Positron
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+}).addTo(this.map);
+
+// Alternative: Standard OpenStreetMap
+// L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+//     attribution: '&copy; OpenStreetMap contributors'
+// }).addTo(this.map);
 ```
 
 ### Adjust Initial Zoom Level
@@ -139,18 +145,28 @@ lineOptions: {
 ## Troubleshooting
 
 **Location not working:**
-- Make sure you're using HTTPS (required for geolocation)
+- Make sure you're using HTTPS (required for geolocation - GitHub Pages provides this automatically)
 - Check browser permissions for location access
+- **Safari/iOS**: The app provides detailed instructions - both website settings AND system settings must allow location
 - Ensure GPS is enabled on your device
+- Try refreshing the page after granting permissions
+- Verify you're accessing the site via the HTTPS URL (GitHub Pages automatically provides HTTPS)
 
 **Routes not calculating:**
-- Check internet connection (routes use online service)
-- Verify office coordinates are correct
+- Check internet connection (routes use online OSRM service)
+- Verify office coordinates are correct in `offices.json`
+- Make sure you've selected an office and granted location permission
 - Try refreshing the page
 
 **Map not loading:**
 - Check internet connection (needed for map tiles)
 - Verify Leaflet CDN links are accessible
+- Check browser console (F12) for errors
+
+**Safari-specific issues:**
+- Safari requires location permissions in TWO places (website settings AND system settings)
+- The app shows detailed Safari instructions when needed
+- Make sure "Precise Location" is enabled for better accuracy
 
 ## Future Enhancements
 

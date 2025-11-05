@@ -1,15 +1,15 @@
 # QR Code Generation Guide
 
-This guide will help you create QR codes that link to your navigation app.
+This guide will help you create QR codes that link to your navigation app. The app is production-ready and includes all necessary features for real-world deployment.
 
 ## Step 1: Deploy Your App
 
-Before creating a QR code, you need to deploy your navigation app to a public URL. See `README.md` for deployment options.
+Before creating a QR code, you need to deploy your navigation app to a public URL. See `README.md` for deployment options and `DEPLOYMENT.md` for detailed GitHub Pages deployment instructions.
 
 Examples of deployed URLs:
 - `https://yourusername.github.io/qr-navigation/`
-- `https://your-building-navigation.netlify.app/`
-- `https://navigation.yourbuilding.com/`
+- `https://yourusername.github.io/willowbrook-navigation/`
+- `https://navigation.yourbuilding.com/` (if using custom domain)
 
 ## Step 2: Generate QR Code
 
@@ -77,8 +77,16 @@ Before placing QR codes:
 1. Generate the QR code
 2. Test scan with your phone's camera
 3. Verify it opens the correct URL
-4. Test the navigation functionality
-5. Make sure it works on both iOS and Android
+4. Test the navigation functionality:
+   - Grant location permissions when prompted
+   - Search for an office
+   - Verify route calculation works
+   - Test that your location updates as you move
+5. Test on multiple devices:
+   - iPhone (iOS Safari)
+   - Android phones (Chrome, Firefox)
+   - Different browsers to ensure compatibility
+6. Test location permissions workflow - the app provides browser-specific instructions if needed
 
 ## QR Code Design Tips
 
@@ -120,6 +128,8 @@ Test with multiple devices:
 - **Update if URL changes**: If you change your deployment URL, you'll need to regenerate QR codes
 - **Check periodically**: Verify QR codes still work after building renovations or changes
 - **Backup copies**: Keep digital copies of your QR code designs for easy reprinting
+- **Monitor app functionality**: Periodically test that location services and routing still work correctly
+- **Office updates**: When you update `offices.json`, commit and push to GitHub - GitHub Pages will automatically rebuild your site
 
 ## Alternative: Short URLs
 

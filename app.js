@@ -801,7 +801,7 @@ class NavigationApp {
             instructions += '<br><br><div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-top: 10px;">';
             instructions += '<strong>HTTPS Issue Detected</strong><br>';
             instructions += 'Current protocol: ' + protocol + '<br>';
-            instructions += 'Geolocation requires HTTPS. Make sure your Netlify URL starts with https://';
+            instructions += 'Geolocation requires HTTPS. Make sure your site URL starts with https://';
             instructions += '</div>';
         }
         
