@@ -12,6 +12,9 @@
     <!-- Leaflet Routing Machine CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     
+    <!-- Pannellum -->
+    <link rel="stylesheet" href="https://unpkg.com/pannellum/build/pannellum.css">
+    
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -33,6 +36,26 @@
                 <div id="searchResults" class="search-results"></div>
             </div>
             <button id="clearRoute" class="clear-btn" style="display: none;">Clear Route</button>
+        </div>
+
+        <!-- Destination Details Panel -->
+        <div id="destinationPanel" class="destination-panel" aria-live="polite">
+            <div class="destination-info">
+                <div class="destination-copy">
+                    <div id="destinationName" class="destination-name">Select an office to see details.</div>
+                    <div id="destinationDescription" class="destination-description"></div>
+                    <div id="destinationRoute" class="destination-route"></div>
+                </div>
+                <button 
+                    id="panoramaBtn" 
+                    class="pano-btn" 
+                    type="button" 
+                    disabled 
+                    aria-disabled="true"
+                >
+                    360° View
+                </button>
+            </div>
         </div>
 
         <!-- Location Permission Prompt (shown initially, hidden after permission granted) -->
@@ -59,11 +82,34 @@
         </div>
     </div>
 
+    <div 
+        id="panoOverlay" 
+        role="dialog" 
+        aria-modal="true" 
+        aria-label="360 degree panorama" 
+        tabindex="-1"
+        style="display:none; position:fixed; inset:0; z-index:9999; background:#000;"
+    ></div>
+    <button 
+        id="panoClose" 
+        type="button" 
+        aria-label="Exit 360 degree view" 
+        style="display:none; position:fixed; top:12px; right:12px; z-index:10000;"
+    >
+        Exit 360°
+    </button>
+
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <!-- Leaflet Routing Machine JS -->
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+    <!-- Google Maps JS API (replace YOUR_API_KEY) -->
+    <!-- TODO: Insert Google Maps API key before enabling Street View. -->
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY" async defer></script> -->
+
+    <script src="https://unpkg.com/pannellum/build/pannellum.js" defer></script>
     
     <script src="app.js"></script>
 </body>

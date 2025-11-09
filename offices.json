@@ -8,7 +8,13 @@
     {
       "name": "Firmus Medical, LLC",
       "lat": 41.750736,
-      "lng": -87.937705
+      "lng": -87.937705,
+      "panorama": {
+        "provider": "google",
+        "radius": 60,
+        "heading": 145,
+        "pitch": 0
+      }
     },
     {
       "name": "TRP Investments, LLC",
@@ -133,7 +139,13 @@
     {
       "name": "Front Door",
       "lat": 36.152983,
-      "lng": -86.782853
+      "lng": -86.782853,
+      "panorama": {
+        "provider": "google",
+        "radius": 60,
+        "heading": 180,
+        "pitch": 0
+      }
     },
     {
       "name": "Grass",

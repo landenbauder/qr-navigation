@@ -12,6 +12,20 @@ class NavigationApp {
         this.lastRouteUpdatePosition = null; // Track last position used for route update
         this.minRouteUpdateDistance = 15; // Minimum distance in meters to trigger route update
         this.routeDestinationName = null; // Store destination name to avoid showing status repeatedly
+        this.pannellumViewer = null;
+        this.googleStreetView = null;
+        this.panoramaBtn = null;
+        this.panoOverlay = null;
+        this.panoCloseBtn = null;
+        this.destinationNameEl = null;
+        this.destinationDescEl = null;
+        this.destinationRouteEl = null;
+        this.mapContainer = null;
+        this.panoramaClickLocked = false;
+        this.mapDisplayCache = '';
+        this.lastRouteEndpoint = null;
+        this.pendingPanoramaRequest = null;
+        this.currentPanoramaProvider = null;
         
         // Default building location (will be updated from offices.json)
         this.buildingCenter = {
@@ -19,7 +33,39 @@ class NavigationApp {
             lng: -118.2437
         };
         
+        this.cacheDomReferences();
         this.init();
+    }
+
+    cacheDomReferences() {
+        this.mapContainer = document.getElementById('map');
+        this.panoramaBtn = document.getElementById('panoramaBtn');
+        this.panoOverlay = document.getElementById('panoOverlay');
+        this.panoCloseBtn = document.getElementById('panoClose');
+        this.destinationNameEl = document.getElementById('destinationName');
+        this.destinationDescEl = document.getElementById('destinationDescription');
+        this.destinationRouteEl = document.getElementById('destinationRoute');
+
+        if (this.panoramaBtn) {
+            this.panoramaBtn.addEventListener('click', () => {
+                if (!this.selectedOffice || !this.selectedOffice.panorama) {
+                    return;
+                }
+                this.openPanorama(this.selectedOffice);
+            });
+        }
+
+        if (this.panoCloseBtn) {
+            this.panoCloseBtn.addEventListener('click', () => this.closePanorama());
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && this.panoOverlay && this.panoOverlay.style.display === 'block') {
+                this.closePanorama();
+            }
+        });
+
+        this.updateDestinationPanel(null);
     }
 
     async init() {
@@ -290,7 +336,10 @@ class NavigationApp {
     }
 
     selectOffice(office) {
+        this.closePanorama();
         this.selectedOffice = office;
+        this.lastRouteEndpoint = null;
+        this.updateDestinationPanel(office);
         this.lastRouteUpdatePosition = null; // Reset route update tracking
         document.getElementById('clearRoute').style.display = 'block';
         
@@ -392,6 +441,11 @@ class NavigationApp {
             const route = e.routes[0];
             const distance = (route.summary.totalDistance / 1000).toFixed(2);
             const duration = Math.round(route.summary.totalTime / 60);
+            this.setRouteSummary(distance, duration);
+            const endpoint = route.coordinates[route.coordinates.length - 1];
+            if (endpoint) {
+                this.lastRouteEndpoint = { lat: endpoint.lat, lng: endpoint.lng };
+            }
             
             // Only show status message on initial route calculation
             if (isFirstRouteFound) {
@@ -893,8 +947,228 @@ class NavigationApp {
         this.selectedOffice = null;
         this.lastRouteUpdatePosition = null; // Reset route tracking
         this.routeDestinationName = null;
+        this.lastRouteEndpoint = null;
+        this.updateDestinationPanel(null);
+        this.closePanorama();
         document.getElementById('officeSearch').value = '';
         document.getElementById('clearRoute').style.display = 'none';
+    }
+
+    updateDestinationPanel(office) {
+        if (!this.destinationNameEl) {
+            return;
+        }
+
+        if (!office) {
+            this.destinationNameEl.textContent = 'Select an office to see details.';
+            if (this.destinationDescEl) {
+                this.destinationDescEl.textContent = '';
+            }
+            if (this.destinationRouteEl) {
+                this.destinationRouteEl.textContent = '';
+            }
+            this.updatePanoramaButtonState(false);
+            return;
+        }
+
+        this.destinationNameEl.textContent = office.name;
+        if (this.destinationDescEl) {
+            this.destinationDescEl.textContent = office.description || '';
+        }
+        if (this.destinationRouteEl) {
+            this.destinationRouteEl.textContent = '';
+        }
+        this.updatePanoramaButtonState(Boolean(office.panorama));
+    }
+
+    updatePanoramaButtonState(isEnabled) {
+        if (!this.panoramaBtn) {
+            return;
+        }
+        this.panoramaBtn.disabled = !isEnabled;
+        this.panoramaBtn.setAttribute('aria-disabled', isEnabled ? 'false' : 'true');
+    }
+
+    setRouteSummary(distance, duration) {
+        if (!this.destinationRouteEl || !this.selectedOffice) {
+            return;
+        }
+        this.destinationRouteEl.textContent = `Route: ${distance} km (~${duration} min walk)`;
+    }
+
+    openPanorama(destination) {
+        if (!destination || !destination.panorama || !this.panoOverlay || !this.mapContainer) {
+            return;
+        }
+
+        if (this.panoramaClickLocked) {
+            return;
+        }
+
+        this.panoramaClickLocked = true;
+        setTimeout(() => {
+            this.panoramaClickLocked = false;
+        }, 600);
+
+        const panoramaConfig = destination.panorama;
+        const provider = (panoramaConfig && panoramaConfig.provider) ? panoramaConfig.provider.toLowerCase() : '';
+        if (!panoramaConfig || !provider) {
+            this.showStatus('Panorama unavailable.');
+            return;
+        }
+
+        this.closePanorama({ restoreMap: false });
+        this.pendingPanoramaRequest = Date.now();
+
+        if (!this.mapDisplayCache) {
+            this.mapDisplayCache = this.mapContainer.style.display || '';
+        }
+        this.mapContainer.style.display = 'none';
+
+        this.panoOverlay.innerHTML = '';
+        this.panoOverlay.style.display = 'block';
+        if (typeof this.panoOverlay.focus === 'function') {
+            try {
+                this.panoOverlay.focus({ preventScroll: true });
+            } catch (error) {
+                this.panoOverlay.focus();
+            }
+        }
+        if (this.panoCloseBtn) {
+            this.panoCloseBtn.style.display = 'block';
+        }
+
+        switch (provider) {
+            case 'google':
+                this.openGooglePanorama(destination, panoramaConfig);
+                break;
+            case 'local':
+                this.openLocalPanorama(panoramaConfig);
+                break;
+            case 'mapillary':
+                this.handleMapillaryPlaceholder();
+                break;
+            default:
+                this.showStatus('Panorama provider not supported.');
+                this.closePanorama();
+        }
+    }
+
+    openGooglePanorama(destination, panoramaConfig) {
+        if (!(window.google && window.google.maps && window.google.maps.StreetViewService)) {
+            this.showStatus('360° view requires Google Maps API key. Configure and reload.');
+            this.closePanorama();
+            return;
+        }
+
+        const service = new google.maps.StreetViewService();
+        const radius = panoramaConfig.radius || 60;
+        const location = this.lastRouteEndpoint || { lat: destination.lat, lng: destination.lng };
+        const requestId = this.pendingPanoramaRequest;
+
+        service.getPanorama({ location, radius }, (data, status) => {
+            if (this.pendingPanoramaRequest !== requestId) {
+                return;
+            }
+            if (status !== google.maps.StreetViewStatus.OK || !data) {
+                this.showStatus('No coverage here');
+                this.closePanorama();
+                return;
+            }
+
+            this.googleStreetView = new google.maps.StreetViewPanorama(this.panoOverlay, {
+                position: data.location.latLng,
+                pov: {
+                    heading: panoramaConfig.heading || 0,
+                    pitch: panoramaConfig.pitch || 0
+                },
+                zoom: 1
+            });
+            this.currentPanoramaProvider = 'google';
+        });
+    }
+
+    openLocalPanorama(panoramaConfig) {
+        if (!(window.pannellum && typeof window.pannellum.viewer === 'function')) {
+            this.showStatus('Panorama viewer unavailable.');
+            this.closePanorama();
+            return;
+        }
+
+        if (!panoramaConfig.image) {
+            this.showStatus('Panorama unavailable.');
+            this.closePanorama();
+            return;
+        }
+
+        try {
+            this.pannellumViewer = window.pannellum.viewer('panoOverlay', {
+                type: 'equirectangular',
+                panorama: panoramaConfig.image,
+                autoLoad: true,
+                yaw: panoramaConfig.heading || panoramaConfig.yaw || 0,
+                pitch: panoramaConfig.pitch || 0
+            });
+            this.currentPanoramaProvider = 'local';
+
+            if (this.pannellumViewer && typeof this.pannellumViewer.on === 'function') {
+                this.pannellumViewer.on('error', () => {
+                    this.showStatus('Panorama unavailable.');
+                    this.closePanorama();
+                });
+            }
+        } catch (error) {
+            console.error('Pannellum viewer error:', error);
+            this.showStatus('Panorama unavailable.');
+            this.closePanorama();
+        }
+    }
+
+    handleMapillaryPlaceholder() {
+        // TODO: Wire up Mapillary JS with imageId when available.
+        this.showStatus('Mapillary 360° view coming soon.');
+        this.closePanorama();
+    }
+
+    closePanorama(options = {}) {
+        const { restoreMap = true } = options;
+        this.pendingPanoramaRequest = null;
+        this.panoramaClickLocked = false;
+        this.destroyActivePanorama();
+
+        if (this.panoOverlay) {
+            this.panoOverlay.style.display = 'none';
+            this.panoOverlay.innerHTML = '';
+        }
+        if (this.panoCloseBtn) {
+            this.panoCloseBtn.style.display = 'none';
+        }
+        if (restoreMap && this.mapContainer) {
+            this.mapContainer.style.display = this.mapDisplayCache || '';
+            this.mapDisplayCache = '';
+        }
+    }
+
+    destroyActivePanorama() {
+        if (this.pannellumViewer) {
+            try {
+                this.pannellumViewer.destroy();
+            } catch (error) {
+                console.error('Pannellum cleanup error:', error);
+            }
+            this.pannellumViewer = null;
+        }
+
+        if (this.googleStreetView) {
+            try {
+                this.googleStreetView.setVisible(false);
+            } catch (error) {
+                console.error('Google Street View cleanup error:', error);
+            }
+            this.googleStreetView = null;
+        }
+
+        this.currentPanoramaProvider = null;
     }
 
     showStatus(message) {
