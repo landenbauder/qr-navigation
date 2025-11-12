@@ -447,6 +447,12 @@ class NavigationApp {
                 this.lastRouteEndpoint = { lat: endpoint.lat, lng: endpoint.lng };
             }
             
+            // Update panorama button visibility now that route is active
+            if (this.selectedOffice) {
+                const hasPanorama = Boolean(this.selectedOffice.panorama);
+                this.updatePanoramaButtonState(hasPanorama);
+            }
+            
             // Only show status message on initial route calculation
             if (isFirstRouteFound) {
                 this.showStatus(`Route to ${destinationName}: ${distance} km, ~${duration} min walk`);
@@ -950,6 +956,10 @@ class NavigationApp {
         this.lastRouteEndpoint = null;
         this.updateDestinationPanel(null);
         this.closePanorama();
+        // Hide panorama button when route is cleared
+        if (this.panoramaBtn) {
+            this.panoramaBtn.style.display = 'none';
+        }
         document.getElementById('officeSearch').value = '';
         document.getElementById('clearRoute').style.display = 'none';
     }
@@ -978,13 +988,18 @@ class NavigationApp {
         if (this.destinationRouteEl) {
             this.destinationRouteEl.textContent = '';
         }
-        this.updatePanoramaButtonState(Boolean(office.panorama));
+        // Enable panorama button only if office has panorama config AND route is active
+        const hasPanorama = Boolean(office.panorama);
+        this.updatePanoramaButtonState(hasPanorama);
     }
 
     updatePanoramaButtonState(isEnabled) {
         if (!this.panoramaBtn) {
             return;
         }
+        // Only show button when navigation is active (route exists) and panorama is available
+        const shouldShow = isEnabled && this.routingControl !== null && this.selectedOffice !== null;
+        this.panoramaBtn.style.display = shouldShow ? 'block' : 'none';
         this.panoramaBtn.disabled = !isEnabled;
         this.panoramaBtn.setAttribute('aria-disabled', isEnabled ? 'false' : 'true');
     }
@@ -1063,7 +1078,20 @@ class NavigationApp {
 
         const service = new google.maps.StreetViewService();
         const radius = panoramaConfig.radius || 60;
-        const location = this.lastRouteEndpoint || { lat: destination.lat, lng: destination.lng };
+        
+        // Use panorama-specific coordinates if available, otherwise use route endpoint or office location
+        let location;
+        if (panoramaConfig.lat && panoramaConfig.lng) {
+            // Use dedicated panorama coordinates (on street)
+            location = { lat: panoramaConfig.lat, lng: panoramaConfig.lng };
+        } else if (this.lastRouteEndpoint) {
+            // Use route endpoint (should be on street)
+            location = this.lastRouteEndpoint;
+        } else {
+            // Fallback to office location (may not have Street View coverage)
+            location = { lat: destination.lat, lng: destination.lng };
+        }
+        
         const requestId = this.pendingPanoramaRequest;
 
         service.getPanorama({ location, radius }, (data, status) => {
@@ -1071,7 +1099,7 @@ class NavigationApp {
                 return;
             }
             if (status !== google.maps.StreetViewStatus.OK || !data) {
-                this.showStatus('No coverage here');
+                this.showStatus('No Street View coverage at this location');
                 this.closePanorama();
                 return;
             }
