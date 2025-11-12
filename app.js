@@ -341,7 +341,7 @@ class NavigationApp {
         this.lastRouteEndpoint = null;
         this.updateDestinationPanel(office);
         this.lastRouteUpdatePosition = null; // Reset route update tracking
-        document.getElementById('clearRoute').style.display = 'block';
+        document.getElementById('clearRoute').style.display = 'inline-flex';
         
         if (this.userMarker) {
             const userPos = this.userMarker.getLatLng();
@@ -993,15 +993,19 @@ class NavigationApp {
         this.updatePanoramaButtonState(hasPanorama);
     }
 
-    updatePanoramaButtonState(isEnabled) {
+    updatePanoramaButtonState(hasPanorama) {
         if (!this.panoramaBtn) {
             return;
         }
         // Only show button when navigation is active (route exists) and panorama is available
-        const shouldShow = isEnabled && this.routingControl !== null && this.selectedOffice !== null;
-        this.panoramaBtn.style.display = shouldShow ? 'block' : 'none';
-        this.panoramaBtn.disabled = !isEnabled;
-        this.panoramaBtn.setAttribute('aria-disabled', isEnabled ? 'false' : 'true');
+        const shouldShow = Boolean(
+            hasPanorama &&
+            this.routingControl !== null &&
+            this.selectedOffice !== null
+        );
+        this.panoramaBtn.style.display = shouldShow ? 'inline-flex' : 'none';
+        this.panoramaBtn.disabled = !shouldShow;
+        this.panoramaBtn.setAttribute('aria-disabled', shouldShow ? 'false' : 'true');
     }
 
     setRouteSummary(distance, duration) {
