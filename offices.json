@@ -1,144 +1,134 @@
-{
+﻿{
+    "offices":  [
+                    {
+                        "lng":  -87.937705,
+                        "name":  "Firmus Medical, LLC",
+                        "lat":  41.750736
+                    },
+                    {
+                        "lng":  -87.937768,
+                        "name":  "TRP Investments, LLC",
+                        "lat":  41.750666
+                    },
+                    {
+                        "lng":  -87.937755,
+                        "name":  "Donnelly Transportation, Inc.",
+                        "lat":  41.750599
+                    },
+                    {
+                        "lng":  -87.937635,
+                        "name":  "Henrich Electronics Corporation",
+                        "lat":  41.750595
+                    },
+                    {
+                        "lng":  -87.937774,
+                        "name":  "Charland, LLC",
+                        "lat":  41.750521
+                    },
+                    {
+                        "lng":  -87.937711,
+                        "name":  "Thomas Murphy",
+                        "lat":  41.750450
+                    },
+                    {
+                        "lng":  -87.937771,
+                        "name":  "Perform Technologies, Inc.",
+                        "lat":  41.750379
+                    },
+                    {
+                        "lng":  -87.937817,
+                        "name":  "Shahid Khwaja",
+                        "lat":  41.750312
+                    },
+                    {
+                        "lng":  -87.937718,
+                        "name":  "SFUSA",
+                        "lat":  41.750312
+                    },
+                    {
+                        "lng":  -87.937614,
+                        "name":  "Airtex Manufacturing Inc.",
+                        "lat":  41.750162
+                    },
+                    {
+                        "lng":  -87.937680,
+                        "name":  "Syndem, LLC",
+                        "lat":  41.750109
+                    },
+                    {
+                        "lng":  -87.937768,
+                        "name":  "Lifetime Restoration, Inc.",
+                        "lat":  41.750105
+                    },
+                    {
+                        "lng":  -87.937774,
+                        "name":  "Clean Slate, Inc.",
+                        "lat":  41.750188
+                    },
+                    {
+                        "lng":  -87.937897,
+                        "name":  "John Devae Insurance Agency, Inc.",
+                        "lat":  41.750151
+                    },
+                    {
+                        "lng":  -87.937977,
+                        "name":  "Donald E. Morris Architect, PC",
+                        "lat":  41.750150
+                    },
+                    {
+                        "lng":  -87.938083,
+                        "name":  "Redwood Construction Group LLC",
+                        "lat":  41.750153
+                    },
+                    {
+                        "lng":  -87.938168,
+                        "name":  "Equitec Group LLC",
+                        "lat":  41.750150
+                    },
+                    {
+                        "lng":  -87.938375,
+                        "name":  "Armond Cozzi",
+                        "lat":  41.750185
+                    },
+                    {
+                        "lng":  -87.938458,
+                        "name":  "The Forest Electric Company",
+                        "lat":  41.750143
+                    },
+                    {
+                        "lng":  -87.938557,
+                        "name":  "Lifetime Restoration, Inc.",
+                        "lat":  41.750142
+                    },
+                    {
+                        "lng":  -87.938663,
+                        "name":  "Nightingale Home Healthcare of Illinois, Inc.",
+                        "lat":  41.750097
+                    },
+                    {
+                        "lng":  -87.938846,
+                        "name":  "Green Home Makeover, LLC",
+                        "lat":  41.750098
+                    },
+                    {
+                        "lng":  -87.938853,
+                        "name":  "Law Office of Robert J. Chio",
+                        "lat":  41.750302
+                    },
+                    {
+                        "lng":  -87.938831,
+                        "name":  "The Best Veneer Company LLC",
+                        "lat":  41.750370
+                    },
+                    {
+                        "lng":  -87.938720,
+                        "name":  "Troop Contracting, Inc.",
+                        "lat":  41.750408
+                    }
+                ],
     "buildingCenter":  {
                            "lat":  41.750197,
                            "lng":  -87.937808,
                            "name":  "Willowbrook Office Building"
-                       },
-    "offices":  [
-                    {
-                        "name":  "Firmus Medical, LLC",
-                        "lat":  41.750736,
-                        "lng":  -87.937705
-                    },
-                    {
-                        "name":  "TRP Investments, LLC",
-                        "lat":  41.750666,
-                        "lng":  -87.937768
-                    },
-                    {
-                        "name":  "Donnelly Transportation, Inc.",
-                        "lat":  41.750599,
-                        "lng":  -87.937755
-                    },
-                    {
-                        "name":  "Henrich Electronics Corporation",
-                        "lat":  41.750595,
-                        "lng":  -87.937635
-                    },
-                    {
-                        "name":  "Charland, LLC",
-                        "lat":  41.750521,
-                        "lng":  -87.937774
-                    },
-                    {
-                        "name":  "Thomas Murphy",
-                        "lat":  41.750450,
-                        "lng":  -87.937711
-                    },
-                    {
-                        "name":  "Perform Technologies, Inc.",
-                        "lat":  41.750379,
-                        "lng":  -87.937771
-                    },
-                    {
-                        "name":  "Shahid Khwaja",
-                        "lat":  41.750312,
-                        "lng":  -87.937817
-                    },
-                    {
-                        "name":  "SFUSA",
-                        "lat":  41.750312,
-                        "lng":  -87.937718
-                    },
-                    {
-                        "name":  "Airtex Manufacturing Inc.",
-                        "lat":  41.750162,
-                        "lng":  -87.937614
-                    },
-                    {
-                        "name":  "Syndem, LLC",
-                        "lat":  41.750109,
-                        "lng":  -87.937680
-                    },
-                    {
-                        "name":  "Lifetime Restoration, Inc.",
-                        "lat":  41.750105,
-                        "lng":  -87.937768
-                    },
-                    {
-                        "name":  "Clean Slate, Inc.",
-                        "lat":  41.750188,
-                        "lng":  -87.937774
-                    },
-                    {
-                        "name":  "John Devae Insurance Agency, Inc.",
-                        "lat":  41.750151,
-                        "lng":  -87.937897
-                    },
-                    {
-                        "name":  "Donald E. Morris Architect, PC",
-                        "lat":  41.750150,
-                        "lng":  -87.937977
-                    },
-                    {
-                        "name":  "Redwood Construction Group LLC",
-                        "lat":  41.750153,
-                        "lng":  -87.938083
-                    },
-                    {
-                        "name":  "Equitec Group LLC",
-                        "lat":  41.750150,
-                        "lng":  -87.938168
-                    },
-                    {
-                        "name":  "Armond Cozzi",
-                        "lat":  41.750185,
-                        "lng":  -87.938375
-                    },
-                    {
-                        "name":  "The Forest Electric Company",
-                        "lat":  41.750143,
-                        "lng":  -87.938458
-                    },
-                    {
-                        "name":  "Lifetime Restoration, Inc.",
-                        "lat":  41.750142,
-                        "lng":  -87.938557
-                    },
-                    {
-                        "name":  "Nightingale Home Healthcare of Illinois, Inc.",
-                        "lat":  41.750097,
-                        "lng":  -87.938663
-                    },
-                    {
-                        "name":  "Green Home Makeover, LLC",
-                        "lat":  41.750098,
-                        "lng":  -87.938846
-                    },
-                    {
-                        "name":  "Law Office of Robert J. Chio",
-                        "lat":  41.750302,
-                        "lng":  -87.938853
-                    },
-                    {
-                        "name":  "The Best Veneer Company LLC",
-                        "lat":  41.750370,
-                        "lng":  -87.938831
-                    },
-                    {
-                        "name":  "Troop Contracting, Inc.",
-                        "lat":  41.750408,
-                        "lng":  -87.938720
-                    },
-                    {
-                        "name":  "Front Door",
-                        "lat":  36.152983,
-                        "lng":  -86.782853
-                    },
-                    {
-                        "name":  "Grass",
-                        "lat":  36.152559,
-                        "lng":  -86.781381
-                    }
-                ]
+                       }
 }
