@@ -1081,7 +1081,13 @@ class NavigationApp {
         }
 
         const service = new google.maps.StreetViewService();
-        const radius = panoramaConfig.radius || 60;
+        const radius = panoramaConfig.radius || 80;
+        const panoContainer = document.createElement('div');
+        panoContainer.className = 'google-panorama-container';
+        panoContainer.style.width = '100%';
+        panoContainer.style.height = '100%';
+        panoContainer.style.position = 'relative';
+        this.panoOverlay.appendChild(panoContainer);
         
         // Use panorama-specific coordinates if available, otherwise use route endpoint or office location
         let location;
@@ -1098,7 +1104,18 @@ class NavigationApp {
         
         const requestId = this.pendingPanoramaRequest;
 
-        service.getPanorama({ location, radius }, (data, status) => {
+        const requestOptions = {
+            location,
+            radius
+        };
+        if (google.maps.StreetViewPreference) {
+            requestOptions.preference = google.maps.StreetViewPreference.NEAREST;
+        }
+        if (google.maps.StreetViewSource) {
+            requestOptions.source = google.maps.StreetViewSource.OUTDOOR;
+        }
+
+        service.getPanorama(requestOptions, (data, status) => {
             if (this.pendingPanoramaRequest !== requestId) {
                 return;
             }
@@ -1108,13 +1125,19 @@ class NavigationApp {
                 return;
             }
 
-            this.googleStreetView = new google.maps.StreetViewPanorama(this.panoOverlay, {
+            this.googleStreetView = new google.maps.StreetViewPanorama(panoContainer, {
                 position: data.location.latLng,
                 pov: {
                     heading: panoramaConfig.heading || 0,
                     pitch: panoramaConfig.pitch || 0
                 },
-                zoom: 1
+                zoom: panoramaConfig.zoom || 1,
+                visible: true,
+                panControl: true,
+                addressControl: false,
+                linksControl: true,
+                motionTracking: false,
+                motionTrackingControl: false
             });
             this.currentPanoramaProvider = 'google';
         });
