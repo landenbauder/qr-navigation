@@ -26,6 +26,9 @@ class NavigationApp {
         this.lastRouteEndpoint = null;
         this.pendingPanoramaRequest = null;
         this.currentPanoramaProvider = null;
+        this.panoramaMarker = null; // Map marker for 360° view
+        this.pedestrianPathPolyline = null; // Polyline for walking path
+        this.streetViewOverlayContainer = null; // Container for Street View overlays
         
         // Default building location (will be updated from offices.json)
         this.buildingCenter = {
@@ -216,6 +219,76 @@ class NavigationApp {
         });
     }
 
+    createPanoramaMarker(office) {
+        // Remove existing panorama marker
+        if (this.panoramaMarker) {
+            this.map.removeLayer(this.panoramaMarker);
+            this.panoramaMarker = null;
+        }
+
+        // Only create marker if office has panorama config
+        if (!office || !office.panorama || !office.panorama.lat || !office.panorama.lng) {
+            return;
+        }
+
+        // Create custom 360° icon
+        const icon360 = L.divIcon({
+            className: 'panorama-map-marker',
+            html: `
+                <div class="panorama-marker-inner">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <circle cx="16" cy="16" r="15" fill="#2c2c2c" stroke="white" stroke-width="2"/>
+                        <text x="16" y="20" font-size="10" fill="white" text-anchor="middle" font-weight="bold">360°</text>
+                    </svg>
+                </div>
+            `,
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
+        });
+
+        // Add marker to map
+        this.panoramaMarker = L.marker([office.panorama.lat, office.panorama.lng], {
+            icon: icon360,
+            zIndexOffset: 1000 // Keep it above other markers
+        }).addTo(this.map);
+
+        // Add click handler
+        this.panoramaMarker.on('click', () => {
+            if (!this.panoramaClickLocked && office) {
+                this.openPanorama(office);
+            }
+        });
+
+        // Add tooltip
+        this.panoramaMarker.bindTooltip('Click for 360° View', {
+            direction: 'top',
+            offset: [0, -20]
+        });
+    }
+
+    drawPedestrianPath(office) {
+        // Remove existing pedestrian path
+        if (this.pedestrianPathPolyline) {
+            this.map.removeLayer(this.pedestrianPathPolyline);
+            this.pedestrianPathPolyline = null;
+        }
+
+        // Only draw if office has walking path
+        if (!office || !office.walkingPath || office.walkingPath.length < 2) {
+            return;
+        }
+
+        // Convert walking path to Leaflet LatLng array
+        const pathCoords = office.walkingPath.map(point => [point.lat, point.lng]);
+
+        // Draw polyline with same style as main route (seamless extension)
+        this.pedestrianPathPolyline = L.polyline(pathCoords, {
+            color: '#4CAF50',
+            opacity: 0.8,
+            weight: 5
+        }).addTo(this.map);
+    }
+
     setupSearch() {
         const searchInput = document.getElementById('officeSearch');
         const searchResults = document.getElementById('searchResults');
@@ -342,6 +415,10 @@ class NavigationApp {
         this.updateDestinationPanel(office);
         this.lastRouteUpdatePosition = null; // Reset route update tracking
         document.getElementById('clearRoute').style.display = 'inline-flex';
+        
+        // Create panorama marker and pedestrian path
+        this.createPanoramaMarker(office);
+        this.drawPedestrianPath(office);
         
         if (this.userMarker) {
             const userPos = this.userMarker.getLatLng();
@@ -950,6 +1027,19 @@ class NavigationApp {
             this.map.removeControl(this.routingControl);
             this.routingControl = null;
         }
+        
+        // Remove panorama marker
+        if (this.panoramaMarker) {
+            this.map.removeLayer(this.panoramaMarker);
+            this.panoramaMarker = null;
+        }
+        
+        // Remove pedestrian path
+        if (this.pedestrianPathPolyline) {
+            this.map.removeLayer(this.pedestrianPathPolyline);
+            this.pedestrianPathPolyline = null;
+        }
+        
         this.selectedOffice = null;
         this.lastRouteUpdatePosition = null; // Reset route tracking
         this.routeDestinationName = null;
@@ -1125,11 +1215,23 @@ class NavigationApp {
                 return;
             }
 
+            // Calculate initial heading toward destination
+            let initialHeading = panoramaConfig.heading || 0;
+            if (destination.walkingPath && destination.walkingPath.length > 1) {
+                // Point toward first waypoint
+                const startPoint = destination.walkingPath[0];
+                const nextPoint = destination.walkingPath[1];
+                initialHeading = this.calculateHeading(
+                    startPoint.lat, startPoint.lng,
+                    nextPoint.lat, nextPoint.lng
+                );
+            }
+
             this.googleStreetView = new google.maps.StreetViewPanorama(panoContainer, {
                 position: data.location.latLng,
                 pov: {
-                    heading: panoramaConfig.heading || 0,
-                    pitch: panoramaConfig.pitch || 0
+                    heading: initialHeading,
+                    pitch: panoramaConfig.pitch || -10 // Slight downward angle to see ground
                 },
                 zoom: panoramaConfig.zoom || 1,
                 visible: true,
@@ -1140,7 +1242,113 @@ class NavigationApp {
                 motionTrackingControl: false
             });
             this.currentPanoramaProvider = 'google';
+
+            // Add walking path overlays if available
+            if (destination.walkingPath && destination.walkingPath.length > 1) {
+                this.addStreetViewPathOverlays(this.googleStreetView, destination.walkingPath, panoContainer);
+            }
         });
+    }
+
+    calculateHeading(lat1, lng1, lat2, lng2) {
+        // Calculate bearing between two points
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const lat1Rad = lat1 * Math.PI / 180;
+        const lat2Rad = lat2 * Math.PI / 180;
+        
+        const y = Math.sin(dLng) * Math.cos(lat2Rad);
+        const x = Math.cos(lat1Rad) * Math.sin(lat2Rad) -
+                  Math.sin(lat1Rad) * Math.cos(lat2Rad) * Math.cos(dLng);
+        
+        let bearing = Math.atan2(y, x) * 180 / Math.PI;
+        return (bearing + 360) % 360; // Normalize to 0-360
+    }
+
+    addStreetViewPathOverlays(panorama, walkingPath, container) {
+        // Create overlay container
+        const overlayContainer = document.createElement('div');
+        overlayContainer.className = 'streetview-path-overlay';
+        overlayContainer.style.position = 'absolute';
+        overlayContainer.style.top = '0';
+        overlayContainer.style.left = '0';
+        overlayContainer.style.width = '100%';
+        overlayContainer.style.height = '100%';
+        overlayContainer.style.pointerEvents = 'none';
+        overlayContainer.style.zIndex = '1';
+        container.appendChild(overlayContainer);
+
+        // Store overlay container reference for cleanup
+        this.streetViewOverlayContainer = overlayContainer;
+
+        // Function to update overlay positions
+        const updateOverlays = () => {
+            overlayContainer.innerHTML = '';
+            
+            const pov = panorama.getPov();
+            const position = panorama.getPosition();
+            
+            if (!position) return;
+
+            const currentLat = position.lat();
+            const currentLng = position.lng();
+            
+            // Draw arrows/indicators for each segment of the path
+            for (let i = 0; i < walkingPath.length - 1; i++) {
+                const targetPoint = walkingPath[i + 1];
+                const heading = this.calculateHeading(currentLat, currentLng, targetPoint.lat, targetPoint.lng);
+                const distance = this.calculateDistance(currentLat, currentLng, targetPoint.lat, targetPoint.lng);
+                
+                // Only show if within reasonable distance (50 meters) and in view
+                if (distance < 50) {
+                    const relativeHeading = heading - pov.heading;
+                    const normalizedHeading = ((relativeHeading + 180) % 360) - 180;
+                    
+                    // Only show if roughly in front of viewer (within 90 degrees)
+                    if (Math.abs(normalizedHeading) < 90) {
+                        this.createPathArrow(overlayContainer, normalizedHeading, distance, i + 1, walkingPath.length - 1);
+                    }
+                }
+            }
+        };
+
+        // Update overlays on view change
+        panorama.addListener('pov_changed', updateOverlays);
+        panorama.addListener('position_changed', updateOverlays);
+        
+        // Initial update
+        setTimeout(updateOverlays, 100);
+    }
+
+    createPathArrow(container, relativeHeading, distance, stepNum, totalSteps) {
+        const arrow = document.createElement('div');
+        arrow.className = 'streetview-arrow';
+        
+        // Calculate horizontal position based on heading (-90 to +90 degrees = 0% to 100% across screen)
+        const horizontalPosition = 50 + (relativeHeading / 90) * 40; // Center at 50%, spread 40% each direction
+        
+        // Calculate vertical position based on pitch and distance (closer = lower on screen)
+        const verticalPosition = 50 + Math.min(distance * 0.5, 20); // Lower for closer targets
+        
+        arrow.style.position = 'absolute';
+        arrow.style.left = `${horizontalPosition}%`;
+        arrow.style.top = `${verticalPosition}%`;
+        arrow.style.transform = 'translate(-50%, -50%)';
+        arrow.style.pointerEvents = 'none';
+        
+        // Arrow SVG pointing forward/down
+        arrow.innerHTML = `
+            <div style="text-align: center;">
+                <svg width="48" height="48" viewBox="0 0 48 48" style="filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));">
+                    <circle cx="24" cy="24" r="22" fill="#4CAF50" opacity="0.9"/>
+                    <path d="M 24 12 L 24 32 M 24 32 L 18 26 M 24 32 L 30 26" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div style="background: rgba(76, 175, 80, 0.95); color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-top: 4px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                    ${Math.round(distance)}m
+                </div>
+            </div>
+        `;
+        
+        container.appendChild(arrow);
     }
 
     openLocalPanorama(panoramaConfig) {
@@ -1221,6 +1429,18 @@ class NavigationApp {
                 console.error('Google Street View cleanup error:', error);
             }
             this.googleStreetView = null;
+        }
+
+        // Clean up overlay container
+        if (this.streetViewOverlayContainer) {
+            try {
+                if (this.streetViewOverlayContainer.parentNode) {
+                    this.streetViewOverlayContainer.parentNode.removeChild(this.streetViewOverlayContainer);
+                }
+            } catch (error) {
+                console.error('Overlay cleanup error:', error);
+            }
+            this.streetViewOverlayContainer = null;
         }
 
         this.currentPanoramaProvider = null;

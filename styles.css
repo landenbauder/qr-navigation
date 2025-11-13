@@ -481,6 +481,60 @@ body {
     display: none !important;
 }
 
+/* Panorama Map Marker */
+.panorama-map-marker {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.panorama-map-marker:hover {
+    transform: scale(1.1);
+}
+
+.panorama-marker-inner {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.85;
+        transform: scale(1.05);
+    }
+}
+
+/* Street View Path Overlays */
+.streetview-path-overlay {
+    pointer-events: none;
+    user-select: none;
+}
+
+.streetview-arrow {
+    transition: all 0.3s ease;
+    animation: fadeInArrow 0.4s ease;
+}
+
+@keyframes fadeInArrow {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Google Panorama Container */
+.google-panorama-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
 /* Mobile Optimizations */
 @media (max-width: 480px) {
     .search-container {
@@ -523,5 +577,22 @@ body {
 
     .pano-btn {
         width: 100%;
+    }
+
+    /* Make panorama marker larger on mobile for easier tapping */
+    .panorama-map-marker svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Adjust arrow size for mobile */
+    .streetview-arrow svg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .streetview-arrow div[style*="background"] {
+        font-size: 12px;
+        padding: 5px 10px;
     }
 }

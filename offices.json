@@ -6,21 +6,6 @@
   },
   "offices": [
     {
-      "name": "Precise Bioscience, LLC",
-      "lat": 41.751081,
-      "lng": -87.937631
-    },
-    {
-      "name": "Advanced Physicians, SC",
-      "lat": 41.750801,
-      "lng": -87.937620
-    },
-    {
-      "name": "Ecodrive, Inc.",
-      "lat": 41.750736,
-      "lng": -87.937680
-    },
-    {
       "name": "TRP Investments, LLC",
       "lat": 41.750666,
       "lng": -87.937768,
@@ -31,7 +16,12 @@
         "heading": 90,
         "pitch": 0,
         "radius": 60
-      }
+      },
+      "walkingPath": [
+        { "lat": 41.750641, "lng": -87.937909 },
+        { "lat": 41.750629, "lng": -87.937911 },
+        { "lat": 41.750647, "lng": -87.937835 }
+      ]
     }
   ]
 }
