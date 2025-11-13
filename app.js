@@ -420,10 +420,15 @@ class NavigationApp {
         this.createPanoramaMarker(office);
         this.drawPedestrianPath(office);
         
+        // Determine route destination: use panorama location if available, otherwise office location
+        const destination = office.panorama && office.panorama.lat && office.panorama.lng
+            ? [office.panorama.lat, office.panorama.lng]
+            : [office.lat, office.lng];
+        
         if (this.userMarker) {
             const userPos = this.userMarker.getLatLng();
             this.lastRouteUpdatePosition = { lat: userPos.lat, lng: userPos.lng };
-            this.calculateRoute(userPos, [office.lat, office.lng], office.name, true);
+            this.calculateRoute(userPos, destination, office.name, true);
         } else {
             this.showStatus('Waiting for your location... Please allow location access.');
             // Wait a moment for location, then try again
@@ -431,7 +436,7 @@ class NavigationApp {
                 if (this.userMarker) {
                     const userPos = this.userMarker.getLatLng();
                     this.lastRouteUpdatePosition = { lat: userPos.lat, lng: userPos.lng };
-                    this.calculateRoute(userPos, [office.lat, office.lng], office.name, true);
+                    this.calculateRoute(userPos, destination, office.name, true);
                 } else {
                     this.showStatus('Unable to get your location. Please enable location services.');
                 }
@@ -862,8 +867,12 @@ class NavigationApp {
             }
             
             if (shouldUpdate) {
+                // Determine route destination: use panorama location if available, otherwise office location
+                const destination = this.selectedOffice.panorama && this.selectedOffice.panorama.lat && this.selectedOffice.panorama.lng
+                    ? [this.selectedOffice.panorama.lat, this.selectedOffice.panorama.lng]
+                    : [this.selectedOffice.lat, this.selectedOffice.lng];
                 // Update route dynamically (not initial route)
-                this.calculateRoute(userPos, [this.selectedOffice.lat, this.selectedOffice.lng], this.selectedOffice.name, false);
+                this.calculateRoute(userPos, destination, this.selectedOffice.name, false);
             }
         }
     }
@@ -1215,37 +1224,27 @@ class NavigationApp {
                 return;
             }
 
-            // Calculate initial heading toward destination
-            let initialHeading = panoramaConfig.heading || 0;
-            if (destination.walkingPath && destination.walkingPath.length > 1) {
-                // Point toward first waypoint
-                const startPoint = destination.walkingPath[0];
-                const nextPoint = destination.walkingPath[1];
-                initialHeading = this.calculateHeading(
-                    startPoint.lat, startPoint.lng,
-                    nextPoint.lat, nextPoint.lng
-                );
-            }
-
             this.googleStreetView = new google.maps.StreetViewPanorama(panoContainer, {
                 position: data.location.latLng,
                 pov: {
-                    heading: initialHeading,
-                    pitch: panoramaConfig.pitch || -10 // Slight downward angle to see ground
+                    heading: 90, // Face east
+                    pitch: -10 // Slight downward angle to see ground
                 },
                 zoom: panoramaConfig.zoom || 1,
                 visible: true,
                 panControl: true,
                 addressControl: false,
-                linksControl: true,
+                linksControl: false, // Disable navigation arrows
+                clickToGo: false, // Disable click-to-move
                 motionTracking: false,
                 motionTrackingControl: false
             });
             this.currentPanoramaProvider = 'google';
 
-            // Add walking path overlays if available
-            if (destination.walkingPath && destination.walkingPath.length > 1) {
-                this.addStreetViewPathOverlays(this.googleStreetView, destination.walkingPath, panoContainer);
+            // Add fixed destination marker if walking path exists
+            if (destination.walkingPath && destination.walkingPath.length > 0) {
+                const destinationCoords = destination.walkingPath[destination.walkingPath.length - 1];
+                this.addFixedDestinationMarker(this.googleStreetView, destinationCoords, panoContainer);
             }
         });
     }
@@ -1264,10 +1263,10 @@ class NavigationApp {
         return (bearing + 360) % 360; // Normalize to 0-360
     }
 
-    addStreetViewPathOverlays(panorama, walkingPath, container) {
-        // Create overlay container
+    addFixedDestinationMarker(panorama, destinationCoords, container) {
+        // Create overlay container for the destination marker
         const overlayContainer = document.createElement('div');
-        overlayContainer.className = 'streetview-path-overlay';
+        overlayContainer.className = 'streetview-destination-overlay';
         overlayContainer.style.position = 'absolute';
         overlayContainer.style.top = '0';
         overlayContainer.style.left = '0';
@@ -1280,10 +1279,25 @@ class NavigationApp {
         // Store overlay container reference for cleanup
         this.streetViewOverlayContainer = overlayContainer;
 
-        // Function to update overlay positions
-        const updateOverlays = () => {
-            overlayContainer.innerHTML = '';
-            
+        // Create the marker element
+        const marker = document.createElement('div');
+        marker.className = 'streetview-destination-marker';
+        marker.innerHTML = `
+            <div style="text-align: center;">
+                <svg width="56" height="70" viewBox="0 0 56 70" style="filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));">
+                    <path d="M 28 2 C 15 2 4 13 4 26 C 4 39 28 68 28 68 C 28 68 52 39 52 26 C 52 13 41 2 28 2 Z" fill="#4CAF50" stroke="white" stroke-width="3"/>
+                    <circle cx="28" cy="26" r="10" fill="white"/>
+                    <circle cx="28" cy="26" r="6" fill="#2E7D32"/>
+                </svg>
+                <div style="background: rgba(76, 175, 80, 0.95); color: white; padding: 8px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; margin-top: 4px; white-space: nowrap; box-shadow: 0 3px 10px rgba(0,0,0,0.4);">
+                    Building Entrance
+                </div>
+            </div>
+        `;
+        overlayContainer.appendChild(marker);
+
+        // Function to update marker position based on current view
+        const updateMarkerPosition = () => {
             const pov = panorama.getPov();
             const position = panorama.getPosition();
             
@@ -1292,63 +1306,45 @@ class NavigationApp {
             const currentLat = position.lat();
             const currentLng = position.lng();
             
-            // Draw arrows/indicators for each segment of the path
-            for (let i = 0; i < walkingPath.length - 1; i++) {
-                const targetPoint = walkingPath[i + 1];
-                const heading = this.calculateHeading(currentLat, currentLng, targetPoint.lat, targetPoint.lng);
-                const distance = this.calculateDistance(currentLat, currentLng, targetPoint.lat, targetPoint.lng);
+            // Calculate bearing to destination
+            const bearing = this.calculateHeading(currentLat, currentLng, destinationCoords.lat, destinationCoords.lng);
+            const distance = this.calculateDistance(currentLat, currentLng, destinationCoords.lat, destinationCoords.lng);
+            
+            // Calculate relative angle to current view
+            const relativeHeading = bearing - pov.heading;
+            const normalizedHeading = ((relativeHeading + 180) % 360) - 180;
+            
+            // Calculate screen position
+            // Horizontal: -90 to +90 degrees maps to roughly 0% to 100% of screen
+            // Using FOV adjustment for more accurate positioning
+            const fov = 90; // Approximate horizontal FOV
+            const horizontalPosition = 50 + (normalizedHeading / fov) * 50;
+            
+            // Vertical: slight downward angle based on pitch, adjusted for ground-level destinations
+            const basePitch = pov.pitch || 0;
+            const verticalPosition = 50 - basePitch * 0.8; // Adjust for pitch
+            
+            // Only show marker if destination is somewhat in view (within expanded FOV)
+            if (Math.abs(normalizedHeading) < 120) {
+                marker.style.display = 'block';
+                marker.style.position = 'absolute';
+                marker.style.left = `${horizontalPosition}%`;
+                marker.style.top = `${verticalPosition}%`;
+                marker.style.transform = 'translate(-50%, -100%)'; // Anchor at bottom center of pin
                 
-                // Only show if within reasonable distance (50 meters) and in view
-                if (distance < 50) {
-                    const relativeHeading = heading - pov.heading;
-                    const normalizedHeading = ((relativeHeading + 180) % 360) - 180;
-                    
-                    // Only show if roughly in front of viewer (within 90 degrees)
-                    if (Math.abs(normalizedHeading) < 90) {
-                        this.createPathArrow(overlayContainer, normalizedHeading, distance, i + 1, walkingPath.length - 1);
-                    }
-                }
+                // Scale based on distance (closer = larger)
+                const scale = Math.max(0.7, Math.min(1.3, 30 / distance));
+                marker.style.transform = `translate(-50%, -100%) scale(${scale})`;
+            } else {
+                marker.style.display = 'none';
             }
         };
 
-        // Update overlays on view change
-        panorama.addListener('pov_changed', updateOverlays);
-        panorama.addListener('position_changed', updateOverlays);
+        // Update marker on view change
+        panorama.addListener('pov_changed', updateMarkerPosition);
         
         // Initial update
-        setTimeout(updateOverlays, 100);
-    }
-
-    createPathArrow(container, relativeHeading, distance, stepNum, totalSteps) {
-        const arrow = document.createElement('div');
-        arrow.className = 'streetview-arrow';
-        
-        // Calculate horizontal position based on heading (-90 to +90 degrees = 0% to 100% across screen)
-        const horizontalPosition = 50 + (relativeHeading / 90) * 40; // Center at 50%, spread 40% each direction
-        
-        // Calculate vertical position based on pitch and distance (closer = lower on screen)
-        const verticalPosition = 50 + Math.min(distance * 0.5, 20); // Lower for closer targets
-        
-        arrow.style.position = 'absolute';
-        arrow.style.left = `${horizontalPosition}%`;
-        arrow.style.top = `${verticalPosition}%`;
-        arrow.style.transform = 'translate(-50%, -50%)';
-        arrow.style.pointerEvents = 'none';
-        
-        // Arrow SVG pointing forward/down
-        arrow.innerHTML = `
-            <div style="text-align: center;">
-                <svg width="48" height="48" viewBox="0 0 48 48" style="filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));">
-                    <circle cx="24" cy="24" r="22" fill="#4CAF50" opacity="0.9"/>
-                    <path d="M 24 12 L 24 32 M 24 32 L 18 26 M 24 32 L 30 26" stroke="white" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <div style="background: rgba(76, 175, 80, 0.95); color: white; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-top: 4px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
-                    ${Math.round(distance)}m
-                </div>
-            </div>
-        `;
-        
-        container.appendChild(arrow);
+        setTimeout(updateMarkerPosition, 100);
     }
 
     openLocalPanorama(panoramaConfig) {

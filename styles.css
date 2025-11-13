@@ -506,25 +506,39 @@ body {
     }
 }
 
-/* Street View Path Overlays */
-.streetview-path-overlay {
+/* Street View Destination Overlay */
+.streetview-destination-overlay {
     pointer-events: none;
     user-select: none;
 }
 
-.streetview-arrow {
+.streetview-destination-marker {
     transition: all 0.3s ease;
-    animation: fadeInArrow 0.4s ease;
+    animation: fadeInMarker 0.5s ease;
 }
 
-@keyframes fadeInArrow {
+@keyframes fadeInMarker {
     from {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.8);
+        transform: translate(-50%, -100%) scale(0.5);
     }
     to {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -100%) scale(1);
+    }
+}
+
+/* Pulse animation for destination marker */
+.streetview-destination-marker svg {
+    animation: markerPulse 2s ease-in-out infinite;
+}
+
+@keyframes markerPulse {
+    0%, 100% {
+        filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+    }
+    50% {
+        filter: drop-shadow(0 4px 20px rgba(76, 175, 80, 0.8));
     }
 }
 
@@ -585,14 +599,8 @@ body {
         height: 40px;
     }
 
-    /* Adjust arrow size for mobile */
-    .streetview-arrow svg {
-        width: 40px;
-        height: 40px;
-    }
-
-    .streetview-arrow div[style*="background"] {
-        font-size: 12px;
-        padding: 5px 10px;
+    /* Adjust destination marker size for mobile */
+    .streetview-destination-marker {
+        transform: translate(-50%, -100%) scale(0.9) !important;
     }
 }
