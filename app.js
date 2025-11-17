@@ -1359,32 +1359,58 @@ class NavigationApp {
                 
                 console.log('[Marker] Relative heading:', relativeHeading, 'normalized:', normalizedHeading);
                 
-                // Calculate screen position
-                // Horizontal: -90 to +90 degrees maps to roughly 0% to 100% of screen
-                // Using FOV adjustment for more accurate positioning
-                const fov = 90; // Approximate horizontal FOV
-                let horizontalPosition = 50 + (normalizedHeading / fov) * 50;
+                // Calculate screen position using more accurate projection
+                // Google Street View default FOV is approximately 90 degrees horizontal at zoom level 0
+                // FOV changes with zoom: fov = 180 / Math.pow(2, zoom)
+                const zoom = pov.zoom || 0;
+                const horizontalFov = 180 / Math.pow(2, zoom);
+                const verticalFov = horizontalFov * 0.75; // Approximate aspect ratio
                 
-                // Clamp to reasonable screen bounds (0-100%)
-                horizontalPosition = Math.max(0, Math.min(100, horizontalPosition));
+                console.log('[Marker] Zoom:', zoom, 'Horizontal FOV:', horizontalFov, 'Vertical FOV:', verticalFov);
                 
-                // Vertical: position in lower portion of screen for ground-level destinations
-                const basePitch = pov.pitch || 0;
-                let verticalPosition = 60 - (basePitch * 0.5); // Lower on screen, adjust for pitch
+                // Horizontal position based on normalized heading and actual FOV
+                // normalizedHeading ranges from -180 to 180
+                // We want to map it to screen position
+                let horizontalPosition = 50 + (normalizedHeading / (horizontalFov / 2)) * 50;
                 
-                // Clamp vertical position
-                verticalPosition = Math.max(20, Math.min(80, verticalPosition));
+                // Vertical position calculation
+                // For ground-level destinations, we need to account for the elevation difference
+                // Assuming camera is at ~1.5-2m height and destination is on ground
+                const cameraPitch = pov.pitch || 0;
+                
+                // Calculate the pitch angle to the destination
+                // For very close distances on ground level, pitch should be slightly down
+                const groundLevelPitchOffset = -5; // Degrees down from horizon for ground-level objects
+                const relativePitch = groundLevelPitchOffset - cameraPitch;
+                
+                // Map pitch to vertical screen position
+                let verticalPosition = 50 - (relativePitch / (verticalFov / 2)) * 50;
+                
+                console.log('[Marker] Camera pitch:', cameraPitch, 'Relative pitch:', relativePitch, 'Vertical pos:', verticalPosition);
+                
+                // Don't clamp too aggressively - allow some off-screen positioning
+                horizontalPosition = Math.max(-10, Math.min(110, horizontalPosition));
+                verticalPosition = Math.max(-10, Math.min(110, verticalPosition));
                 
                 console.log('[Marker] Calculated position:', { 
                     horizontal: horizontalPosition + '%', 
                     vertical: verticalPosition + '%',
                     normalizedHeading: normalizedHeading,
-                    inView: Math.abs(normalizedHeading) < 120
+                    horizontalFov: horizontalFov
                 });
                 
-                // Always show marker initially (relaxed visibility check for debugging)
-                // Later we can make this more restrictive
-                const shouldShow = Math.abs(normalizedHeading) < 150; // More permissive
+                // Show marker only if it's within the current field of view
+                const isInHorizontalView = Math.abs(normalizedHeading) < (horizontalFov / 2);
+                const isInVerticalView = Math.abs(relativePitch) < (verticalFov / 2);
+                const shouldShow = isInHorizontalView && isInVerticalView;
+                
+                console.log('[Marker] Visibility:', { 
+                    isInHorizontalView, 
+                    isInVerticalView, 
+                    shouldShow,
+                    normalizedHeading: normalizedHeading,
+                    horizontalFovHalf: horizontalFov / 2
+                });
                 
                 if (shouldShow) {
                     marker.style.display = 'block';
@@ -1404,9 +1430,13 @@ class NavigationApp {
             }
         };
 
-        // Update marker on view change
+        // Update marker on view change (includes heading, pitch, and zoom changes)
         panorama.addListener('pov_changed', updateMarkerPosition);
         console.log('[Marker] POV change listener added');
+        
+        // Update on zoom change (pov_changed should cover this, but adding for completeness)
+        panorama.addListener('zoom_changed', updateMarkerPosition);
+        console.log('[Marker] Zoom change listener added');
         
         // Initial update with multiple attempts to ensure it works
         setTimeout(updateMarkerPosition, 200);
