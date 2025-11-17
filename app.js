@@ -1244,7 +1244,21 @@ class NavigationApp {
             // Add fixed destination marker if walking path exists
             if (destination.walkingPath && destination.walkingPath.length > 0) {
                 const destinationCoords = destination.walkingPath[destination.walkingPath.length - 1];
-                this.addFixedDestinationMarker(this.googleStreetView, destinationCoords, panoContainer);
+                console.log('[Street View] Adding destination marker at:', destinationCoords);
+                // Wait for panorama to be ready before adding marker
+                this.googleStreetView.addListener('status_changed', () => {
+                    if (this.googleStreetView.getStatus() === google.maps.StreetViewStatus.OK) {
+                        console.log('[Street View] Panorama ready, adding marker');
+                        this.addFixedDestinationMarker(this.googleStreetView, destinationCoords, panoContainer);
+                    }
+                });
+                // Also try immediately in case it's already ready
+                setTimeout(() => {
+                    if (this.googleStreetView.getStatus() === google.maps.StreetViewStatus.OK) {
+                        console.log('[Street View] Panorama already ready, adding marker');
+                        this.addFixedDestinationMarker(this.googleStreetView, destinationCoords, panoContainer);
+                    }
+                }, 500);
             }
         });
     }
@@ -1264,6 +1278,16 @@ class NavigationApp {
     }
 
     addFixedDestinationMarker(panorama, destinationCoords, container) {
+        console.log('[Marker] Creating destination marker function called');
+        console.log('[Marker] Destination coordinates:', destinationCoords);
+        console.log('[Marker] Container:', container);
+        
+        // Check if marker already exists to prevent duplicates
+        if (this.streetViewOverlayContainer && container.contains(this.streetViewOverlayContainer)) {
+            console.log('[Marker] Marker already exists, skipping');
+            return;
+        }
+        
         // Create overlay container for the destination marker
         const overlayContainer = document.createElement('div');
         overlayContainer.className = 'streetview-destination-overlay';
@@ -1273,8 +1297,14 @@ class NavigationApp {
         overlayContainer.style.width = '100%';
         overlayContainer.style.height = '100%';
         overlayContainer.style.pointerEvents = 'none';
-        overlayContainer.style.zIndex = '1';
+        overlayContainer.style.zIndex = '1000'; // Higher z-index to ensure visibility
+        overlayContainer.style.overflow = 'visible'; // Allow marker to be visible even if slightly off-screen
+        
+        // Debug: Add visible border temporarily to verify container exists
+        // overlayContainer.style.border = '2px solid red';
+        
         container.appendChild(overlayContainer);
+        console.log('[Marker] Overlay container added to DOM');
 
         // Store overlay container reference for cleanup
         this.streetViewOverlayContainer = overlayContainer;
@@ -1282,6 +1312,8 @@ class NavigationApp {
         // Create the marker element
         const marker = document.createElement('div');
         marker.className = 'streetview-destination-marker';
+        marker.style.position = 'absolute';
+        marker.style.display = 'block'; // Always show initially for debugging
         marker.innerHTML = `
             <div style="text-align: center;">
                 <svg width="56" height="70" viewBox="0 0 56 70" style="filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));">
@@ -1295,56 +1327,91 @@ class NavigationApp {
             </div>
         `;
         overlayContainer.appendChild(marker);
+        console.log('[Marker] Marker element created and added');
 
         // Function to update marker position based on current view
         const updateMarkerPosition = () => {
-            const pov = panorama.getPov();
-            const position = panorama.getPosition();
-            
-            if (!position) return;
-
-            const currentLat = position.lat();
-            const currentLng = position.lng();
-            
-            // Calculate bearing to destination
-            const bearing = this.calculateHeading(currentLat, currentLng, destinationCoords.lat, destinationCoords.lng);
-            const distance = this.calculateDistance(currentLat, currentLng, destinationCoords.lat, destinationCoords.lng);
-            
-            // Calculate relative angle to current view
-            const relativeHeading = bearing - pov.heading;
-            const normalizedHeading = ((relativeHeading + 180) % 360) - 180;
-            
-            // Calculate screen position
-            // Horizontal: -90 to +90 degrees maps to roughly 0% to 100% of screen
-            // Using FOV adjustment for more accurate positioning
-            const fov = 90; // Approximate horizontal FOV
-            const horizontalPosition = 50 + (normalizedHeading / fov) * 50;
-            
-            // Vertical: slight downward angle based on pitch, adjusted for ground-level destinations
-            const basePitch = pov.pitch || 0;
-            const verticalPosition = 50 - basePitch * 0.8; // Adjust for pitch
-            
-            // Only show marker if destination is somewhat in view (within expanded FOV)
-            if (Math.abs(normalizedHeading) < 120) {
-                marker.style.display = 'block';
-                marker.style.position = 'absolute';
-                marker.style.left = `${horizontalPosition}%`;
-                marker.style.top = `${verticalPosition}%`;
-                marker.style.transform = 'translate(-50%, -100%)'; // Anchor at bottom center of pin
+            try {
+                const pov = panorama.getPov();
+                const position = panorama.getPosition();
                 
-                // Scale based on distance (closer = larger)
-                const scale = Math.max(0.7, Math.min(1.3, 30 / distance));
-                marker.style.transform = `translate(-50%, -100%) scale(${scale})`;
-            } else {
-                marker.style.display = 'none';
+                if (!position) {
+                    console.log('[Marker] No position available yet');
+                    return;
+                }
+
+                const currentLat = position.lat();
+                const currentLng = position.lng();
+                
+                console.log('[Marker] Current position:', { lat: currentLat, lng: currentLng });
+                console.log('[Marker] Current POV:', pov);
+                
+                // Calculate bearing to destination
+                const bearing = this.calculateHeading(currentLat, currentLng, destinationCoords.lat, destinationCoords.lng);
+                const distance = this.calculateDistance(currentLat, currentLng, destinationCoords.lat, destinationCoords.lng);
+                
+                console.log('[Marker] Bearing to destination:', bearing, 'degrees');
+                console.log('[Marker] Distance to destination:', distance, 'meters');
+                
+                // Calculate relative angle to current view
+                const relativeHeading = bearing - pov.heading;
+                const normalizedHeading = ((relativeHeading + 180) % 360) - 180;
+                
+                console.log('[Marker] Relative heading:', relativeHeading, 'normalized:', normalizedHeading);
+                
+                // Calculate screen position
+                // Horizontal: -90 to +90 degrees maps to roughly 0% to 100% of screen
+                // Using FOV adjustment for more accurate positioning
+                const fov = 90; // Approximate horizontal FOV
+                let horizontalPosition = 50 + (normalizedHeading / fov) * 50;
+                
+                // Clamp to reasonable screen bounds (0-100%)
+                horizontalPosition = Math.max(0, Math.min(100, horizontalPosition));
+                
+                // Vertical: position in lower portion of screen for ground-level destinations
+                const basePitch = pov.pitch || 0;
+                let verticalPosition = 60 - (basePitch * 0.5); // Lower on screen, adjust for pitch
+                
+                // Clamp vertical position
+                verticalPosition = Math.max(20, Math.min(80, verticalPosition));
+                
+                console.log('[Marker] Calculated position:', { 
+                    horizontal: horizontalPosition + '%', 
+                    vertical: verticalPosition + '%',
+                    normalizedHeading: normalizedHeading,
+                    inView: Math.abs(normalizedHeading) < 120
+                });
+                
+                // Always show marker initially (relaxed visibility check for debugging)
+                // Later we can make this more restrictive
+                const shouldShow = Math.abs(normalizedHeading) < 150; // More permissive
+                
+                if (shouldShow) {
+                    marker.style.display = 'block';
+                    marker.style.left = `${horizontalPosition}%`;
+                    marker.style.top = `${verticalPosition}%`;
+                    
+                    // Scale based on distance (closer = larger)
+                    const scale = Math.max(0.6, Math.min(1.5, 40 / distance));
+                    marker.style.transform = `translate(-50%, -100%) scale(${scale})`;
+                    console.log('[Marker] Marker displayed at position');
+                } else {
+                    marker.style.display = 'none';
+                    console.log('[Marker] Marker hidden (out of view)');
+                }
+            } catch (error) {
+                console.error('[Marker] Error updating position:', error);
             }
         };
 
         // Update marker on view change
         panorama.addListener('pov_changed', updateMarkerPosition);
+        console.log('[Marker] POV change listener added');
         
-        // Initial update
-        setTimeout(updateMarkerPosition, 100);
+        // Initial update with multiple attempts to ensure it works
+        setTimeout(updateMarkerPosition, 200);
+        setTimeout(updateMarkerPosition, 500);
+        setTimeout(updateMarkerPosition, 1000);
     }
 
     openLocalPanorama(panoramaConfig) {
