@@ -506,46 +506,84 @@ body {
     }
 }
 
-/* Street View Destination Overlay */
-.streetview-destination-overlay {
+/* Street View Compass Overlay */
+.streetview-compass-overlay {
     pointer-events: none;
     user-select: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-    overflow: visible;
 }
 
-.streetview-destination-marker {
-    transition: all 0.3s ease;
-    animation: fadeInMarker 0.5s ease;
+.streetview-compass {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: fadeInCompass 0.5s ease;
 }
 
-@keyframes fadeInMarker {
+@keyframes fadeInCompass {
     from {
         opacity: 0;
-        transform: translate(-50%, -100%) scale(0.5);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
-        transform: translate(-50%, -100%) scale(1);
+        transform: translateY(0);
     }
 }
 
-/* Pulse animation for destination marker */
-.streetview-destination-marker svg {
-    animation: markerPulse 2s ease-in-out infinite;
+.compass-arrow-container {
+    position: relative;
 }
 
-@keyframes markerPulse {
+.compass-arrow {
+    display: block;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+}
+
+#arrow-pointer {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: 30px 30px;
+}
+
+.compass-info {
+    background: rgba(44, 44, 44, 0.95);
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.compass-label {
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.compass-distance {
+    color: #4CAF50;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Pulse animation for compass */
+.compass-arrow circle {
+    animation: compassPulse 2s ease-in-out infinite;
+}
+
+@keyframes compassPulse {
     0%, 100% {
-        filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+        stroke: white;
+        stroke-width: 2;
     }
     50% {
-        filter: drop-shadow(0 4px 20px rgba(76, 175, 80, 0.8));
+        stroke: #4CAF50;
+        stroke-width: 3;
     }
 }
 
@@ -606,8 +644,21 @@ body {
         height: 40px;
     }
 
-    /* Adjust destination marker size for mobile */
-    .streetview-destination-marker {
-        transform: translate(-50%, -100%) scale(0.9) !important;
+    /* Adjust compass size for mobile */
+    .compass-arrow {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .compass-info {
+        padding: 8px 16px;
+    }
+    
+    .compass-label {
+        font-size: 11px;
+    }
+    
+    .compass-distance {
+        font-size: 16px;
     }
 }

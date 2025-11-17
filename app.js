@@ -1278,170 +1278,111 @@ class NavigationApp {
     }
 
     addFixedDestinationMarker(panorama, destinationCoords, container) {
-        console.log('[Marker] Creating destination marker function called');
-        console.log('[Marker] Destination coordinates:', destinationCoords);
-        console.log('[Marker] Container:', container);
+        console.log('[Compass] Creating directional compass indicator');
+        console.log('[Compass] Destination coordinates:', destinationCoords);
         
-        // Check if marker already exists to prevent duplicates
+        // Check if compass already exists to prevent duplicates
         if (this.streetViewOverlayContainer && container.contains(this.streetViewOverlayContainer)) {
-            console.log('[Marker] Marker already exists, skipping');
+            console.log('[Compass] Compass already exists, skipping');
             return;
         }
         
-        // Create overlay container for the destination marker
+        // Create overlay container for the compass
         const overlayContainer = document.createElement('div');
-        overlayContainer.className = 'streetview-destination-overlay';
+        overlayContainer.className = 'streetview-compass-overlay';
         overlayContainer.style.position = 'absolute';
-        overlayContainer.style.top = '0';
-        overlayContainer.style.left = '0';
-        overlayContainer.style.width = '100%';
-        overlayContainer.style.height = '100%';
+        overlayContainer.style.bottom = '20px';
+        overlayContainer.style.left = '50%';
+        overlayContainer.style.transform = 'translateX(-50%)';
         overlayContainer.style.pointerEvents = 'none';
-        overlayContainer.style.zIndex = '1000'; // Higher z-index to ensure visibility
-        overlayContainer.style.overflow = 'visible'; // Allow marker to be visible even if slightly off-screen
-        
-        // Debug: Add visible border temporarily to verify container exists
-        // overlayContainer.style.border = '2px solid red';
+        overlayContainer.style.zIndex = '1000';
         
         container.appendChild(overlayContainer);
-        console.log('[Marker] Overlay container added to DOM');
+        console.log('[Compass] Overlay container added to DOM');
 
         // Store overlay container reference for cleanup
         this.streetViewOverlayContainer = overlayContainer;
 
-        // Create the marker element
-        const marker = document.createElement('div');
-        marker.className = 'streetview-destination-marker';
-        marker.style.position = 'absolute';
-        marker.style.display = 'block'; // Always show initially for debugging
-        marker.innerHTML = `
-            <div style="text-align: center;">
-                <svg width="56" height="70" viewBox="0 0 56 70" style="filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));">
-                    <path d="M 28 2 C 15 2 4 13 4 26 C 4 39 28 68 28 68 C 28 68 52 39 52 26 C 52 13 41 2 28 2 Z" fill="#4CAF50" stroke="white" stroke-width="3"/>
-                    <circle cx="28" cy="26" r="10" fill="white"/>
-                    <circle cx="28" cy="26" r="6" fill="#2E7D32"/>
+        // Create the compass element
+        const compass = document.createElement('div');
+        compass.className = 'streetview-compass';
+        compass.innerHTML = `
+            <div class="compass-arrow-container">
+                <svg class="compass-arrow" width="60" height="60" viewBox="0 0 60 60">
+                    <defs>
+                        <filter id="arrow-shadow">
+                            <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.5"/>
+                        </filter>
+                    </defs>
+                    <!-- Outer circle -->
+                    <circle cx="30" cy="30" r="28" fill="rgba(44, 44, 44, 0.95)" stroke="white" stroke-width="2"/>
+                    <!-- Arrow pointing up (will rotate) -->
+                    <g id="arrow-pointer" filter="url(#arrow-shadow)">
+                        <path d="M 30 10 L 38 28 L 30 24 L 22 28 Z" fill="#4CAF50" stroke="white" stroke-width="1.5"/>
+                        <path d="M 30 24 L 30 42" stroke="#4CAF50" stroke-width="3"/>
+                    </g>
                 </svg>
-                <div style="background: rgba(76, 175, 80, 0.95); color: white; padding: 8px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; margin-top: 4px; white-space: nowrap; box-shadow: 0 3px 10px rgba(0,0,0,0.4);">
-                    Building Entrance
-                </div>
+            </div>
+            <div class="compass-info">
+                <div class="compass-label">Building Entrance</div>
+                <div class="compass-distance">-- m</div>
             </div>
         `;
-        overlayContainer.appendChild(marker);
-        console.log('[Marker] Marker element created and added');
+        overlayContainer.appendChild(compass);
+        console.log('[Compass] Compass element created and added');
 
-        // Function to update marker position based on current view
-        const updateMarkerPosition = () => {
+        const arrowPointer = compass.querySelector('#arrow-pointer');
+        const distanceDisplay = compass.querySelector('.compass-distance');
+
+        // Function to update compass direction
+        const updateCompass = () => {
             try {
                 const pov = panorama.getPov();
                 const position = panorama.getPosition();
                 
                 if (!position) {
-                    console.log('[Marker] No position available yet');
+                    console.log('[Compass] No position available yet');
                     return;
                 }
 
                 const currentLat = position.lat();
                 const currentLng = position.lng();
                 
-                console.log('[Marker] Current position:', { lat: currentLat, lng: currentLng });
-                console.log('[Marker] Current POV:', pov);
-                
                 // Calculate bearing to destination
                 const bearing = this.calculateHeading(currentLat, currentLng, destinationCoords.lat, destinationCoords.lng);
                 const distance = this.calculateDistance(currentLat, currentLng, destinationCoords.lat, destinationCoords.lng);
                 
-                console.log('[Marker] Bearing to destination:', bearing, 'degrees');
-                console.log('[Marker] Distance to destination:', distance, 'meters');
+                console.log('[Compass] Bearing:', bearing, 'Distance:', distance, 'Camera heading:', pov.heading);
                 
-                // Calculate relative angle to current view
-                const relativeHeading = bearing - pov.heading;
-                const normalizedHeading = ((relativeHeading + 180) % 360) - 180;
+                // Calculate relative angle (bearing - camera heading)
+                // This is the angle we need to rotate the arrow
+                const relativeAngle = bearing - pov.heading;
                 
-                console.log('[Marker] Relative heading:', relativeHeading, 'normalized:', normalizedHeading);
+                // Update arrow rotation
+                arrowPointer.style.transform = `rotate(${relativeAngle}deg)`;
+                arrowPointer.style.transformOrigin = '30px 30px';
                 
-                // Calculate screen position using more accurate projection
-                // Google Street View default FOV is approximately 90 degrees horizontal at zoom level 0
-                // FOV changes with zoom: fov = 180 / Math.pow(2, zoom)
-                const zoom = pov.zoom || 0;
-                const horizontalFov = 180 / Math.pow(2, zoom);
-                const verticalFov = horizontalFov * 0.75; // Approximate aspect ratio
-                
-                console.log('[Marker] Zoom:', zoom, 'Horizontal FOV:', horizontalFov, 'Vertical FOV:', verticalFov);
-                
-                // Horizontal position based on normalized heading and actual FOV
-                // normalizedHeading ranges from -180 to 180
-                // We want to map it to screen position
-                let horizontalPosition = 50 + (normalizedHeading / (horizontalFov / 2)) * 50;
-                
-                // Vertical position calculation
-                // For ground-level destinations, we need to account for the elevation difference
-                // Assuming camera is at ~1.5-2m height and destination is on ground
-                const cameraPitch = pov.pitch || 0;
-                
-                // Calculate the pitch angle to the destination
-                // For very close distances on ground level, pitch should be slightly down
-                const groundLevelPitchOffset = -5; // Degrees down from horizon for ground-level objects
-                const relativePitch = groundLevelPitchOffset - cameraPitch;
-                
-                // Map pitch to vertical screen position
-                let verticalPosition = 50 - (relativePitch / (verticalFov / 2)) * 50;
-                
-                console.log('[Marker] Camera pitch:', cameraPitch, 'Relative pitch:', relativePitch, 'Vertical pos:', verticalPosition);
-                
-                // Don't clamp too aggressively - allow some off-screen positioning
-                horizontalPosition = Math.max(-10, Math.min(110, horizontalPosition));
-                verticalPosition = Math.max(-10, Math.min(110, verticalPosition));
-                
-                console.log('[Marker] Calculated position:', { 
-                    horizontal: horizontalPosition + '%', 
-                    vertical: verticalPosition + '%',
-                    normalizedHeading: normalizedHeading,
-                    horizontalFov: horizontalFov
-                });
-                
-                // Show marker only if it's within the current field of view
-                const isInHorizontalView = Math.abs(normalizedHeading) < (horizontalFov / 2);
-                const isInVerticalView = Math.abs(relativePitch) < (verticalFov / 2);
-                const shouldShow = isInHorizontalView && isInVerticalView;
-                
-                console.log('[Marker] Visibility:', { 
-                    isInHorizontalView, 
-                    isInVerticalView, 
-                    shouldShow,
-                    normalizedHeading: normalizedHeading,
-                    horizontalFovHalf: horizontalFov / 2
-                });
-                
-                if (shouldShow) {
-                    marker.style.display = 'block';
-                    marker.style.left = `${horizontalPosition}%`;
-                    marker.style.top = `${verticalPosition}%`;
-                    
-                    // Scale based on distance (closer = larger)
-                    const scale = Math.max(0.6, Math.min(1.5, 40 / distance));
-                    marker.style.transform = `translate(-50%, -100%) scale(${scale})`;
-                    console.log('[Marker] Marker displayed at position');
+                // Update distance display
+                if (distance < 1000) {
+                    distanceDisplay.textContent = `${Math.round(distance)}m`;
                 } else {
-                    marker.style.display = 'none';
-                    console.log('[Marker] Marker hidden (out of view)');
+                    distanceDisplay.textContent = `${(distance / 1000).toFixed(2)}km`;
                 }
+                
+                console.log('[Compass] Updated - Relative angle:', relativeAngle, 'Distance:', Math.round(distance), 'm');
             } catch (error) {
-                console.error('[Marker] Error updating position:', error);
+                console.error('[Compass] Error updating compass:', error);
             }
         };
 
-        // Update marker on view change (includes heading, pitch, and zoom changes)
-        panorama.addListener('pov_changed', updateMarkerPosition);
-        console.log('[Marker] POV change listener added');
+        // Update compass on view change
+        panorama.addListener('pov_changed', updateCompass);
+        console.log('[Compass] POV change listener added');
         
-        // Update on zoom change (pov_changed should cover this, but adding for completeness)
-        panorama.addListener('zoom_changed', updateMarkerPosition);
-        console.log('[Marker] Zoom change listener added');
-        
-        // Initial update with multiple attempts to ensure it works
-        setTimeout(updateMarkerPosition, 200);
-        setTimeout(updateMarkerPosition, 500);
-        setTimeout(updateMarkerPosition, 1000);
+        // Initial update with multiple attempts
+        setTimeout(updateCompass, 200);
+        setTimeout(updateCompass, 500);
+        setTimeout(updateCompass, 1000);
     }
 
     openLocalPanorama(panoramaConfig) {
