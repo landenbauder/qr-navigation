@@ -312,21 +312,13 @@ class NavigationApp {
             });
         };
 
-        // Show all offices when search input is focused and empty
-        searchInput.addEventListener('focus', () => {
-            if (searchInput.value.trim().length === 0) {
-                this.showAllOffices();
-            } else {
-                this.displaySearchResults(filterOffices(searchInput.value));
-            }
-        });
-
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
+            const searchResults = document.getElementById('searchResults');
             
             if (query.length === 0) {
-                // Show all offices when search is cleared
-                this.showAllOffices();
+                // Hide results when search is cleared
+                searchResults.classList.remove('active');
                 return;
             }
 
