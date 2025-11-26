@@ -17,8 +17,8 @@ class NavigationApp {
         this.panoramaBtn = null;
         this.panoOverlay = null;
         this.panoCloseBtn = null;
+        this.destinationPanel = null;
         this.destinationNameEl = null;
-        this.destinationDescEl = null;
         this.destinationRouteEl = null;
         this.mapContainer = null;
         this.panoramaClickLocked = false;
@@ -48,9 +48,8 @@ class NavigationApp {
         this.panoramaBtn = document.getElementById('panoramaBtn');
         this.panoOverlay = document.getElementById('panoOverlay');
         this.panoCloseBtn = document.getElementById('panoClose');
-        this.destinationPanel = document.getElementById('destinationPanel'); // Cache the panel container
+        this.destinationPanel = document.getElementById('destinationPanel');
         this.destinationNameEl = document.getElementById('destinationName');
-        this.destinationDescEl = document.getElementById('destinationDescription');
         this.destinationRouteEl = document.getElementById('destinationRoute');
         this.landingMenu = document.getElementById('landingMenu');
         this.returnToSearchBtn = document.getElementById('returnToSearchBtn');
@@ -406,6 +405,10 @@ class NavigationApp {
         if (this.landingMenu) {
             this.landingMenu.style.display = 'none';
         }
+        if (this.mapContainer) {
+            this.mapContainer.style.display = 'block';
+            this.mapContainer.style.visibility = 'visible';
+        }
         if (this.returnToSearchBtn) {
             this.returnToSearchBtn.style.display = 'flex';
         }
@@ -558,9 +561,9 @@ class NavigationApp {
 
         this.routingControl.on('routesfound', (e) => {
             const route = e.routes[0];
-            const distance = (route.summary.totalDistance / 1000).toFixed(2);
-            const duration = Math.round(route.summary.totalTime / 60);
-            this.setRouteSummary(distance, duration);
+            const distanceMeters = route.summary.totalDistance;
+            const durationSeconds = route.summary.totalTime;
+            this.setRouteSummary(distanceMeters, durationSeconds);
             const endpoint = route.coordinates[route.coordinates.length - 1];
             if (endpoint) {
                 this.lastRouteEndpoint = { lat: endpoint.lat, lng: endpoint.lng };
@@ -1086,39 +1089,42 @@ class NavigationApp {
     }
 
     updateDestinationPanel(office) {
-        if (!this.destinationNameEl || !this.destinationPanel) {
+        if (!this.destinationPanel || !this.destinationNameEl || !this.destinationRouteEl) {
             return;
         }
 
         if (!office) {
-            this.destinationPanel.style.display = 'none'; // Hide panel when no office selected
-            this.destinationNameEl.textContent = '';
-            if (this.destinationDescEl) {
-                this.destinationDescEl.textContent = '';
-            }
-            if (this.destinationRouteEl) {
-                this.destinationRouteEl.textContent = '';
-            }
+            this.destinationPanel.style.display = 'none';
+            this.destinationNameEl.textContent = 'Select an office to get directions';
+            this.destinationRouteEl.textContent = '--';
             return;
         }
 
-        this.destinationPanel.style.display = 'flex'; // Show panel
-        this.destinationNameEl.textContent = office.name;
-        if (this.destinationDescEl) {
-            this.destinationDescEl.textContent = office.description || '';
-        }
-        if (this.destinationRouteEl) {
-            this.destinationRouteEl.textContent = 'Calculating route...';
-        }
+        const nameText = office.unit
+            ? `Unit ${office.unit} - ${office.name}`
+            : office.name;
+
+        this.destinationPanel.style.display = 'flex';
+        this.destinationNameEl.textContent = nameText;
+        this.destinationRouteEl.textContent = 'Calculating route...';
     }
 
     // Removed updatePanoramaButtonState as button is gone from panel
 
-    setRouteSummary(distance, duration) {
+    setRouteSummary(distanceMeters, durationSeconds) {
         if (!this.destinationRouteEl || !this.selectedOffice) {
             return;
         }
-        this.destinationRouteEl.textContent = `Route: ${distance} km (~${duration} min walk)`;
+
+        let distanceText;
+        if (distanceMeters >= 1000) {
+            distanceText = `${(distanceMeters / 1000).toFixed(1)} km`;
+        } else {
+            distanceText = `${Math.round(distanceMeters)} m`;
+        }
+
+        const minutes = Math.max(1, Math.round(durationSeconds / 60));
+        this.destinationRouteEl.textContent = `${distanceText} | ${minutes} min walk`;
     }
 
     openPanorama(destination) {
