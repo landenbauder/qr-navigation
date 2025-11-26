@@ -259,7 +259,7 @@ body {
 /* Compass Overlay Adjustment */
 .streetview-compass-overlay {
     position: absolute;
-    bottom: 40px; /* Moved up slightly */
+    bottom: 120px; /* Moved up significantly to avoid cutoff */
     left: 50%;
     transform: translateX(-50%);
     pointer-events: none;

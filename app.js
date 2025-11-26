@@ -48,6 +48,7 @@ class NavigationApp {
         this.panoramaBtn = document.getElementById('panoramaBtn');
         this.panoOverlay = document.getElementById('panoOverlay');
         this.panoCloseBtn = document.getElementById('panoClose');
+        this.destinationPanel = document.getElementById('destinationPanel'); // Cache the panel container
         this.destinationNameEl = document.getElementById('destinationName');
         this.destinationDescEl = document.getElementById('destinationDescription');
         this.destinationRouteEl = document.getElementById('destinationRoute');
@@ -1085,12 +1086,13 @@ class NavigationApp {
     }
 
     updateDestinationPanel(office) {
-        if (!this.destinationNameEl) {
+        if (!this.destinationNameEl || !this.destinationPanel) {
             return;
         }
 
         if (!office) {
-            this.destinationNameEl.textContent = 'Select an office to see details.';
+            this.destinationPanel.style.display = 'none'; // Hide panel when no office selected
+            this.destinationNameEl.textContent = '';
             if (this.destinationDescEl) {
                 this.destinationDescEl.textContent = '';
             }
@@ -1100,12 +1102,13 @@ class NavigationApp {
             return;
         }
 
+        this.destinationPanel.style.display = 'flex'; // Show panel
         this.destinationNameEl.textContent = office.name;
         if (this.destinationDescEl) {
             this.destinationDescEl.textContent = office.description || '';
         }
         if (this.destinationRouteEl) {
-            this.destinationRouteEl.textContent = '';
+            this.destinationRouteEl.textContent = 'Calculating route...';
         }
     }
 
@@ -1236,7 +1239,9 @@ class NavigationApp {
                 },
                 zoom: panoramaConfig.zoom || 1,
                 visible: true,
-                panControl: true,
+                panControl: false, // Remove compass/pan control
+                zoomControl: false, // Remove zoom buttons
+                fullscreenControl: false,
                 addressControl: false,
                 linksControl: false, // Disable navigation arrows
                 clickToGo: false, // Disable click-to-move
