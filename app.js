@@ -409,6 +409,11 @@ class NavigationApp {
             this.returnToSearchBtn.style.display = 'flex';
         }
         
+        // Resize map to fit container now that it's visible
+        if (this.map) {
+            this.map.invalidateSize();
+        }
+        
         // Create panorama marker and pedestrian path
         this.createPanoramaMarker(office);
         this.drawPedestrianPath(office);
@@ -423,6 +428,9 @@ class NavigationApp {
             this.lastRouteUpdatePosition = { lat: userPos.lat, lng: userPos.lng };
             this.calculateRoute(userPos, destination, office.name, true);
         } else {
+            // If no location yet, try to request it immediately
+            this.requestLocation();
+            
             this.showStatus('Waiting for your location... Please allow location access.');
             // Wait a moment for location, then try again
             setTimeout(() => {
@@ -431,7 +439,8 @@ class NavigationApp {
                     this.lastRouteUpdatePosition = { lat: userPos.lat, lng: userPos.lng };
                     this.calculateRoute(userPos, destination, office.name, true);
                 } else {
-                    this.showStatus('Unable to get your location. Please enable location services.');
+                    // Don't show error immediately, keep waiting or let requestLocation handle errors
+                    console.log('Location not ready yet, user needs to approve permission');
                 }
             }, 2000);
         }
