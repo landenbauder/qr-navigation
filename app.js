@@ -55,12 +55,8 @@ class NavigationApp {
         this.returnToSearchBtn = document.getElementById('returnToSearchBtn');
 
         if (this.panoramaBtn) {
-            this.panoramaBtn.addEventListener('click', () => {
-                if (!this.selectedOffice || !this.selectedOffice.panorama) {
-                    return;
-                }
-                this.openPanorama(this.selectedOffice);
-            });
+            // Remove this listener as the button is removed from top panel
+            // If you want to keep it for debugging, leave it, but it won't be in DOM
         }
 
         if (this.panoCloseBtn) {
@@ -571,8 +567,7 @@ class NavigationApp {
             
             // Update panorama button visibility now that route is active
             if (this.selectedOffice) {
-                const hasPanorama = Boolean(this.selectedOffice.panorama);
-                this.updatePanoramaButtonState(hasPanorama);
+                // No top panel button to update
             }
             
             // Only show status message on initial route calculation
@@ -1070,7 +1065,7 @@ class NavigationApp {
         this.closePanorama();
         // Hide panorama button when route is cleared
         if (this.panoramaBtn) {
-            this.panoramaBtn.style.display = 'none';
+            // Button removed
         }
         
         // Switch back to landing menu
@@ -1102,7 +1097,6 @@ class NavigationApp {
             if (this.destinationRouteEl) {
                 this.destinationRouteEl.textContent = '';
             }
-            this.updatePanoramaButtonState(false);
             return;
         }
 
@@ -1113,25 +1107,9 @@ class NavigationApp {
         if (this.destinationRouteEl) {
             this.destinationRouteEl.textContent = '';
         }
-        // Enable panorama button only if office has panorama config AND route is active
-        const hasPanorama = Boolean(office.panorama);
-        this.updatePanoramaButtonState(hasPanorama);
     }
 
-    updatePanoramaButtonState(hasPanorama) {
-        if (!this.panoramaBtn) {
-            return;
-        }
-        // Only show button when navigation is active (route exists) and panorama is available
-        const shouldShow = Boolean(
-            hasPanorama &&
-            this.routingControl !== null &&
-            this.selectedOffice !== null
-        );
-        this.panoramaBtn.style.display = shouldShow ? 'inline-flex' : 'none';
-        this.panoramaBtn.disabled = !shouldShow;
-        this.panoramaBtn.setAttribute('aria-disabled', shouldShow ? 'false' : 'true');
-    }
+    // Removed updatePanoramaButtonState as button is gone from panel
 
     setRouteSummary(distance, duration) {
         if (!this.destinationRouteEl || !this.selectedOffice) {
