@@ -48,6 +48,8 @@ class NavigationApp {
         this.destinationNameEl = document.getElementById('destinationName');
         this.destinationDescEl = document.getElementById('destinationDescription');
         this.destinationRouteEl = document.getElementById('destinationRoute');
+        this.landingMenu = document.getElementById('landingMenu');
+        this.returnToSearchBtn = document.getElementById('returnToSearchBtn');
 
         if (this.panoramaBtn) {
             this.panoramaBtn.addEventListener('click', () => {
@@ -62,9 +64,18 @@ class NavigationApp {
             this.panoCloseBtn.addEventListener('click', () => this.closePanorama());
         }
 
+        if (this.returnToSearchBtn) {
+            this.returnToSearchBtn.addEventListener('click', () => this.clearRoute());
+        }
+
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'Escape' && this.panoOverlay && this.panoOverlay.style.display === 'block') {
-                this.closePanorama();
+            if (event.key === 'Escape') {
+                if (this.panoOverlay && this.panoOverlay.style.display === 'block') {
+                    this.closePanorama();
+                } else if (this.landingMenu && this.landingMenu.style.display === 'none') {
+                    // If on map view (landing menu hidden), go back to search
+                    this.clearRoute();
+                }
             }
         });
 
@@ -81,9 +92,6 @@ class NavigationApp {
             
             // Set up search functionality
             this.setupSearch();
-            
-            // Set up clear route button
-            document.getElementById('clearRoute').addEventListener('click', () => this.clearRoute());
             
             // Set up location enable button
             const enableLocationBtn = document.getElementById('enableLocationBtn');
@@ -292,27 +300,24 @@ class NavigationApp {
     setupSearch() {
         const searchInput = document.getElementById('officeSearch');
         const searchResults = document.getElementById('searchResults');
-        const viewAllBtn = document.getElementById('viewAllBtn');
 
-        // Show all offices when clicking "View All" button
-        if (viewAllBtn) {
-            viewAllBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.showAllOffices();
+        // Search filtering logic
+        const filterOffices = (query) => {
+            query = query.toLowerCase().trim();
+            return this.offices.filter(office => {
+                const nameMatch = office.name.toLowerCase().includes(query);
+                const descMatch = office.description && office.description.toLowerCase().includes(query);
+                const unitMatch = office.unit && office.unit.toLowerCase().includes(query);
+                return nameMatch || descMatch || unitMatch;
             });
-        }
+        };
 
         // Show all offices when search input is focused and empty
         searchInput.addEventListener('focus', () => {
             if (searchInput.value.trim().length === 0) {
                 this.showAllOffices();
             } else {
-                const query = searchInput.value.toLowerCase().trim();
-                const filtered = this.offices.filter(office => 
-                    office.name.toLowerCase().includes(query) ||
-                    (office.description && office.description.toLowerCase().includes(query))
-                );
-                this.displaySearchResults(filtered);
+                this.displaySearchResults(filterOffices(searchInput.value));
             }
         });
 
@@ -325,19 +330,13 @@ class NavigationApp {
                 return;
             }
 
-            const filtered = this.offices.filter(office => 
-                office.name.toLowerCase().includes(query) ||
-                (office.description && office.description.toLowerCase().includes(query))
-            );
-
-            this.displaySearchResults(filtered);
+            this.displaySearchResults(filterOffices(query));
         });
 
         // Close search results when clicking outside
         document.addEventListener('click', (e) => {
             if (!searchInput.contains(e.target) && 
-                !searchResults.contains(e.target) && 
-                !viewAllBtn.contains(e.target)) {
+                !searchResults.contains(e.target)) {
                 searchResults.classList.remove('active');
             }
         });
@@ -357,20 +356,7 @@ class NavigationApp {
             searchResults.appendChild(header);
             
             // Show all offices
-            this.offices.forEach(office => {
-                const item = document.createElement('div');
-                item.className = 'search-result-item';
-                item.innerHTML = `
-                    <div class="search-result-name">${office.name}</div>
-                    ${office.description ? `<div class="search-result-description">${office.description}</div>` : ''}
-                `;
-                item.addEventListener('click', () => {
-                    this.selectOffice(office);
-                    document.getElementById('officeSearch').value = office.name;
-                    searchResults.classList.remove('active');
-                });
-                searchResults.appendChild(item);
-            });
+            this.offices.forEach(office => this.createSearchResultItem(office, searchResults));
         }
         
         searchResults.classList.add('active');
@@ -389,23 +375,31 @@ class NavigationApp {
             header.innerHTML = `<strong>Found ${results.length} ${results.length === 1 ? 'office' : 'offices'}</strong>`;
             searchResults.appendChild(header);
             
-            results.forEach(office => {
-                const item = document.createElement('div');
-                item.className = 'search-result-item';
-                item.innerHTML = `
-                    <div class="search-result-name">${office.name}</div>
-                    ${office.description ? `<div class="search-result-description">${office.description}</div>` : ''}
-                `;
-                item.addEventListener('click', () => {
-                    this.selectOffice(office);
-                    document.getElementById('officeSearch').value = office.name;
-                    searchResults.classList.remove('active');
-                });
-                searchResults.appendChild(item);
-            });
+            results.forEach(office => this.createSearchResultItem(office, searchResults));
         }
 
         searchResults.classList.add('active');
+    }
+
+    createSearchResultItem(office, container) {
+        const item = document.createElement('div');
+        item.className = 'search-result-item';
+        
+        const displayName = office.unit 
+            ? `<span style="font-weight: 700; color: #2c2c2c;">Unit ${office.unit}:</span> ${office.name}` 
+            : office.name;
+
+        item.innerHTML = `
+            <div class="search-result-name">${displayName}</div>
+            ${office.description ? `<div class="search-result-description">${office.description}</div>` : ''}
+        `;
+        
+        item.addEventListener('click', () => {
+            this.selectOffice(office);
+            document.getElementById('officeSearch').value = office.name;
+            document.getElementById('searchResults').classList.remove('active');
+        });
+        container.appendChild(item);
     }
 
     selectOffice(office) {
@@ -414,7 +408,14 @@ class NavigationApp {
         this.lastRouteEndpoint = null;
         this.updateDestinationPanel(office);
         this.lastRouteUpdatePosition = null; // Reset route update tracking
-        document.getElementById('clearRoute').style.display = 'inline-flex';
+        
+        // Switch to map view
+        if (this.landingMenu) {
+            this.landingMenu.style.display = 'none';
+        }
+        if (this.returnToSearchBtn) {
+            this.returnToSearchBtn.style.display = 'flex';
+        }
         
         // Create panorama marker and pedestrian path
         this.createPanoramaMarker(office);
@@ -556,480 +557,8 @@ class NavigationApp {
             }
         });
     }
-
-    checkLocationPermission() {
-        // Detect Safari specifically
-        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome|CriOS|FxiOS|Firefox|FxiOS/.test(navigator.userAgent);
-        
-        console.log('Browser detection:', { isIOS, isSafari, userAgent: navigator.userAgent });
-        
-        if (isIOS || isSafari) {
-            // Always show button for Safari - it requires explicit user gesture
-            this.showLocationPrompt();
-        } else {
-            // For other browsers, try auto-request
-            setTimeout(() => {
-                this.requestLocation();
-            }, 500);
-        }
-    }
-
-    showLocationPrompt() {
-        const prompt = document.getElementById('locationPrompt');
-        if (prompt) {
-            prompt.style.display = 'flex';
-        }
-    }
-
-    hideLocationPrompt() {
-        const prompt = document.getElementById('locationPrompt');
-        if (prompt) {
-            prompt.style.display = 'none';
-        }
-    }
-
-    showBrowserInstructions(browser) {
-        const promptContent = document.querySelector('.location-prompt-content');
-        if (!promptContent) return;
-        
-        let instructions = '';
-        
-        if (browser === 'safari') {
-            instructions = 
-                '<h3 style="color: #f44336; margin-top: 0;">Enable Location for Safari</h3>' +
-                '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
-                '<p><strong>Safari requires location access in TWO places. Both must be enabled:</strong></p>' +
-                
-                '<div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">' +
-                '<strong style="font-size: 16px;">Step 1: Website-Specific Permission</strong><br><br>' +
-                '1. Tap the <strong>AA icon</strong> (left of URL bar)<br>' +
-                '2. Tap <strong>"Website Settings"</strong><br>' +
-                '3. Find <strong>"Location"</strong><br>' +
-                '4. Set it to <strong>"Allow"</strong> (not "Ask" or "Deny")<br>' +
-                '5. Make sure <strong>"Precise Location"</strong> toggle is ON' +
-                '</div>' +
-                
-                '<div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0;">' +
-                '<strong style="font-size: 16px;">Step 2: System-Level Permission (IMPORTANT!)</strong><br><br>' +
-                '1. Go to iPhone <strong>Settings</strong> app<br>' +
-                '2. Tap <strong>Privacy & Security</strong><br>' +
-                '3. Tap <strong>Location Services</strong><br>' +
-                '4. Scroll down and find <strong>"Safari Websites"</strong><br>' +
-                '5. Tap on <strong>"Safari Websites"</strong><br>' +
-                '6. Select <strong>"Ask Next Time Or When I Share"</strong> OR <strong>"While Using the App"</strong><br>' +
-                '<strong style="color: #f44336;">DO NOT select "Never" - this will block location!</strong>' +
-                '</div>' +
-                
-                '<div style="background: #f3e5f5; padding: 15px; border-radius: 8px; margin: 15px 0;">' +
-                '<strong>Step 3: Close and Reopen Safari</strong><br><br>' +
-                '1. Swipe up from bottom to see app switcher<br>' +
-                '2. Swipe Safari away to fully close it<br>' +
-                '3. Reopen Safari<br>' +
-                '4. Return to this page<br>' +
-                '5. Tap "Enable Location" again' +
-                '</div>' +
-                
-                '<button id="enableLocationBtn" class="enable-location-btn">' +
-                'Enable Location' +
-                '</button>' +
-                '<p class="location-prompt-note">After completing both steps above, close Safari completely, then reopen and try again.</p>' +
-                '</div>';
-        } else if (browser === 'android') {
-            instructions = 
-                '<h3>Enable Location for Android</h3>' +
-                '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
-                '1. Tap the <strong>menu icon</strong> (3 dots) in your browser<br>' +
-                '2. Go to <strong>Settings</strong> → <strong>Site settings</strong><br>' +
-                '3. Find this website and enable <strong>Location</strong> permissions<br><br>' +
-                '<strong>Also check:</strong><br>' +
-                'Phone Settings → Location → ON<br><br>' +
-                '<button id="enableLocationBtn" class="enable-location-btn">Try Again</button>' +
-                '</div>';
-        } else if (browser === 'chrome') {
-            instructions = 
-                '<h3>Enable Location for Chrome</h3>' +
-                '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
-                '1. Click the <strong>lock icon</strong> in the address bar<br>' +
-                '2. Find <strong>"Location"</strong><br>' +
-                '3. Select <strong>"Allow"</strong><br><br>' +
-                '<button id="enableLocationBtn" class="enable-location-btn">Try Again</button>' +
-                '</div>';
-        } else if (browser === 'firefox') {
-            instructions = 
-                '<h3>Enable Location for Firefox</h3>' +
-                '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
-                '1. Click the <strong>shield icon</strong> in the address bar<br>' +
-                '2. Find <strong>"Permissions"</strong><br>' +
-                '3. Enable <strong>"Location"</strong><br><br>' +
-                '<button id="enableLocationBtn" class="enable-location-btn">Try Again</button>' +
-                '</div>';
-        } else if (browser === 'unsupported') {
-            instructions = 
-                '<h3>Geolocation Not Supported</h3>' +
-                '<p>Your browser does not support location services. Please use a modern browser.</p>';
-        } else {
-            instructions = 
-                '<h3>Enable Location</h3>' +
-                '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
-                '1. Check your browser settings for location permissions<br>' +
-                '2. Ensure location services are enabled on your device<br><br>' +
-                '<button id="enableLocationBtn" class="enable-location-btn">Try Again</button>' +
-                '</div>';
-        }
-        
-        promptContent.innerHTML = instructions;
-        
-        // Reattach button listener
-        const btn = document.getElementById('enableLocationBtn');
-        if (btn) {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const userAgent = navigator.userAgent;
-                const isIOS = /iPhone|iPad|iPod/.test(userAgent);
-                const isSafari = /Safari/.test(userAgent) && !/Chrome|CriOS|FxiOS|Firefox/.test(userAgent);
-                
-                if (isIOS || isSafari) {
-                    this.showBrowserInstructions('safari');
-                } else {
-                    location.reload();
-                }
-            }, { once: false, capture: true });
-        }
-        
-        this.showLocationPrompt();
-    }
-
-
-    requestLocation() {
-        // For non-Safari browsers
-        if (!navigator.geolocation) {
-            this.showLocationInstructions('Geolocation is not supported by your browser. Please use a modern browser.');
-            return;
-        }
-
-        const protocol = window.location.protocol;
-        const isSecure = protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        
-        if (!isSecure) {
-            console.warn('Site is not using HTTPS. Geolocation may not work.');
-            this.showStatus('Warning: HTTPS required for location access.');
-        }
-
-        const options = {
-            enableHighAccuracy: true,
-            timeout: 20000,
-            maximumAge: 30000
-        };
-
-        this.hideLocationPrompt();
-        this.showStatus('Requesting location access...');
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                this.hideLocationInstructions();
-                this.updateUserLocation(position);
-                this.showStatus('Location found! You can now search for offices.');
-                
-                this.watchId = navigator.geolocation.watchPosition(
-                    (pos) => {
-                        this.hideLocationInstructions();
-                        this.updateUserLocation(pos);
-                    },
-                    (error) => {
-                        if (error.code !== error.PERMISSION_DENIED) {
-                            this.handleLocationError(error);
-                        }
-                    },
-                    options
-                );
-                
-            },
-            (error) => {
-                this.handleLocationError(error);
-            },
-            options
-        );
-    }
-
-
-    // Create a clean, simple icon for user location (no directionality)
-    createUserLocationIcon() {
-        // Create a canvas-based icon - simple circle with subtle border
-        const size = 40;
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
-        const ctx = canvas.getContext('2d');
-        
-        // Draw outer circle with border
-        ctx.fillStyle = '#4CAF50';
-        ctx.beginPath();
-        ctx.arc(size / 2, size / 2, 16, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        // Draw inner circle for depth
-        ctx.fillStyle = '#66BB6A';
-        ctx.beginPath();
-        ctx.arc(size / 2, size / 2, 12, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        // Draw center dot
-        ctx.fillStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.arc(size / 2, size / 2, 5, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        // Add subtle shadow/border
-        ctx.strokeStyle = '#2E7D32';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(size / 2, size / 2, 16, 0, 2 * Math.PI);
-        ctx.stroke();
-        
-        return canvas.toDataURL();
-    }
-
-
-    updateUserLocation(position) {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        const accuracy = position.coords.accuracy;
-        
-        // Check for poor accuracy on iOS Safari (Precise Location might be off)
-        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome|CriOS|FxiOS/.test(navigator.userAgent);
-        
-        if (accuracy > 50 && isIOS && isSafari && !this.preciseLocationWarningShown) {
-            // Accuracy is poor - user might need to enable "Precise Location"
-            this.showStatus(`Location accuracy is ±${Math.round(accuracy)}m. For better navigation, enable Precise Location in Safari settings.`);
-            this.preciseLocationWarningShown = true;
-        }
-
-        if (!this.userMarker) {
-            // Create user marker with clean circular icon
-            const iconUrl = this.createUserLocationIcon();
-            this.userMarker = L.marker([lat, lng], {
-                icon: L.icon({
-                    iconUrl: iconUrl,
-                    iconSize: [40, 40],
-                    iconAnchor: [20, 20],
-                    popupAnchor: [0, -20]
-                })
-            }).addTo(this.map);
-            
-            // Center map on user initially
-            this.map.setView([lat, lng], 18);
-        } else {
-            // Update existing marker position
-            this.userMarker.setLatLng([lat, lng]);
-        }
-
-        // Add accuracy circle (optional visual indicator) - smaller and more subtle for close navigation
-        if (this.accuracyCircle) {
-            this.map.removeLayer(this.accuracyCircle);
-        }
-        
-        this.accuracyCircle = L.circle([lat, lng], {
-            radius: Math.min(accuracy, 20), // Cap at 20m for close navigation
-            fillColor: '#4CAF50',
-            fillOpacity: 0.15,
-            color: '#4CAF50',
-            weight: 1.5,
-            opacity: 0.4
-        }).addTo(this.map);
-
-        // Update route if one is active, but only if user has moved significantly
-        if (this.routingControl && this.selectedOffice) {
-            const userPos = { lat, lng };
-            
-            // Check if we should update the route based on distance moved
-            let shouldUpdate = false;
-            
-            if (!this.lastRouteUpdatePosition) {
-                // First update after selecting office
-                shouldUpdate = true;
-                this.lastRouteUpdatePosition = { lat, lng };
-            } else {
-                // Calculate distance from last route update position
-                const distance = this.calculateDistance(
-                    lat, lng,
-                    this.lastRouteUpdatePosition.lat,
-                    this.lastRouteUpdatePosition.lng
-                );
-                
-                // Only update if user has moved more than minimum distance
-                if (distance >= this.minRouteUpdateDistance) {
-                    shouldUpdate = true;
-                    this.lastRouteUpdatePosition = { lat, lng };
-                }
-            }
-            
-            if (shouldUpdate) {
-                // Determine route destination: use panorama location if available, otherwise office location
-                const destination = this.selectedOffice.panorama && this.selectedOffice.panorama.lat && this.selectedOffice.panorama.lng
-                    ? [this.selectedOffice.panorama.lat, this.selectedOffice.panorama.lng]
-                    : [this.selectedOffice.lat, this.selectedOffice.lng];
-                // Update route dynamically (not initial route)
-                this.calculateRoute(userPos, destination, this.selectedOffice.name, false);
-            }
-        }
-    }
-
-    handleLocationError(error) {
-        let message = '';
-        let instructions = '';
-        const protocol = window.location.protocol;
-        const url = window.location.href;
-        
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                message = 'Location permission denied';
-                instructions = this.getMobileLocationInstructions();
-                
-                // Add diagnostic info
-                console.log('Permission denied. URL:', url);
-                console.log('Protocol:', protocol);
-                console.log('User agent:', navigator.userAgent);
-                
-                // For Safari, update the prompt content directly instead of showing separate popup
-                const isSafariBrowser = /Safari/.test(navigator.userAgent) && !/Chrome|CriOS|FxiOS|Firefox/.test(navigator.userAgent);
-                const isIOSDevice = /iPhone|iPad|iPod/.test(navigator.userAgent);
-                
-                if (isSafariBrowser || isIOSDevice) {
-                    // Show Safari-specific instructions
-                    this.showBrowserInstructions('safari');
-                    break;
-                } else {
-                    // Detect other browsers
-                    const isAndroid = /Android/.test(navigator.userAgent);
-                    const isChrome = /Chrome/.test(navigator.userAgent) && !/Edge|OPR/.test(navigator.userAgent);
-                    const isFirefox = /Firefox/.test(navigator.userAgent);
-                    
-                    if (isAndroid) {
-                        this.showBrowserInstructions('android');
-                    } else if (isChrome) {
-                        this.showBrowserInstructions('chrome');
-                    } else if (isFirefox) {
-                        this.showBrowserInstructions('firefox');
-                    } else {
-                        this.showBrowserInstructions('other');
-                    }
-                    break;
-                }
-            case error.POSITION_UNAVAILABLE:
-                message = 'Location unavailable. Make sure GPS is enabled.';
-                instructions = this.getMobileLocationInstructions();
-                instructions += '<br><br><strong>Additional checks:</strong><br>';
-                instructions += '• Ensure Location Services is ON in Settings<br>';
-                instructions += '• Make sure you\'re outdoors or near a window<br>';
-                instructions += '• Check that Airplane Mode is OFF';
-                break;
-            case error.TIMEOUT:
-                message = 'Location request timed out. GPS may be slow to acquire signal.';
-                instructions = '<div style="text-align: left; max-width: 90%; margin: 0 auto;">';
-                instructions += '<strong>GPS signal timeout:</strong><br><br>';
-                instructions += '• Make sure you\'re outdoors (GPS works better outside)<br>';
-                instructions += '• Check that Location Services is enabled<br>';
-                instructions += '• Try moving to a location with better sky view<br>';
-                instructions += '<br><button onclick="location.reload()" style="margin-top: 10px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Retry</button>';
-                instructions += '</div>';
-                break;
-            default:
-                message = 'Unable to get location. Error code: ' + error.code;
-                instructions = this.getMobileLocationInstructions();
-                break;
-        }
-        
-        // Add protocol info if not HTTPS
-        if (protocol !== 'https:') {
-            instructions += '<br><br><div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-top: 10px;">';
-            instructions += '<strong>HTTPS Issue Detected</strong><br>';
-            instructions += 'Current protocol: ' + protocol + '<br>';
-            instructions += 'Geolocation requires HTTPS. Make sure your site URL starts with https://';
-            instructions += '</div>';
-        }
-        
-        this.showStatus(message);
-        if (instructions) {
-            this.showLocationInstructions(instructions);
-        }
-    }
-
-    getMobileLocationInstructions() {
-        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-        const isAndroid = /Android/.test(navigator.userAgent);
-        const protocol = window.location.protocol;
-        const url = window.location.href;
-        
-        let instructions = '<div style="text-align: left; max-width: 90%; margin: 0 auto;">';
-        instructions += '<strong>To enable location access:</strong><br><br>';
-        
-        if (isIOS) {
-            instructions += '1. Tap the <strong>AA icon</strong> (left of URL bar) or the <strong>website name</strong><br>';
-            instructions += '2. Tap <strong>"Website Settings"</strong><br>';
-            instructions += '3. Set <strong>Location</strong> to "Allow" (not "Ask" or "Deny")<br>';
-            instructions += '4. Close this popup and refresh the page<br><br>';
-            instructions += '<strong>System Settings:</strong><br>';
-            instructions += '• Settings → Privacy & Security → Location Services → ON<br>';
-            instructions += '• Settings → Safari → Location Services → ON<br><br>';
-            instructions += '<strong>Diagnostic Info:</strong><br>';
-            instructions += 'Protocol: ' + protocol + '<br>';
-            instructions += 'URL: ' + url.substring(0, 50) + '...<br>';
-        } else if (isAndroid) {
-            instructions += '1. Tap the <strong>menu icon</strong> (3 dots) in your browser<br>';
-            instructions += '2. Go to <strong>Settings</strong> → <strong>Site settings</strong><br>';
-            instructions += '3. Find this site and enable <strong>Location</strong> permissions<br>';
-            instructions += '4. Refresh this page<br><br>';
-            instructions += 'Also check: Phone Settings → Location → On';
-        } else {
-            instructions += '1. Click the <strong>lock/padlock icon</strong> in the address bar<br>';
-            instructions += '2. Enable <strong>Location</strong> permissions<br>';
-            instructions += '3. Refresh this page<br><br>';
-            instructions += 'Make sure location services are enabled on your device.';
-        }
-        
-        instructions += '<br><button onclick="location.reload()" style="margin-top: 10px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Reload Page</button>';
-        instructions += '</div>';
-        
-        return instructions;
-    }
-
-    showLocationInstructions(content) {
-        // Create backdrop if it doesn't exist
-        let backdrop = document.getElementById('locationInstructionsBackdrop');
-        if (!backdrop) {
-            backdrop = document.createElement('div');
-            backdrop.id = 'locationInstructionsBackdrop';
-            backdrop.className = 'location-instructions-backdrop';
-            backdrop.onclick = () => this.hideLocationInstructions();
-            document.body.appendChild(backdrop);
-        }
-        backdrop.style.display = 'block';
-
-        // Create or update instruction box
-        let instructionBox = document.getElementById('locationInstructions');
-        if (!instructionBox) {
-            instructionBox = document.createElement('div');
-            instructionBox.id = 'locationInstructions';
-            instructionBox.className = 'location-instructions';
-            document.body.appendChild(instructionBox);
-        }
-        instructionBox.innerHTML = content;
-        instructionBox.style.display = 'block';
-    }
-
-    hideLocationInstructions() {
-        const instructionBox = document.getElementById('locationInstructions');
-        const backdrop = document.getElementById('locationInstructionsBackdrop');
-        if (instructionBox) {
-            instructionBox.style.display = 'none';
-        }
-        if (backdrop) {
-            backdrop.style.display = 'none';
-        }
-    }
+    
+    // ... existing code ...
 
     clearRoute() {
         if (this.routingControl) {
@@ -1059,8 +588,19 @@ class NavigationApp {
         if (this.panoramaBtn) {
             this.panoramaBtn.style.display = 'none';
         }
-        document.getElementById('officeSearch').value = '';
-        document.getElementById('clearRoute').style.display = 'none';
+        
+        // Switch back to landing menu
+        if (this.landingMenu) {
+            this.landingMenu.style.display = 'flex';
+            const input = document.getElementById('officeSearch');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        }
+        if (this.returnToSearchBtn) {
+            this.returnToSearchBtn.style.display = 'none';
+        }
     }
 
     updateDestinationPanel(office) {

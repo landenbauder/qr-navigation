@@ -19,23 +19,20 @@
 </head>
 <body>
     <div class="container">
-        <!-- Search Bar -->
-        <div class="search-container">
-            <div class="search-wrapper">
-                <input 
-                    type="text" 
-                    id="officeSearch" 
-                    placeholder="Search for an office or suite..."
-                    autocomplete="off"
-                >
-                <button id="viewAllBtn" class="view-all-btn" title="View all offices">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/>
-                    </svg>
-                </button>
-                <div id="searchResults" class="search-results"></div>
+        <!-- Landing Menu (Search Interface) -->
+        <div id="landingMenu" class="landing-menu">
+            <div class="landing-content">
+                <h1 class="landing-title">Enter Unit # or Company Name</h1>
+                <div class="search-wrapper landing-search">
+                    <input 
+                        type="text" 
+                        id="officeSearch" 
+                        placeholder="Search..."
+                        autocomplete="off"
+                    >
+                    <div id="searchResults" class="search-results"></div>
+                </div>
             </div>
-            <button id="clearRoute" class="clear-btn" style="display: none;">Clear Route</button>
         </div>
 
         <!-- Destination Details Panel -->
@@ -58,6 +55,14 @@
                 </button>
             </div>
         </div>
+
+        <!-- Return to Search Button (Map View) -->
+        <button id="returnToSearchBtn" class="return-search-btn" title="Search for another office" style="display: none;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+        </button>
 
         <!-- Location Permission Prompt (shown initially, hidden after permission granted) -->
         <div id="locationPrompt" class="location-prompt">
