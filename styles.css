@@ -182,7 +182,7 @@ body {
 /* Destination Panel (Redesigned Top Overlay) */
 .destination-panel {
     position: absolute;
-    top: 16px;
+    top: max(50px, env(safe-area-inset-top, 0px) + 50px); /* Account for iPhone notch/camera */
     left: 50%;
     transform: translateX(-50%);
     width: min(600px, calc(100% - 32px));
@@ -251,20 +251,20 @@ body {
     position: static;
     width: 46px;
     height: 46px;
-    background: #111;
+    background: #e8e8e8;
     border: none;
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #fff;
+    color: #333;
     transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
     flex-shrink: 0;
 }
 
 .return-search-btn:hover {
-    background: #000;
+    background: #d0d0d0;
     transform: translateY(-1px);
 }
 
@@ -441,7 +441,7 @@ body {
 /* Street View Compass Overlay */
 .streetview-compass-overlay {
     position: absolute;
-    bottom: 150px;
+    bottom: 180px; /* Moved up significantly to avoid cutoff on mobile */
     left: 50%;
     transform: translateX(-50%);
     pointer-events: none;

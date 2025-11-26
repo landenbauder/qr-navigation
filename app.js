@@ -576,7 +576,9 @@ class NavigationApp {
             
             // Only show status message on initial route calculation
             if (isFirstRouteFound) {
-                this.showStatus(`Route to ${destinationName}: ${distance} km, ~${duration} min walk`);
+                const distanceKm = (distanceMeters / 1000).toFixed(2);
+                const durationMin = Math.round(durationSeconds / 60);
+                this.showStatus(`Route to ${destinationName}: ${distanceKm} km, ~${durationMin} min walk`);
                 isFirstRouteFound = false;
                 
                 // Fit map to show entire route only on initial route
@@ -1306,7 +1308,7 @@ class NavigationApp {
         const overlayContainer = document.createElement('div');
         overlayContainer.className = 'streetview-compass-overlay';
         overlayContainer.style.position = 'absolute';
-        overlayContainer.style.bottom = '20px';
+        overlayContainer.style.bottom = '180px'; // Moved up significantly to avoid cutoff
         overlayContainer.style.left = '50%';
         overlayContainer.style.transform = 'translateX(-50%)';
         overlayContainer.style.pointerEvents = 'none';
