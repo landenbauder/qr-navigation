@@ -29,20 +29,27 @@ body {
     background: var(--surface);
 }
 
-.brand-header {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 2200;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+/* Landing logo (centered, larger) */
+.landing-logo {
+    height: 96px;
+    width: auto;
+    align-self: center;
+    filter: drop-shadow(0 10px 26px rgba(0, 0, 0, 0.14));
 }
 
-.brand-logo {
-    height: 48px;
-    width: auto;
-    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1));
+@media (max-width: 420px) {
+    .landing-logo {
+        height: 78px;
+    }
+
+    .landing-content {
+        gap: 22px;
+        margin-top: -4vh;
+    }
+
+    .landing-title {
+        font-size: 28px;
+    }
 }
 
 /* Landing Menu Overlay */
@@ -212,10 +219,11 @@ body {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(14px);
     border-radius: 18px;
-    padding: 16px 18px;
+    padding: 16px 18px 56px; /* reserve bottom row for search button + logo */
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
     z-index: 1000;
     display: none;
+    overflow: hidden;
 }
 
 .destination-info {
@@ -224,6 +232,18 @@ body {
     justify-content: space-between;
     width: 100%;
     gap: 16px;
+    position: relative; /* for destination logo positioning */
+}
+
+.destination-logo {
+    position: absolute;
+    right: 14px;
+    bottom: 12px;
+    height: 26px;
+    width: auto;
+    opacity: 0.9;
+    pointer-events: none;
+    filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.12));
 }
 
 .destination-copy {
@@ -271,7 +291,9 @@ body {
 
 /* Updated Search Button inside Panel */
 .return-search-btn {
-    position: static;
+    position: absolute;
+    left: 14px;
+    bottom: 10px;
     width: 46px;
     height: 46px;
     background: rgba(65, 75, 67, 0.1);
