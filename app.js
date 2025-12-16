@@ -33,6 +33,9 @@ class NavigationApp {
         this.locationWaitTimeout = null;
         this.locationWaitStart = null;
         this.selectedEntrance = null; // Current entrance for multi-entrance offices
+        this.brandColor = '#414b43';
+        this.officeMarkers = new Map(); // Cache of office markers (not shown by default)
+        this.activeOfficeMarker = null;
         
         // Default building location (will be updated from offices.json)
         this.buildingCenter = {
@@ -205,26 +208,65 @@ class NavigationApp {
             maxZoom: 19
         }).addTo(this.map);
 
-        // Add office markers
+        // Prepare office markers (not shown until an office is selected)
         this.addOfficeMarkers();
     }
 
-    addOfficeMarkers() {
-        this.offices.forEach(office => {
-            const marker = L.marker([office.lat, office.lng], {
-                icon: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34],
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                    shadowSize: [41, 41]
-                })
-            }).addTo(this.map);
+    getOfficeKey(office) {
+        const unitPart = office.unit ? `__${office.unit}` : '';
+        return `${office.name}${unitPart}`;
+    }
 
-            const popupContent = `<strong>${office.name}</strong>${office.description ? `<br>${office.description}` : ''}`;
-            marker.bindPopup(popupContent);
+    createOfficeMarker(office) {
+        const icon = L.divIcon({
+            className: 'office-marker',
+            html: `<div class="office-pin"></div>`,
+            iconSize: [26, 26],
+            iconAnchor: [13, 26]
         });
+
+        const marker = L.marker([office.lat, office.lng], { icon });
+        const popupContent = `<strong>${office.name}</strong>${office.unit ? ` (Unit ${office.unit})` : ''}${office.description ? `<br>${office.description}` : ''}`;
+        marker.bindPopup(popupContent);
+        return marker;
+    }
+
+    addOfficeMarkers() {
+        // Cache markers but do not show them by default
+        this.offices.forEach(office => {
+            const key = this.getOfficeKey(office);
+            if (!this.officeMarkers.has(key)) {
+                this.officeMarkers.set(key, this.createOfficeMarker(office));
+            }
+        });
+    }
+
+    showOfficeMarker(office) {
+        // Hide current active marker
+        if (this.activeOfficeMarker) {
+            this.map.removeLayer(this.activeOfficeMarker);
+            this.activeOfficeMarker = null;
+        }
+
+        if (!office) return;
+
+        const key = this.getOfficeKey(office);
+        let marker = this.officeMarkers.get(key);
+        if (!marker) {
+            marker = this.createOfficeMarker(office);
+            this.officeMarkers.set(key, marker);
+        }
+        marker.addTo(this.map);
+        this.activeOfficeMarker = marker;
+    }
+
+    hideAllOfficeMarkers() {
+        this.officeMarkers.forEach(marker => {
+            if (this.map.hasLayer(marker)) {
+                this.map.removeLayer(marker);
+            }
+        });
+        this.activeOfficeMarker = null;
     }
 
     createPanoramaMarker(office) {
@@ -245,7 +287,7 @@ class NavigationApp {
             html: `
                 <div class="panorama-marker-inner">
                     <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                        <circle cx="16" cy="16" r="15" fill="#2c2c2c" stroke="white" stroke-width="2"/>
+                        <circle cx="16" cy="16" r="15" fill="${this.brandColor}" stroke="white" stroke-width="2"/>
                         <text x="16" y="20" font-size="10" fill="white" text-anchor="middle" font-weight="bold">360°</text>
                     </svg>
                 </div>
@@ -303,7 +345,7 @@ class NavigationApp {
 
         // Draw polyline with same style as main route (seamless extension)
         this.pedestrianPathPolyline = L.polyline(pathCoords, {
-            color: '#4CAF50',
+            color: this.brandColor,
             opacity: 0.8,
             weight: 5
         }).addTo(this.map);
@@ -492,6 +534,9 @@ class NavigationApp {
             this.map.invalidateSize();
         }
         
+        // Show only the selected office marker
+        this.showOfficeMarker(office);
+
         // Create panorama marker and pedestrian path
         this.createPanoramaMarker(office);
         
@@ -635,7 +680,7 @@ class NavigationApp {
             lineOptions: {
                 styles: [
                     {
-                        color: '#4CAF50',
+                        color: this.brandColor,
                         opacity: 0.8,
                         weight: 5
                     }
@@ -887,12 +932,12 @@ class NavigationApp {
         canvas.height = size;
         const ctx = canvas.getContext('2d');
         
-        ctx.fillStyle = '#4CAF50';
+        ctx.fillStyle = this.brandColor;
         ctx.beginPath();
         ctx.arc(size / 2, size / 2, 16, 0, 2 * Math.PI);
         ctx.fill();
         
-        ctx.fillStyle = '#66BB6A';
+        ctx.fillStyle = '#5b655e';
         ctx.beginPath();
         ctx.arc(size / 2, size / 2, 12, 0, 2 * Math.PI);
         ctx.fill();
@@ -902,7 +947,7 @@ class NavigationApp {
         ctx.arc(size / 2, size / 2, 5, 0, 2 * Math.PI);
         ctx.fill();
         
-        ctx.strokeStyle = '#2E7D32';
+        ctx.strokeStyle = '#2e352f';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.arc(size / 2, size / 2, 16, 0, 2 * Math.PI);
@@ -946,9 +991,9 @@ class NavigationApp {
         
         this.accuracyCircle = L.circle([lat, lng], {
             radius: Math.min(accuracy, 20),
-            fillColor: '#4CAF50',
+            fillColor: this.brandColor,
             fillOpacity: 0.15,
-            color: '#4CAF50',
+            color: this.brandColor,
             weight: 1.5,
             opacity: 0.4
         }).addTo(this.map);
@@ -1038,7 +1083,7 @@ class NavigationApp {
                 instructions += '- Make sure you are outdoors (GPS works better outside)<br>';
                 instructions += '- Check that Location Services is enabled<br>';
                 instructions += '- Try moving to a location with better sky view<br>';
-                instructions += '<br><button onclick="location.reload()" style="margin-top: 10px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Retry</button>';
+                instructions += `<br><button onclick="location.reload()" style="margin-top: 10px; padding: 10px 20px; background: ${this.brandColor}; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Retry</button>`;
                 instructions += '</div>';
                 break;
             default:
@@ -1094,7 +1139,7 @@ class NavigationApp {
             instructions += 'Make sure location services are enabled on your device.';
         }
         
-        instructions += '<br><button onclick="location.reload()" style="margin-top: 10px; padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Reload Page</button>';
+        instructions += `<br><button onclick="location.reload()" style="margin-top: 10px; padding: 10px 20px; background: ${this.brandColor}; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold;">Reload Page</button>`;
         instructions += '</div>';
         
         return instructions;
@@ -1151,6 +1196,9 @@ class NavigationApp {
             this.pedestrianPathPolyline = null;
         }
         
+        // Remove office marker
+        this.hideAllOfficeMarkers();
+
         this.selectedOffice = null;
         this.selectedEntrance = null; // Clear selected entrance
         this.lastRouteUpdatePosition = null; // Reset route tracking
@@ -1449,8 +1497,8 @@ class NavigationApp {
                     <circle cx="30" cy="30" r="28" fill="rgba(44, 44, 44, 0.95)" stroke="white" stroke-width="2"/>
                     <!-- Arrow pointing up (will rotate) -->
                     <g id="arrow-pointer" filter="url(#arrow-shadow)">
-                        <path d="M 30 10 L 38 28 L 30 24 L 22 28 Z" fill="#4CAF50" stroke="white" stroke-width="1.5"/>
-                        <path d="M 30 24 L 30 42" stroke="#4CAF50" stroke-width="3"/>
+                        <path d="M 30 10 L 38 28 L 30 24 L 22 28 Z" fill="${this.brandColor}" stroke="white" stroke-width="1.5"/>
+                        <path d="M 30 24 L 30 42" stroke="${this.brandColor}" stroke-width="3"/>
                     </g>
                 </svg>
             </div>
