@@ -323,20 +323,34 @@ class NavigationApp {
             this.pedestrianPathPolyline = null;
         }
 
-        // Only draw if office has walking path
-        if (!office || !office.walkingPath || office.walkingPath.length < 2) {
+        if (!office) {
             return;
         }
 
-        // Get the walking path, potentially with dynamic endpoint for multi-entrance offices
-        let walkingPath;
-        if (closestEntrance && office.entrances && office.entrances.length > 1) {
-            walkingPath = this.getDynamicWalkingPath(office, closestEntrance);
-        } else {
-            walkingPath = office.walkingPath;
+        // Get the walking path, preferring entrance-specific paths when available
+        let walkingPath = null;
+
+        if (office.walkingPathsByEntrance && Object.keys(office.walkingPathsByEntrance).length > 0) {
+            let entranceIndex = -1;
+            if (closestEntrance) {
+                entranceIndex = this.findEntranceIndex(office, closestEntrance);
+            }
+
+            const pathKey = entranceIndex >= 0
+                ? String(entranceIndex)
+                : Object.keys(office.walkingPathsByEntrance)[0];
+
+            walkingPath = office.walkingPathsByEntrance[pathKey] || null;
+        } else if (office.walkingPath && office.walkingPath.length >= 2) {
+            // Fallback to legacy single walking path, with dynamic endpoint for multi-entrance offices
+            if (closestEntrance && office.entrances && office.entrances.length > 1) {
+                walkingPath = this.getDynamicWalkingPath(office, closestEntrance);
+            } else {
+                walkingPath = office.walkingPath;
+            }
         }
 
-        if (!walkingPath) {
+        if (!walkingPath || walkingPath.length < 2) {
             return;
         }
 
@@ -487,12 +501,49 @@ class NavigationApp {
     }
 
     /**
+     * Find the index of an entrance that matches provided coordinates within a small tolerance
+     * @param {Object} office - The office object
+     * @param {Object} entranceCoords - The entrance coordinates to match
+     * @param {number} toleranceMeters - Distance tolerance in meters
+     * @returns {number} The matching entrance index or -1 if not found
+     */
+    findEntranceIndex(office, entranceCoords, toleranceMeters = 1.5) {
+        if (!office || !office.entrances || !entranceCoords) {
+            return -1;
+        }
+
+        for (let i = 0; i < office.entrances.length; i++) {
+            const entrance = office.entrances[i];
+            const distance = this.calculateDistance(
+                entrance.lat, entrance.lng,
+                entranceCoords.lat, entranceCoords.lng
+            );
+
+            if (distance <= toleranceMeters) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
      * Get the dynamic walking path for an office based on closest entrance
      * @param {Object} office - The office object
      * @param {Object} closestEntrance - The closest entrance coordinates
      * @returns {Array} The walking path array
      */
     getDynamicWalkingPath(office, closestEntrance) {
+        if (office.walkingPathsByEntrance && closestEntrance) {
+            const entranceIndex = this.findEntranceIndex(office, closestEntrance);
+            if (entranceIndex >= 0) {
+                const walkingPath = office.walkingPathsByEntrance[String(entranceIndex)];
+                if (walkingPath && walkingPath.length >= 2) {
+                    return walkingPath;
+                }
+            }
+        }
+
         if (!office.walkingPath || office.walkingPath.length < 2) {
             return null;
         }
