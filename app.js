@@ -540,6 +540,13 @@ class NavigationApp {
         if (this.userMarker) {
             const userPos = this.userMarker.getLatLng();
             this.lastRouteUpdatePosition = { lat: userPos.lat, lng: userPos.lng };
+            
+            // Set entrance once when location becomes available
+            if (this.selectedOffice) {
+                this.selectedEntrance = this.findClosestEntrance(this.selectedOffice, { lat: userPos.lat, lng: userPos.lng });
+                this.drawPedestrianPath(this.selectedOffice, this.selectedEntrance);
+            }
+
             this.calculateRoute(userPos, this.pendingDestination.coords, this.pendingDestination.name, true);
             this.clearPendingDestination();
             return;
@@ -971,19 +978,6 @@ class NavigationApp {
             }
             
             if (shouldUpdate) {
-                // Update closest entrance for multi-entrance offices
-                if (this.selectedOffice.entrances && this.selectedOffice.entrances.length > 1) {
-                    const newClosestEntrance = this.findClosestEntrance(this.selectedOffice, userPos);
-                    // Check if entrance changed
-                    if (!this.selectedEntrance || 
-                        newClosestEntrance.lat !== this.selectedEntrance.lat || 
-                        newClosestEntrance.lng !== this.selectedEntrance.lng) {
-                        this.selectedEntrance = newClosestEntrance;
-                        // Redraw walking path with new entrance
-                        this.drawPedestrianPath(this.selectedOffice, this.selectedEntrance);
-                    }
-                }
-                
                 const destination = this.selectedOffice.panorama && this.selectedOffice.panorama.lat && this.selectedOffice.panorama.lng
                     ? [this.selectedOffice.panorama.lat, this.selectedOffice.panorama.lng]
                     : [this.selectedOffice.lat, this.selectedOffice.lng];
