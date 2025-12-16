@@ -674,11 +674,20 @@ class NavigationApp {
                 serviceUrl: 'https://router.project-osrm.org/route/v1',
                 profile: 'foot' // Walking profile
             }),
+            waypointMode: 'connect',
             routeWhileDragging: false,
             showAlternatives: false,
             addWaypoints: false,
             lineOptions: {
+                extendToWaypoints: true,
                 styles: [
+                    {
+                        color: this.brandColor,
+                        opacity: 0.8,
+                        weight: 5
+                    }
+                ],
+                missingRouteStyles: [
                     {
                         color: this.brandColor,
                         opacity: 0.8,
