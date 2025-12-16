@@ -471,26 +471,19 @@ body {
 /* Panorama Map Marker */
 .panorama-map-marker {
     cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.panorama-map-marker:hover {
-    transform: scale(1.1);
+    opacity: 1 !important;
+    animation: none !important;
+    transition: none;
 }
 
 .panorama-marker-inner {
-    animation: pulse 2s ease-in-out infinite;
+    opacity: 1;
+    animation: none;
+    transition: transform 0.2s ease;
 }
 
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.85;
-        transform: scale(1.05);
-    }
+.panorama-map-marker:hover .panorama-marker-inner {
+    transform: scale(1.1);
 }
 
 /* Street View Compass Overlay */
