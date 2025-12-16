@@ -32,6 +32,7 @@ class NavigationApp {
         this.pendingDestination = null;
         this.locationWaitTimeout = null;
         this.locationWaitStart = null;
+        this.selectedEntrance = null; // Current entrance for multi-entrance offices
         
         // Default building location (will be updated from offices.json)
         this.buildingCenter = {
@@ -273,7 +274,7 @@ class NavigationApp {
         });
     }
 
-    drawPedestrianPath(office) {
+    drawPedestrianPath(office, closestEntrance = null) {
         // Remove existing pedestrian path
         if (this.pedestrianPathPolyline) {
             this.map.removeLayer(this.pedestrianPathPolyline);
@@ -285,8 +286,20 @@ class NavigationApp {
             return;
         }
 
+        // Get the walking path, potentially with dynamic endpoint for multi-entrance offices
+        let walkingPath;
+        if (closestEntrance && office.entrances && office.entrances.length > 1) {
+            walkingPath = this.getDynamicWalkingPath(office, closestEntrance);
+        } else {
+            walkingPath = office.walkingPath;
+        }
+
+        if (!walkingPath) {
+            return;
+        }
+
         // Convert walking path to Leaflet LatLng array
-        const pathCoords = office.walkingPath.map(point => [point.lat, point.lng]);
+        const pathCoords = walkingPath.map(point => [point.lat, point.lng]);
 
         // Draw polyline with same style as main route (seamless extension)
         this.pedestrianPathPolyline = L.polyline(pathCoords, {
@@ -393,10 +406,71 @@ class NavigationApp {
         container.appendChild(item);
     }
 
+    /**
+     * Find the closest entrance to a given position for offices with multiple entrances
+     * @param {Object} office - The office object
+     * @param {Object} userPosition - The user's current position {lat, lng}
+     * @returns {Object} The closest entrance coordinates {lat, lng}
+     */
+    findClosestEntrance(office, userPosition) {
+        // If no entrances array, use the last point of walkingPath or office location
+        if (!office.entrances || office.entrances.length === 0) {
+            if (office.walkingPath && office.walkingPath.length > 0) {
+                return office.walkingPath[office.walkingPath.length - 1];
+            }
+            return { lat: office.lat, lng: office.lng };
+        }
+
+        // If only one entrance, return it
+        if (office.entrances.length === 1) {
+            return office.entrances[0];
+        }
+
+        // Find closest entrance to user position
+        let closestEntrance = office.entrances[0];
+        let minDistance = Infinity;
+
+        for (const entrance of office.entrances) {
+            const distance = this.calculateDistance(
+                userPosition.lat, userPosition.lng,
+                entrance.lat, entrance.lng
+            );
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestEntrance = entrance;
+            }
+        }
+
+        return closestEntrance;
+    }
+
+    /**
+     * Get the dynamic walking path for an office based on closest entrance
+     * @param {Object} office - The office object
+     * @param {Object} closestEntrance - The closest entrance coordinates
+     * @returns {Array} The walking path array
+     */
+    getDynamicWalkingPath(office, closestEntrance) {
+        if (!office.walkingPath || office.walkingPath.length < 2) {
+            return null;
+        }
+
+        // If office has multiple entrances, update the walking path endpoint
+        if (office.entrances && office.entrances.length > 1) {
+            // Copy the walking path and update the last point to the closest entrance
+            const dynamicPath = office.walkingPath.slice(0, -1);
+            dynamicPath.push(closestEntrance);
+            return dynamicPath;
+        }
+
+        return office.walkingPath;
+    }
+
     selectOffice(office) {
         this.closePanorama();
         this.clearPendingDestination();
         this.selectedOffice = office;
+        this.selectedEntrance = null; // Will be set when we have user position
         this.lastRouteEndpoint = null;
         this.updateDestinationPanel(office);
         this.lastRouteUpdatePosition = null; // Reset route update tracking
@@ -420,7 +494,6 @@ class NavigationApp {
         
         // Create panorama marker and pedestrian path
         this.createPanoramaMarker(office);
-        this.drawPedestrianPath(office);
         
         // Determine route destination: use panorama location if available, otherwise office location
         const destination = office.panorama && office.panorama.lat && office.panorama.lng
@@ -430,9 +503,17 @@ class NavigationApp {
         if (this.userMarker) {
             const userPos = this.userMarker.getLatLng();
             this.lastRouteUpdatePosition = { lat: userPos.lat, lng: userPos.lng };
+            
+            // Find closest entrance and update walking path
+            this.selectedEntrance = this.findClosestEntrance(office, { lat: userPos.lat, lng: userPos.lng });
+            this.drawPedestrianPath(office, this.selectedEntrance);
+            
             this.calculateRoute(userPos, destination, office.name, true);
             return;
         }
+
+        // Draw default walking path (will be updated when user position is available)
+        this.drawPedestrianPath(office, null);
 
         // Prepare to wait for location before starting navigation
         this.pendingDestination = {
@@ -890,6 +971,19 @@ class NavigationApp {
             }
             
             if (shouldUpdate) {
+                // Update closest entrance for multi-entrance offices
+                if (this.selectedOffice.entrances && this.selectedOffice.entrances.length > 1) {
+                    const newClosestEntrance = this.findClosestEntrance(this.selectedOffice, userPos);
+                    // Check if entrance changed
+                    if (!this.selectedEntrance || 
+                        newClosestEntrance.lat !== this.selectedEntrance.lat || 
+                        newClosestEntrance.lng !== this.selectedEntrance.lng) {
+                        this.selectedEntrance = newClosestEntrance;
+                        // Redraw walking path with new entrance
+                        this.drawPedestrianPath(this.selectedOffice, this.selectedEntrance);
+                    }
+                }
+                
                 const destination = this.selectedOffice.panorama && this.selectedOffice.panorama.lat && this.selectedOffice.panorama.lng
                     ? [this.selectedOffice.panorama.lat, this.selectedOffice.panorama.lng]
                     : [this.selectedOffice.lat, this.selectedOffice.lng];
@@ -1064,6 +1158,7 @@ class NavigationApp {
         }
         
         this.selectedOffice = null;
+        this.selectedEntrance = null; // Clear selected entrance
         this.lastRouteUpdatePosition = null; // Reset route tracking
         this.routeDestinationName = null;
         this.lastRouteEndpoint = null;
@@ -1239,10 +1334,38 @@ class NavigationApp {
                 return;
             }
 
+            // Determine the entrance coordinates for heading calculation
+            let entranceCoords;
+            if (this.selectedEntrance) {
+                // Use the dynamically selected closest entrance
+                entranceCoords = this.selectedEntrance;
+            } else if (destination.walkingPath && destination.walkingPath.length > 0) {
+                // Use the last point of walking path
+                entranceCoords = destination.walkingPath[destination.walkingPath.length - 1];
+            } else if (destination.entrances && destination.entrances.length > 0) {
+                // Use the first entrance
+                entranceCoords = destination.entrances[0];
+            } else {
+                // Fallback to office location
+                entranceCoords = { lat: destination.lat, lng: destination.lng };
+            }
+
+            // Calculate heading from panorama location to entrance
+            const panoPosition = data.location.latLng;
+            const dynamicHeading = this.calculateHeading(
+                panoPosition.lat(),
+                panoPosition.lng(),
+                entranceCoords.lat,
+                entranceCoords.lng
+            );
+
+            // Use panorama config heading as fallback, or calculated heading
+            const heading = panoramaConfig.heading !== undefined ? panoramaConfig.heading : dynamicHeading;
+
             this.googleStreetView = new google.maps.StreetViewPanorama(panoContainer, {
                 position: data.location.latLng,
                 pov: {
-                    heading: 90, // Face east
+                    heading: heading, // Face toward building entrance
                     pitch: -10 // Slight downward angle to see ground
                 },
                 zoom: panoramaConfig.zoom || 1,
@@ -1258,25 +1381,22 @@ class NavigationApp {
             });
             this.currentPanoramaProvider = 'google';
 
-            // Add fixed destination marker if walking path exists
-            if (destination.walkingPath && destination.walkingPath.length > 0) {
-                const destinationCoords = destination.walkingPath[destination.walkingPath.length - 1];
-                console.log('[Street View] Adding destination marker at:', destinationCoords);
-                // Wait for panorama to be ready before adding marker
-                this.googleStreetView.addListener('status_changed', () => {
-                    if (this.googleStreetView.getStatus() === google.maps.StreetViewStatus.OK) {
-                        console.log('[Street View] Panorama ready, adding marker');
-                        this.addFixedDestinationMarker(this.googleStreetView, destinationCoords, panoContainer);
-                    }
-                });
-                // Also try immediately in case it's already ready
-                setTimeout(() => {
-                    if (this.googleStreetView.getStatus() === google.maps.StreetViewStatus.OK) {
-                        console.log('[Street View] Panorama already ready, adding marker');
-                        this.addFixedDestinationMarker(this.googleStreetView, destinationCoords, panoContainer);
-                    }
-                }, 500);
-            }
+            // Add fixed destination marker pointing to entrance
+            console.log('[Street View] Adding destination marker at:', entranceCoords);
+            // Wait for panorama to be ready before adding marker
+            this.googleStreetView.addListener('status_changed', () => {
+                if (this.googleStreetView.getStatus() === google.maps.StreetViewStatus.OK) {
+                    console.log('[Street View] Panorama ready, adding marker');
+                    this.addFixedDestinationMarker(this.googleStreetView, entranceCoords, panoContainer);
+                }
+            });
+            // Also try immediately in case it's already ready
+            setTimeout(() => {
+                if (this.googleStreetView.getStatus() === google.maps.StreetViewStatus.OK) {
+                    console.log('[Street View] Panorama already ready, adding marker');
+                    this.addFixedDestinationMarker(this.googleStreetView, entranceCoords, panoContainer);
+                }
+            }, 500);
         });
     }
 
