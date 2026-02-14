@@ -15,6 +15,7 @@ Make sure you have all these files ready:
 - ✅ `index.html`
 - ✅ `styles.css`
 - ✅ `app.js`
+- ✅ `app-config.js`
 - ✅ `offices.json`
 - ✅ `README.md` (optional)
 - ✅ `qr-code-info.md` (optional)
@@ -22,6 +23,8 @@ Make sure you have all these files ready:
 
 **Important Notes:**
 - Make sure your `offices.json` file has the correct coordinates
+- Set your Google Maps key in `app-config.js` (used for 360° Street View)
+- Restrict that key to Maps JavaScript API + your allowed HTTP referrer domains
 - GitHub Pages automatically provides HTTPS, which is required for geolocation to work
 - The `_headers` file is not needed for GitHub Pages (it's Netlify-specific)
 
@@ -50,6 +53,7 @@ Make sure you have all these files ready:
    - `index.html`
    - `styles.css`
    - `app.js`
+   - `app-config.js`
    - `offices.json`
    - `README.md` (if you want it)
    - `qr-code-info.md` (if you want it)

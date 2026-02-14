@@ -44,7 +44,24 @@ Edit `offices.json` with your actual office locations:
    - The building center (where to center the map)
    - Each office/unit location (where routes will navigate to)
 
-### 2. Test Locally
+### 2. Configure Google Maps key (for 360° view)
+
+The app now reads the Google Maps key from `app-config.js` instead of hardcoding it in `index.html`.
+
+1. Open `app-config.js`
+2. Set:
+```javascript
+window.APP_CONFIG = {
+  GOOGLE_MAPS_API_KEY: "YOUR_RESTRICTED_GOOGLE_MAPS_KEY"
+};
+```
+3. In Google Cloud Console, restrict this key by:
+   - API restrictions: Maps JavaScript API only
+   - Application restrictions: HTTP referrers for your domain(s)
+
+If this key is empty, core navigation still works and only 360° Street View is disabled.
+
+### 3. Test Locally
 
 Since the Geolocation API requires HTTPS, you have a few options:
 
@@ -61,7 +78,7 @@ npx http-server --ssl --cert cert.pem --key key.pem
 - Deploy to a free hosting service (see below)
 - Access from your phone to test
 
-### 3. Deploy
+### 4. Deploy
 
 **GitHub Pages (Recommended - Free)**
 1. Create a repository on GitHub
@@ -75,7 +92,7 @@ npx http-server --ssl --cert cert.pem --key key.pem
 - Any static hosting service that supports HTTPS
 - GitHub Pages is recommended because it's free, provides HTTPS automatically, and makes updates easy
 
-### 4. Generate QR Code
+### 5. Generate QR Code
 
 1. Get your deployed URL (e.g., `https://yourusername.github.io/repository-name/`)
 2. Use a free QR code generator:
@@ -91,6 +108,8 @@ QRLocation/
 ├── index.html          # Main HTML file
 ├── styles.css          # Styles and mobile responsiveness
 ├── app.js              # Application logic
+├── app-config.js       # Runtime config (Google Maps key)
+├── app-config.example.js # Example config template
 ├── offices.json        # Office location data
 ├── README.md           # This file
 ├── DEPLOYMENT.md       # Deployment guide

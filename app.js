@@ -34,6 +34,8 @@ class NavigationApp {
         this.locationWaitStart = null;
         this.selectedEntrance = null; // Current entrance for multi-entrance offices
         this.brandColor = '#414b43';
+        this.maxExpectedRouteDistanceMeters = 50000;
+        this.googleMapsApiLoadPromise = null;
         this.officeMarkers = new Map(); // Cache of office markers (not shown by default)
         this.activeOfficeMarker = null;
         
@@ -217,6 +219,39 @@ class NavigationApp {
         return `${office.name}${unitPart}`;
     }
 
+    getBaseOfficeName(office) {
+        if (!office || typeof office.name !== 'string') {
+            return '';
+        }
+
+        const rawName = office.name.trim();
+        if (!office.unit) {
+            return rawName;
+        }
+
+        const unitSuffixMatch = rawName.match(/\(\s*Unit\s+([^\)]+)\s*\)$/i);
+        if (!unitSuffixMatch) {
+            return rawName;
+        }
+
+        const matchedUnit = unitSuffixMatch[1].trim().toLowerCase();
+        const expectedUnit = String(office.unit).trim().toLowerCase();
+        if (matchedUnit !== expectedUnit) {
+            return rawName;
+        }
+
+        return rawName.replace(/\s*\(\s*Unit\s+[^\)]+\s*\)$/i, '').trim();
+    }
+
+    formatOfficeLabel(office, separator = ' - ') {
+        const baseName = this.getBaseOfficeName(office);
+        if (!office || !office.unit) {
+            return baseName;
+        }
+
+        return `Unit ${office.unit}${separator}${baseName}`;
+    }
+
     createOfficeMarker(office) {
         const icon = L.divIcon({
             className: 'office-marker',
@@ -226,7 +261,7 @@ class NavigationApp {
         });
 
         const marker = L.marker([office.lat, office.lng], { icon });
-        const popupContent = `<strong>${office.name}</strong>${office.unit ? ` (Unit ${office.unit})` : ''}${office.description ? `<br>${office.description}` : ''}`;
+        const popupContent = `<strong>${this.formatOfficeLabel(office)}</strong>${office.description ? `<br>${office.description}` : ''}`;
         marker.bindPopup(popupContent);
         return marker;
     }
@@ -445,9 +480,9 @@ class NavigationApp {
         const item = document.createElement('div');
         item.className = 'search-result-item';
         
-        const displayName = office.unit 
-            ? `<span style="font-weight: 700; color: #2c2c2c;">Unit ${office.unit}:</span> ${office.name}` 
-            : office.name;
+        const displayName = office.unit
+            ? `<span style="font-weight: 700; color: #2c2c2c;">Unit ${office.unit}:</span> ${this.getBaseOfficeName(office)}`
+            : this.getBaseOfficeName(office);
 
         item.innerHTML = `
             <div class="search-result-name">${displayName}</div>
@@ -456,7 +491,7 @@ class NavigationApp {
         
         item.addEventListener('click', () => {
             this.selectOffice(office);
-            document.getElementById('officeSearch').value = office.name;
+            document.getElementById('officeSearch').value = this.formatOfficeLabel(office);
             document.getElementById('searchResults').classList.remove('active');
         });
         container.appendChild(item);
@@ -757,6 +792,12 @@ class NavigationApp {
             const distanceMeters = route.summary.totalDistance;
             const durationSeconds = route.summary.totalTime;
             this.setRouteSummary(distanceMeters, durationSeconds);
+
+            if (distanceMeters > this.maxExpectedRouteDistanceMeters) {
+                this.showStatus('Your location appears far from this building. Enable precise location and try again.');
+                return;
+            }
+
             const endpoint = route.coordinates[route.coordinates.length - 1];
             if (endpoint) {
                 this.lastRouteEndpoint = { lat: endpoint.lat, lng: endpoint.lng };
@@ -871,7 +912,7 @@ class NavigationApp {
         } else if (browser === 'android') {
             instructions = 
                 '<h3>Enable Location for Android</h3>' +
-                '<div style="text-align: left; font-size: 14px; line-height: 1.8%;">' +
+                '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
                 '1. Tap the <strong>menu icon</strong> (3 dots) in your browser<br>' +
                 '2. Go to <strong>Settings</strong> -> <strong>Site settings</strong><br>' +
                 '3. Find this website and enable <strong>Location</strong> permissions<br><br>' +
@@ -904,7 +945,7 @@ class NavigationApp {
         } else {
             instructions = 
                 '<h3>Enable Location</h3>' +
-                '<div style="text-align: left; font-size: 14px; line-height: 1.8%;">' +
+                '<div style="text-align: left; font-size: 14px; line-height: 1.8;">' +
                 '1. Check your browser settings for location permissions<br>' +
                 '2. Ensure location services are enabled on your device<br><br>' +
                 '<button id="enableLocationBtn" class="enable-location-btn">Try Again</button>' +
@@ -1299,9 +1340,7 @@ class NavigationApp {
             return;
         }
 
-        const nameText = office.unit
-            ? `Unit ${office.unit} - ${office.name}`
-            : office.name;
+        const nameText = this.formatOfficeLabel(office);
 
         this.destinationPanel.style.display = 'flex';
         this.destinationNameEl.textContent = nameText;
@@ -1312,6 +1351,11 @@ class NavigationApp {
 
     setRouteSummary(distanceMeters, durationSeconds) {
         if (!this.destinationRouteEl || !this.selectedOffice) {
+            return;
+        }
+
+        if (distanceMeters > this.maxExpectedRouteDistanceMeters) {
+            this.destinationRouteEl.textContent = 'Location too far';
             return;
         }
 
@@ -1384,9 +1428,67 @@ class NavigationApp {
         }
     }
 
-    openGooglePanorama(destination, panoramaConfig) {
-        if (!(window.google && window.google.maps && window.google.maps.StreetViewService)) {
-            this.showStatus('360° view requires Google Maps API key. Configure and reload.');
+    getGoogleMapsApiKey() {
+        if (!window.APP_CONFIG || typeof window.APP_CONFIG !== 'object') {
+            return '';
+        }
+
+        const key = window.APP_CONFIG.GOOGLE_MAPS_API_KEY || window.APP_CONFIG.googleMapsApiKey;
+        return typeof key === 'string' ? key.trim() : '';
+    }
+
+    async ensureGoogleMapsApiLoaded() {
+        if (window.google && window.google.maps && window.google.maps.StreetViewService) {
+            return true;
+        }
+
+        const apiKey = this.getGoogleMapsApiKey();
+        if (!apiKey) {
+            this.showStatus('Google Maps key missing. Set APP_CONFIG.GOOGLE_MAPS_API_KEY in app-config.js');
+            return false;
+        }
+
+        if (this.googleMapsApiLoadPromise) {
+            try {
+                await this.googleMapsApiLoadPromise;
+            } catch (error) {
+                return false;
+            }
+            return !!(window.google && window.google.maps && window.google.maps.StreetViewService);
+        }
+
+        this.googleMapsApiLoadPromise = new Promise((resolve, reject) => {
+            const existingScript = document.querySelector('script[data-google-maps-api="true"]');
+            if (existingScript) {
+                existingScript.addEventListener('load', () => resolve(), { once: true });
+                existingScript.addEventListener('error', () => reject(new Error('Google Maps API failed to load')), { once: true });
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(apiKey)}&loading=async`;
+            script.async = true;
+            script.defer = true;
+            script.dataset.googleMapsApi = 'true';
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error('Google Maps API failed to load'));
+            document.head.appendChild(script);
+        });
+
+        try {
+            await this.googleMapsApiLoadPromise;
+            return !!(window.google && window.google.maps && window.google.maps.StreetViewService);
+        } catch (error) {
+            console.error('Google Maps API load error:', error);
+            this.googleMapsApiLoadPromise = null;
+            this.showStatus('Unable to load Google Maps 360° view. Check API key and network.');
+            return false;
+        }
+    }
+
+    async openGooglePanorama(destination, panoramaConfig) {
+        const isLoaded = await this.ensureGoogleMapsApiLoaded();
+        if (!isLoaded || !(window.google && window.google.maps && window.google.maps.StreetViewService)) {
             this.closePanorama();
             return;
         }

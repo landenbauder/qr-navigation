@@ -1,3 +1,12 @@
 {
-    "chatgpt.openOnStartup": false
+    "chatgpt.openOnStartup": false,
+    "chat.agent.enabled": true,
+    "chat.viewSessions.enabled": true,
+    "chat.agentsControl.enabled": true,
+    "chat.agentFilesLocations": [
+        "agents"
+    ],
+    "chat.promptFilesLocations": [
+        "prompts"
+    ]
 }
