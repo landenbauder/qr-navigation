@@ -1,35 +1,22 @@
 ---
-description: Reproduce, fix, and verify a bug with minimal code changes.
+name: bugfix
+description: Reproduce and fix a bug with minimal changes.
 agent: agent
 ---
 
-# Bug fix request
+# Bugfix
 
-Bug report:
-{{input:Describe the bug and expected behavior}}
+${input:bug:Describe the bug}
+Fix this bug with a minimal patch.
 
-Context:
-- Affected files or symbols: {{input:Optional file/symbol hints}}
-- Reproduction steps: {{input:How to reproduce}}
-
-Constraints:
-- Fix root cause, not just symptoms.
-- Keep patch small and avoid unrelated refactors.
-- Preserve existing behavior outside bug scope.
-- Do not add frameworks or tooling.
-
-Execution steps:
-1. Confirm likely root cause from current code.
-2. Apply the smallest correct fix.
-3. Validate with targeted checks and/or reproduction steps.
-4. Update docs only if user-visible behavior changed.
+Include:
+- root cause
+- files changed
+- verification steps
+Expected behavior:
+${input:expected:What should happen}
 
 Success criteria:
-{{input:What must be true for this to be considered fixed}}
+${input:success:How you will verify it is fixed}
 
-Output format:
-- Root cause
-- Fix implemented
-- Files changed
-- Verification steps and results
-- Remaining risks (if any)
+Fix root cause, keep patch minimal, avoid unrelated refactors, and report verification steps.

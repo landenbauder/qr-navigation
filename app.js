@@ -33,6 +33,8 @@ class NavigationApp {
         this.locationWaitTimeout = null;
         this.locationWaitStart = null;
         this.selectedEntrance = null; // Current entrance for multi-entrance offices
+        this.activeRoutePlan = null;
+        this.navigationNodeIndex = { panoramas: [], sidewalks: [] };
         this.brandColor = '#414b43';
         this.maxExpectedRouteDistanceMeters = 50000;
         this.googleMapsApiLoadPromise = null;
@@ -181,6 +183,7 @@ class NavigationApp {
             const response = await fetch('offices.json');
             const data = await response.json();
             this.offices = data.offices;
+            this.buildNavigationNodeIndex();
             
             // Set building center from first office or use provided center
             if (data.buildingCenter) {
@@ -196,6 +199,7 @@ class NavigationApp {
             this.showStatus('Error loading office locations.');
             // Use default empty data
             this.offices = [];
+            this.buildNavigationNodeIndex();
         }
     }
 
@@ -276,6 +280,284 @@ class NavigationApp {
         });
     }
 
+    buildNavigationNodeIndex() {
+        const panoramaNodes = [];
+        const sidewalkNodes = [];
+
+        this.offices.forEach(office => {
+            if (office.panorama && office.panorama.lat && office.panorama.lng) {
+                panoramaNodes.push({ lat: office.panorama.lat, lng: office.panorama.lng });
+            }
+
+            if (Array.isArray(office.walkingPath) && office.walkingPath.length >= 2) {
+                const firstPoint = office.walkingPath[0];
+                if (firstPoint && typeof firstPoint.lat === 'number' && typeof firstPoint.lng === 'number') {
+                    panoramaNodes.push({ lat: firstPoint.lat, lng: firstPoint.lng });
+                }
+
+                for (let index = 1; index < office.walkingPath.length - 1; index++) {
+                    const point = office.walkingPath[index];
+                    if (point && typeof point.lat === 'number' && typeof point.lng === 'number') {
+                        sidewalkNodes.push({ lat: point.lat, lng: point.lng });
+                    }
+                }
+            }
+
+            if (office.walkingPathsByEntrance && typeof office.walkingPathsByEntrance === 'object') {
+                Object.values(office.walkingPathsByEntrance).forEach(path => {
+                    if (!Array.isArray(path) || path.length < 2) {
+                        return;
+                    }
+
+                    const firstPoint = path[0];
+                    if (firstPoint && typeof firstPoint.lat === 'number' && typeof firstPoint.lng === 'number') {
+                        panoramaNodes.push({ lat: firstPoint.lat, lng: firstPoint.lng });
+                    }
+
+                    for (let index = 1; index < path.length - 1; index++) {
+                        const point = path[index];
+                        if (point && typeof point.lat === 'number' && typeof point.lng === 'number') {
+                            sidewalkNodes.push({ lat: point.lat, lng: point.lng });
+                        }
+                    }
+                });
+            }
+        });
+
+        this.navigationNodeIndex = {
+            panoramas: this.dedupeGeoPoints(panoramaNodes),
+            sidewalks: this.dedupeGeoPoints(sidewalkNodes)
+        };
+    }
+
+    dedupeGeoPoints(points, precision = 7) {
+        const uniquePoints = [];
+        const seen = new Set();
+
+        points.forEach(point => {
+            if (!point || typeof point.lat !== 'number' || typeof point.lng !== 'number') {
+                return;
+            }
+
+            const key = `${point.lat.toFixed(precision)}:${point.lng.toFixed(precision)}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniquePoints.push({ lat: point.lat, lng: point.lng });
+            }
+        });
+
+        return uniquePoints;
+    }
+
+    toMeters(point, referenceLatitude) {
+        const latToMeters = 110540;
+        const lngToMeters = 111320 * Math.cos(referenceLatitude * Math.PI / 180);
+        return {
+            x: point.lng * lngToMeters,
+            y: point.lat * latToMeters
+        };
+    }
+
+    distancePointToSegmentMeters(point, segmentStart, segmentEnd) {
+        const referenceLatitude = (segmentStart.lat + segmentEnd.lat) / 2;
+        const pointMeters = this.toMeters(point, referenceLatitude);
+        const startMeters = this.toMeters(segmentStart, referenceLatitude);
+        const endMeters = this.toMeters(segmentEnd, referenceLatitude);
+
+        const segmentDx = endMeters.x - startMeters.x;
+        const segmentDy = endMeters.y - startMeters.y;
+        const segmentLengthSquared = segmentDx * segmentDx + segmentDy * segmentDy;
+
+        if (segmentLengthSquared === 0) {
+            const dx = pointMeters.x - startMeters.x;
+            const dy = pointMeters.y - startMeters.y;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        const projection = ((pointMeters.x - startMeters.x) * segmentDx + (pointMeters.y - startMeters.y) * segmentDy) / segmentLengthSquared;
+        const clampedProjection = Math.max(0, Math.min(1, projection));
+
+        const closestX = startMeters.x + clampedProjection * segmentDx;
+        const closestY = startMeters.y + clampedProjection * segmentDy;
+        const dx = pointMeters.x - closestX;
+        const dy = pointMeters.y - closestY;
+
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    calculatePathSmoothnessScore(pathPoints) {
+        if (!Array.isArray(pathPoints) || pathPoints.length < 3) {
+            return Infinity;
+        }
+
+        const panoramaPoint = pathPoints[0];
+        const entrancePoint = pathPoints[pathPoints.length - 1];
+        let totalDistance = 0;
+
+        for (let index = 0; index < pathPoints.length - 1; index++) {
+            const current = pathPoints[index];
+            const next = pathPoints[index + 1];
+            totalDistance += this.calculateDistance(current.lat, current.lng, next.lat, next.lng);
+        }
+
+        const directDistance = this.calculateDistance(
+            panoramaPoint.lat,
+            panoramaPoint.lng,
+            entrancePoint.lat,
+            entrancePoint.lng
+        );
+
+        const keySidewalkPoint = pathPoints.length >= 3 ? pathPoints[1] : entrancePoint;
+        const segmentOffset = this.distancePointToSegmentMeters(keySidewalkPoint, panoramaPoint, entrancePoint);
+        const detourPenalty = Math.max(0, totalDistance - directDistance);
+
+        return totalDistance + detourPenalty * 2 + segmentOffset * 1.2;
+    }
+
+    findBestPanoramaAndSidewalk(entrancePoint, fallbackPath = null) {
+        if (!entrancePoint) {
+            return null;
+        }
+
+        const fallbackPanorama = Array.isArray(fallbackPath) && fallbackPath.length >= 1 ? fallbackPath[0] : null;
+        const fallbackSidewalk = Array.isArray(fallbackPath) && fallbackPath.length >= 2 ? fallbackPath[1] : null;
+
+        const panoramaCandidates = this.dedupeGeoPoints([
+            ...this.navigationNodeIndex.panoramas,
+            ...(fallbackPanorama ? [fallbackPanorama] : [])
+        ]);
+
+        const sidewalkCandidates = this.dedupeGeoPoints([
+            ...this.navigationNodeIndex.sidewalks,
+            ...(fallbackSidewalk ? [fallbackSidewalk] : [])
+        ]);
+
+        if (panoramaCandidates.length === 0 || sidewalkCandidates.length === 0) {
+            return null;
+        }
+
+        const nearestPanoramaCandidates = panoramaCandidates
+            .map(point => ({
+                point,
+                distanceToEntrance: this.calculateDistance(point.lat, point.lng, entrancePoint.lat, entrancePoint.lng)
+            }))
+            .sort((left, right) => left.distanceToEntrance - right.distanceToEntrance)
+            .slice(0, 5);
+
+        let bestCandidate = null;
+
+        nearestPanoramaCandidates.forEach(panoramaCandidate => {
+            const panoramaPoint = panoramaCandidate.point;
+            const directDistance = panoramaCandidate.distanceToEntrance;
+
+            sidewalkCandidates.forEach(sidewalkPoint => {
+                const distancePanoramaToSidewalk = this.calculateDistance(
+                    panoramaPoint.lat,
+                    panoramaPoint.lng,
+                    sidewalkPoint.lat,
+                    sidewalkPoint.lng
+                );
+                const distanceSidewalkToEntrance = this.calculateDistance(
+                    sidewalkPoint.lat,
+                    sidewalkPoint.lng,
+                    entrancePoint.lat,
+                    entrancePoint.lng
+                );
+
+                const totalDistance = distancePanoramaToSidewalk + distanceSidewalkToEntrance;
+                const detourPenalty = Math.max(0, totalDistance - directDistance);
+                const segmentOffset = this.distancePointToSegmentMeters(sidewalkPoint, panoramaPoint, entrancePoint);
+
+                let score = totalDistance + detourPenalty * 2 + segmentOffset * 1.2;
+
+                if (distanceSidewalkToEntrance > directDistance * 1.2) {
+                    score += 80;
+                }
+
+                if (distancePanoramaToSidewalk > directDistance * 1.5) {
+                    score += 40;
+                }
+
+                if (!bestCandidate || score < bestCandidate.score) {
+                    bestCandidate = {
+                        panorama: { lat: panoramaPoint.lat, lng: panoramaPoint.lng },
+                        sidewalk: { lat: sidewalkPoint.lat, lng: sidewalkPoint.lng },
+                        score
+                    };
+                }
+            });
+        });
+
+        return bestCandidate;
+    }
+
+    resolveOfficeNavigationPlan(office, userPosition = null) {
+        if (!office) {
+            return null;
+        }
+
+        const entrance = userPosition
+            ? this.findClosestEntrance(office, userPosition)
+            : this.findClosestEntrance(office, { lat: office.lat, lng: office.lng });
+
+        const fallbackPath = this.getDynamicWalkingPath(office, entrance);
+        const bestCandidate = this.findBestPanoramaAndSidewalk(entrance, fallbackPath);
+
+        let selectedPath = fallbackPath && fallbackPath.length >= 2
+            ? fallbackPath.map(point => ({ lat: point.lat, lng: point.lng }))
+            : null;
+
+        if (bestCandidate) {
+            const candidatePath = [bestCandidate.panorama, bestCandidate.sidewalk, entrance];
+            const candidateScore = this.calculatePathSmoothnessScore(candidatePath);
+            const fallbackScore = this.calculatePathSmoothnessScore(selectedPath);
+            const hasEntranceSpecificPaths = !!(office.walkingPathsByEntrance && Object.keys(office.walkingPathsByEntrance).length > 0);
+            const improvementThreshold = hasEntranceSpecificPaths ? 20 : 3;
+
+            if (!selectedPath || candidateScore + improvementThreshold < fallbackScore) {
+                selectedPath = candidatePath;
+            }
+        }
+
+        if (!selectedPath || selectedPath.length < 2) {
+            if (office.panorama && office.panorama.lat && office.panorama.lng) {
+                selectedPath = [
+                    { lat: office.panorama.lat, lng: office.panorama.lng },
+                    entrance
+                ];
+            } else {
+                selectedPath = [
+                    { lat: office.lat, lng: office.lng },
+                    entrance
+                ];
+            }
+        }
+
+        const panoramaPoint = selectedPath[0] || (
+            office.panorama && office.panorama.lat && office.panorama.lng
+                ? { lat: office.panorama.lat, lng: office.panorama.lng }
+                : { lat: office.lat, lng: office.lng }
+        );
+
+        return {
+            entrance,
+            panorama: { lat: panoramaPoint.lat, lng: panoramaPoint.lng },
+            walkingPath: selectedPath
+        };
+    }
+
+    getRouteDestinationCoords(office) {
+        if (this.activeRoutePlan && this.activeRoutePlan.panorama) {
+            return [this.activeRoutePlan.panorama.lat, this.activeRoutePlan.panorama.lng];
+        }
+
+        if (office && office.panorama && office.panorama.lat && office.panorama.lng) {
+            return [office.panorama.lat, office.panorama.lng];
+        }
+
+        return office ? [office.lat, office.lng] : null;
+    }
+
     showOfficeMarker(office) {
         // Hide current active marker
         if (this.activeOfficeMarker) {
@@ -304,7 +586,7 @@ class NavigationApp {
         this.activeOfficeMarker = null;
     }
 
-    createPanoramaMarker(office) {
+    createPanoramaMarker(office, panoramaPoint = null) {
         // Remove existing panorama marker
         if (this.panoramaMarker) {
             this.map.removeLayer(this.panoramaMarker);
@@ -312,7 +594,13 @@ class NavigationApp {
         }
 
         // Only create marker if office has panorama config
-        if (!office || !office.panorama || !office.panorama.lat || !office.panorama.lng) {
+        const resolvedPanorama = panoramaPoint || (
+            office && office.panorama && office.panorama.lat && office.panorama.lng
+                ? { lat: office.panorama.lat, lng: office.panorama.lng }
+                : null
+        );
+
+        if (!office || !resolvedPanorama) {
             return;
         }
 
@@ -332,7 +620,7 @@ class NavigationApp {
         });
 
         // Add marker to map
-        this.panoramaMarker = L.marker([office.panorama.lat, office.panorama.lng], {
+        this.panoramaMarker = L.marker([resolvedPanorama.lat, resolvedPanorama.lng], {
             icon: icon360,
             zIndexOffset: 1000 // Keep it above other markers
         }).addTo(this.map);
@@ -351,7 +639,7 @@ class NavigationApp {
         });
     }
 
-    drawPedestrianPath(office, closestEntrance = null) {
+    drawPedestrianPath(office, closestEntrance = null, pathOverride = null) {
         // Remove existing pedestrian path
         if (this.pedestrianPathPolyline) {
             this.map.removeLayer(this.pedestrianPathPolyline);
@@ -362,10 +650,11 @@ class NavigationApp {
             return;
         }
 
-        // Get the walking path, preferring entrance-specific paths when available
-        let walkingPath = null;
-
-        if (office.walkingPathsByEntrance && Object.keys(office.walkingPathsByEntrance).length > 0) {
+        // Get the walking path, preferring override path when available
+        let walkingPath = pathOverride && Array.isArray(pathOverride)
+            ? pathOverride
+            : null;
+        if (!walkingPath && office.walkingPathsByEntrance && Object.keys(office.walkingPathsByEntrance).length > 0) {
             let entranceIndex = -1;
             if (closestEntrance) {
                 entranceIndex = this.findEntranceIndex(office, closestEntrance);
@@ -376,7 +665,7 @@ class NavigationApp {
                 : Object.keys(office.walkingPathsByEntrance)[0];
 
             walkingPath = office.walkingPathsByEntrance[pathKey] || null;
-        } else if (office.walkingPath && office.walkingPath.length >= 2) {
+        } else if (!walkingPath && office.walkingPath && office.walkingPath.length >= 2) {
             // Fallback to legacy single walking path, with dynamic endpoint for multi-entrance offices
             if (closestEntrance && office.entrances && office.entrances.length > 1) {
                 walkingPath = this.getDynamicWalkingPath(office, closestEntrance);
@@ -599,6 +888,7 @@ class NavigationApp {
         this.clearPendingDestination();
         this.selectedOffice = office;
         this.selectedEntrance = null; // Will be set when we have user position
+        this.activeRoutePlan = null;
         this.lastRouteEndpoint = null;
         this.updateDestinationPanel(office);
         this.lastRouteUpdatePosition = null; // Reset route update tracking
@@ -623,32 +913,38 @@ class NavigationApp {
         // Show only the selected office marker
         this.showOfficeMarker(office);
 
+        const currentUserPosition = this.userMarker
+            ? this.userMarker.getLatLng()
+            : null;
+
+        this.activeRoutePlan = this.resolveOfficeNavigationPlan(
+            office,
+            currentUserPosition ? { lat: currentUserPosition.lat, lng: currentUserPosition.lng } : null
+        );
+        this.selectedEntrance = this.activeRoutePlan ? this.activeRoutePlan.entrance : null;
+
         // Create panorama marker and pedestrian path
-        this.createPanoramaMarker(office);
-        
-        // Determine route destination: use panorama location if available, otherwise office location
-        const destination = office.panorama && office.panorama.lat && office.panorama.lng
-            ? [office.panorama.lat, office.panorama.lng]
-            : [office.lat, office.lng];
+        this.createPanoramaMarker(office, this.activeRoutePlan ? this.activeRoutePlan.panorama : null);
+        this.drawPedestrianPath(office, this.selectedEntrance, this.activeRoutePlan ? this.activeRoutePlan.walkingPath : null);
+
+        const destination = this.getRouteDestinationCoords(office);
         
         if (this.userMarker) {
             const userPos = this.userMarker.getLatLng();
             this.lastRouteUpdatePosition = { lat: userPos.lat, lng: userPos.lng };
+
+            this.activeRoutePlan = this.resolveOfficeNavigationPlan(office, { lat: userPos.lat, lng: userPos.lng });
+            this.selectedEntrance = this.activeRoutePlan ? this.activeRoutePlan.entrance : this.selectedEntrance;
+            this.createPanoramaMarker(office, this.activeRoutePlan ? this.activeRoutePlan.panorama : null);
+            this.drawPedestrianPath(office, this.selectedEntrance, this.activeRoutePlan ? this.activeRoutePlan.walkingPath : null);
             
-            // Find closest entrance and update walking path
-            this.selectedEntrance = this.findClosestEntrance(office, { lat: userPos.lat, lng: userPos.lng });
-            this.drawPedestrianPath(office, this.selectedEntrance);
-            
-            this.calculateRoute(userPos, destination, office.name, true);
+            this.calculateRoute(userPos, this.getRouteDestinationCoords(office), office.name, true);
             return;
         }
 
-        // Draw default walking path (will be updated when user position is available)
-        this.drawPedestrianPath(office, null);
-
         // Prepare to wait for location before starting navigation
         this.pendingDestination = {
-            coords: destination,
+            coords: this.getRouteDestinationCoords(office),
             name: office.name
         };
         this.locationWaitStart = null;
@@ -674,8 +970,11 @@ class NavigationApp {
             
             // Set entrance once when location becomes available
             if (this.selectedOffice) {
-                this.selectedEntrance = this.findClosestEntrance(this.selectedOffice, { lat: userPos.lat, lng: userPos.lng });
-                this.drawPedestrianPath(this.selectedOffice, this.selectedEntrance);
+                this.activeRoutePlan = this.resolveOfficeNavigationPlan(this.selectedOffice, { lat: userPos.lat, lng: userPos.lng });
+                this.selectedEntrance = this.activeRoutePlan ? this.activeRoutePlan.entrance : this.selectedEntrance;
+                this.createPanoramaMarker(this.selectedOffice, this.activeRoutePlan ? this.activeRoutePlan.panorama : null);
+                this.drawPedestrianPath(this.selectedOffice, this.selectedEntrance, this.activeRoutePlan ? this.activeRoutePlan.walkingPath : null);
+                this.pendingDestination.coords = this.getRouteDestinationCoords(this.selectedOffice);
             }
 
             this.calculateRoute(userPos, this.pendingDestination.coords, this.pendingDestination.name, true);
@@ -1124,9 +1423,7 @@ class NavigationApp {
             }
             
             if (shouldUpdate) {
-                const destination = this.selectedOffice.panorama && this.selectedOffice.panorama.lat && this.selectedOffice.panorama.lng
-                    ? [this.selectedOffice.panorama.lat, this.selectedOffice.panorama.lng]
-                    : [this.selectedOffice.lat, this.selectedOffice.lng];
+                const destination = this.getRouteDestinationCoords(this.selectedOffice);
                 this.calculateRoute(userPos, destination, this.selectedOffice.name, false);
             }
         }
@@ -1302,6 +1599,7 @@ class NavigationApp {
 
         this.selectedOffice = null;
         this.selectedEntrance = null; // Clear selected entrance
+        this.activeRoutePlan = null;
         this.lastRouteUpdatePosition = null; // Reset route tracking
         this.routeDestinationName = null;
         this.lastRouteEndpoint = null;
@@ -1502,9 +1800,15 @@ class NavigationApp {
         panoContainer.style.position = 'relative';
         this.panoOverlay.appendChild(panoContainer);
         
-        // Use panorama-specific coordinates if available, otherwise use route endpoint or office location
+        // Use dynamically selected panorama coordinates when available,
+        // otherwise use office panorama config, route endpoint, or office location
         let location;
-        if (panoramaConfig.lat && panoramaConfig.lng) {
+        if (this.activeRoutePlan && this.activeRoutePlan.panorama) {
+            location = {
+                lat: this.activeRoutePlan.panorama.lat,
+                lng: this.activeRoutePlan.panorama.lng
+            };
+        } else if (panoramaConfig.lat && panoramaConfig.lng) {
             // Use dedicated panorama coordinates (on street)
             location = { lat: panoramaConfig.lat, lng: panoramaConfig.lng };
         } else if (this.lastRouteEndpoint) {
@@ -1563,8 +1867,10 @@ class NavigationApp {
                 entranceCoords.lng
             );
 
-            // Use panorama config heading as fallback, or calculated heading
-            const heading = panoramaConfig.heading !== undefined ? panoramaConfig.heading : dynamicHeading;
+            // Prefer dynamic heading when an active route plan is in use
+            const heading = (this.activeRoutePlan && this.activeRoutePlan.panorama)
+                ? dynamicHeading
+                : (panoramaConfig.heading !== undefined ? panoramaConfig.heading : dynamicHeading);
 
             this.googleStreetView = new google.maps.StreetViewPanorama(panoContainer, {
                 position: data.location.latLng,

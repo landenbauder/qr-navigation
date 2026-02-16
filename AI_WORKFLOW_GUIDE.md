@@ -82,9 +82,9 @@ This workflow is designed for:
 ## What is already configured
 
 - Global project instructions: `copilot-instructions.md`
-- Reusable feature prompt: `prompts/feature.prompt.md`
-- Reusable bugfix prompt: `prompts/bugfix.prompt.md`
-- Focused reviewer agent: `agents/reviewer.agent.md`
+- Reusable feature prompt: `.github/prompts/feature.prompt.md`
+- Reusable bugfix prompt: `.github/prompts/bugfix.prompt.md`
+- Focused reviewer agent: `.github/agents/reviewer.agent.md`
 
 ---
 
