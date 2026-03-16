@@ -11,8 +11,13 @@ Use this section when you need the fastest possible reminder.
 - Tiny local edit in one function: Inline suggestions or Inline chat
 - New feature or scoped enhancement: `/feature`
 - Bug with repro steps: `/bugfix`
+- Add a new office location: `/add-office`
+- Generate mobile test checklist: `/test-mobile`
+- Pre-deployment verification: `/deploy`
 - Multi-file or medium/high risk: Ask/Plan first, then Agent mode
-- Before merge/deploy: Reviewer agent
+- Before merge/deploy: `@reviewer` agent
+- Office data pipeline work: `@data-manager` agent
+- Deployment readiness check: `@deployer` agent
 
 ### Daily default flow (short)
 
@@ -81,10 +86,27 @@ This workflow is designed for:
 
 ## What is already configured
 
-- Global project instructions: `copilot-instructions.md`
-- Reusable feature prompt: `.github/prompts/feature.prompt.md`
-- Reusable bugfix prompt: `.github/prompts/bugfix.prompt.md`
-- Focused reviewer agent: `.github/agents/reviewer.agent.md`
+All Copilot customization files live in `.github/`:
+
+### Workspace instructions
+- `.github/copilot-instructions.md` — Universal project rules (always loaded)
+
+### File-specific instructions (auto-loaded or on-demand)
+- `.github/instructions/javascript.instructions.md` — Auto-loads for `*.js` files
+- `.github/instructions/geolocation.instructions.md` — On-demand for GPS/map/routing work
+- `.github/instructions/office-data.instructions.md` — Auto-loads for `offices.json`, `generate-offices.js`, data files
+
+### Agents (persistent personas with tool restrictions)
+- `.github/agents/reviewer.agent.md` — Read-only code reviewer (`@reviewer`)
+- `.github/agents/data-manager.agent.md` — Office data pipeline manager (`@data-manager`)
+- `.github/agents/deployer.agent.md` — Deployment readiness advisor (`@deployer`)
+
+### Prompts (one-shot task templates via `/` command)
+- `.github/prompts/feature.prompt.md` — Implement a scoped feature (`/feature`)
+- `.github/prompts/bugfix.prompt.md` — Fix a bug with minimal changes (`/bugfix`)
+- `.github/prompts/add-office.prompt.md` — Add a new office to the system (`/add-office`)
+- `.github/prompts/test-mobile.prompt.md` — Generate mobile testing checklist (`/test-mobile`)
+- `.github/prompts/deploy.prompt.md` — Pre-deployment checklist (`/deploy`)
 
 ---
 
@@ -236,18 +258,16 @@ Manual checklist template (copy/paste):
 
 ## Step 8) Run reviewer agent before merge/deploy
 
-Use the custom reviewer agent when:
+Use `@reviewer` when:
 - A feature is complete
 - A bugfix is ready
 - You are preparing deployment
 
-Ask it to return:
-- Verdict: pass / pass-with-notes / changes-requested
-- Prioritized findings
-- Minimal corrective actions
-- Final regression checklist
+It automatically returns: verdict, prioritized findings, minimal fixes, and regression checklist.
 
-This catches scope drift and hidden regressions.
+Other useful agents:
+- `@data-manager` — when you need to add/update offices or run the data pipeline
+- `@deployer` — when you need a deployment readiness check
 
 ---
 
@@ -403,8 +423,9 @@ Pattern: Overengineering
 
 Weekly or bi-weekly:
 - Prune instruction rules that are no longer needed
-- Add new recurring prompt patterns to prompts/
+- Add new recurring prompt patterns to `.github/prompts/`
 - Update reviewer checklist if new risk areas appear
+- Review file instructions in `.github/instructions/` for accuracy
 
 After major incidents:
 - Add a new acceptance criterion pattern

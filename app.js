@@ -1742,7 +1742,8 @@ class NavigationApp {
 
         const apiKey = this.getGoogleMapsApiKey();
         if (!apiKey) {
-            this.showStatus('Google Maps key missing. Set APP_CONFIG.GOOGLE_MAPS_API_KEY in app-config.js');
+            console.warn('Google Maps API key not configured. Set GOOGLE_MAPS_API_KEY in app-config.js');
+            this.showStatus('360° Street View is not available at this location.');
             return false;
         }
 
