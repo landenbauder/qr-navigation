@@ -78,8 +78,9 @@ For local development, `localhost` is enough. You do not need to push to GitHub 
 2. Run `Tasks: Run Task`.
 3. Choose `Serve QR Navigation Locally`.
 4. Your browser will open to `http://127.0.0.1:4173/`.
-5. Make edits, then refresh the page to see the updated files.
-6. Stop the server with `Ctrl+C` in the task terminal.
+5. For phone testing on the same Wi-Fi network, use the `LAN URL` printed in the terminal instead of `127.0.0.1`.
+6. Make edits, then refresh the page to see the updated files.
+7. Stop the server with `Ctrl+C` in the task terminal.
 
 **Manual local server**
 ```powershell
@@ -95,12 +96,13 @@ Optional custom port:
 - Local edits show up after a normal browser refresh because the app reads files directly from your workspace through the local server.
 - GitHub Pages will not reflect changes until you commit and push.
 - Testing on `127.0.0.1` or `localhost` is ideal for quick data checks, search behavior, and route rendering.
+- `127.0.0.1` on your phone points back to the phone itself. For mobile testing, open the PC's `LAN URL` from the terminal, such as `http://10.0.0.150:4173/`.
 - If you want to test the exact public deployment, push to `main` and then open the GitHub Pages URL.
 
 **Developer-only localhost testing**
 - Opening the app on `127.0.0.1` or `localhost` now shows the normal production search flow by default.
 - To enable local testing tools in VS Code, set `ENABLE_LOCAL_TEST_MODE: true` in `app-config.js`, then refresh the page.
-- You can also use the small lock button in the top-left corner and enter PIN `9719` to enable developer mode at runtime.
+- You can also use the small lock button and enter PIN `9719` to enable developer mode at runtime. On small screens it moves to the bottom-right corner so it stays clear of the search UI.
 - When that flag is on, the app starts in testing mode, shows the testing toolbar, and exposes the office tracing panel.
 - While testing mode is active, use the target button in the testing toolbar to arm map placement, then tap any point on the map to move the user marker and recalculate the route.
 - Set `ENABLE_LOCAL_TEST_MODE: false` again before publishing.

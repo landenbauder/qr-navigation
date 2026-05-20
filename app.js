@@ -1820,11 +1820,13 @@ class NavigationApp {
     }
 
     createOfficeMarkerIcon(office, expanded = false) {
+        const isNarrow = this.isNarrowViewport();
+
         return L.divIcon({
             className: 'office-marker',
             html: this.buildOfficeMarkerHtml(office, { expanded }),
-            iconSize: [420, 150],
-            iconAnchor: [18, 42]
+            iconSize: isNarrow ? [280, 100] : [420, 150],
+            iconAnchor: isNarrow ? [14, 34] : [18, 42]
         });
     }
 
@@ -2237,6 +2239,23 @@ class NavigationApp {
         return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
     }
 
+    isNarrowViewport() {
+        return typeof window !== 'undefined'
+            && typeof window.matchMedia === 'function'
+            && window.matchMedia('(max-width: 640px)').matches;
+    }
+
+    getEntranceMarkerIcon() {
+        const isNarrow = this.isNarrowViewport();
+
+        return L.divIcon({
+            className: 'map-banner-marker-anchor',
+            html: this.getMarkerBannerHtml('Entrance', 'door'),
+            iconSize: isNarrow ? [108, 30] : [132, 36],
+            iconAnchor: isNarrow ? [12, 15] : [14, 18]
+        });
+    }
+
     getMarkerBannerHtml(label, iconType) {
         const iconMarkup = iconType === 'door'
             ? `
@@ -2325,24 +2344,14 @@ class NavigationApp {
 
         if (!this.entranceLabelMarker) {
             this.entranceLabelMarker = L.marker([entrancePoint.lat, entrancePoint.lng], {
-                icon: L.divIcon({
-                    className: 'map-banner-marker-anchor',
-                    html: this.getMarkerBannerHtml('Entrance', 'door'),
-                    iconSize: [132, 36],
-                    iconAnchor: [14, 18]
-                }),
+                icon: this.getEntranceMarkerIcon(),
                 interactive: false,
                 keyboard: false,
                 zIndexOffset: 780
             }).addTo(this.map);
         } else {
             this.entranceLabelMarker.setLatLng([entrancePoint.lat, entrancePoint.lng]);
-            this.entranceLabelMarker.setIcon(L.divIcon({
-                className: 'map-banner-marker-anchor',
-                html: this.getMarkerBannerHtml('Entrance', 'door'),
-                iconSize: [132, 36],
-                iconAnchor: [14, 18]
-            }));
+            this.entranceLabelMarker.setIcon(this.getEntranceMarkerIcon());
 
             if (!this.map.hasLayer(this.entranceLabelMarker)) {
                 this.entranceLabelMarker.addTo(this.map);
@@ -2770,6 +2779,7 @@ class NavigationApp {
             currentUserPosition ? { lat: currentUserPosition.lat, lng: currentUserPosition.lng } : null
         );
         this.selectedEntrance = this.activeRoutePlan ? this.activeRoutePlan.entrance : null;
+        this.updateEntranceLabel(this.getOfficeEntrancePoint(office));
         this.showStreetViewMarkers();
 
         const destination = this.getRouteDestinationCoords(office);
@@ -2780,6 +2790,7 @@ class NavigationApp {
 
             this.activeRoutePlan = this.resolveOfficeNavigationPlan(office, { lat: userPos.lat, lng: userPos.lng });
             this.selectedEntrance = this.activeRoutePlan ? this.activeRoutePlan.entrance : this.selectedEntrance;
+            this.updateEntranceLabel(this.getOfficeEntrancePoint(office));
             this.refreshStreetViewMarkers();
             
             this.calculateRoute(userPos, this.getRouteDestinationCoords(office), office.name, true);
@@ -2817,6 +2828,7 @@ class NavigationApp {
                 this.activeRoutePlan = this.resolveOfficeNavigationPlan(this.selectedOffice, { lat: userPos.lat, lng: userPos.lng });
                 this.selectedEntrance = this.activeRoutePlan ? this.activeRoutePlan.entrance : this.selectedEntrance;
                 this.pendingDestination.coords = this.getRouteDestinationCoords(this.selectedOffice);
+                this.updateEntranceLabel(this.getOfficeEntrancePoint(this.selectedOffice));
             }
 
             this.calculateRoute(userPos, this.pendingDestination.coords, this.pendingDestination.name, true);
@@ -3879,14 +3891,15 @@ class NavigationApp {
 
     createPanoramaContextIcon(type, heading = 0, options = {}) {
         const normalizedHeading = this.normalizeHeading(heading);
+        const isNarrow = this.isNarrowViewport();
 
         if (type === 'camera') {
             if (options.compact) {
                 return L.divIcon({
                     className: 'panorama-context-marker panorama-context-marker--compact',
                     html: this.getStreetViewIconHtml(normalizedHeading, { active: !!options.active }),
-                    iconSize: [42, 42],
-                    iconAnchor: [21, 21]
+                    iconSize: isNarrow ? [30, 30] : [42, 42],
+                    iconAnchor: isNarrow ? [15, 15] : [21, 21]
                 });
             }
 
@@ -3898,17 +3911,12 @@ class NavigationApp {
                         <span class="map-banner-marker__label">Street View</span>
                     </span>
                 `,
-                iconSize: [136, 40],
-                iconAnchor: [19, 20]
+                iconSize: isNarrow ? [112, 32] : [136, 40],
+                iconAnchor: isNarrow ? [15, 16] : [19, 20]
             });
         }
 
-        return L.divIcon({
-            className: 'panorama-context-marker',
-            html: this.getMarkerBannerHtml('Entrance', 'door'),
-            iconSize: [132, 36],
-            iconAnchor: [14, 18]
-        });
+        return this.getEntranceMarkerIcon();
     }
 
     clearPanoramaMapContext() {

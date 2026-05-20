@@ -1327,19 +1327,31 @@ body.panorama-split-active #panoClose {
 
 .street-view-point-marker {
     display: inline-flex;
+    width: 32px;
+    height: 32px;
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.46);
-    backdrop-filter: blur(5px);
-    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
-    transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+    transition: transform 0.16s ease;
+}
+
+.street-view-point-marker .map-banner-marker__camera-pulse {
+    display: none;
+}
+
+.street-view-point-marker .map-banner-marker__camera-core {
+    inset: 8px;
+}
+
+.street-view-point-marker .map-banner-marker__camera-lens {
+    inset: 11px;
 }
 
 .street-view-point-marker.is-active {
-    transform: scale(1.14);
-    background: rgba(255, 255, 255, 0.62);
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+    transform: scale(1.08);
 }
 
 .street-view-point-marker.is-active .map-banner-marker__camera-core {
@@ -1354,11 +1366,12 @@ body.panorama-split-active #panoClose {
     display: none;
     align-items: center;
     gap: 10px;
-    padding: 8px 14px;
+    padding: 7px 12px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.78);
+    background: rgba(247, 247, 245, 0.68);
     backdrop-filter: blur(8px);
-    box-shadow: 0 10px 26px rgba(0, 0, 0, 0.16);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
     z-index: 920;
 }
 
@@ -1371,10 +1384,8 @@ body.panorama-split-active #panoClose {
 }
 
 .street-view-legend .street-view-point-marker {
-    width: 34px;
-    height: 34px;
-    background: rgba(255, 255, 255, 0.18);
-    box-shadow: none;
+    width: 32px;
+    height: 32px;
 }
 
 .street-view-legend .map-banner-marker__camera-cone {
@@ -1458,6 +1469,85 @@ body.panorama-split-active .street-view-legend {
         left: 16px;
         justify-content: space-between;
         gap: 12px;
+    }
+
+    .developer-mode-button {
+        top: auto;
+        left: auto;
+        right: max(16px, env(safe-area-inset-right, 0px) + 16px);
+        bottom: max(16px, env(safe-area-inset-bottom, 0px) + 16px);
+    }
+
+    .office-marker .office-pin {
+        width: 28px;
+        height: 36px;
+    }
+
+    .office-pin__title {
+        display: none;
+        bottom: calc(100% + 4px);
+        max-width: 116px;
+        padding: 4px 7px;
+        font-size: 9px;
+    }
+
+    .office-pin__svg {
+        width: 28px;
+        height: 36px;
+    }
+
+    .office-pin.is-expanded .office-pin__title {
+        display: block;
+        max-width: min(220px, calc(100vw - 32px));
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    .map-banner-marker__label {
+        min-height: 22px;
+        padding: 0 9px 0 8px;
+        font-size: 9px;
+    }
+
+    .map-banner-marker__icon--door {
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+    }
+
+    .map-banner-marker__door {
+        left: 6px;
+        right: 6px;
+        top: 4px;
+        bottom: 3px;
+    }
+
+    .map-banner-marker__door-window {
+        top: 8px;
+        left: 10px;
+    }
+
+    .street-view-point-marker {
+        width: 28px;
+        height: 28px;
+    }
+
+    .street-view-point-marker .map-banner-marker__camera-core {
+        inset: 7px;
+    }
+
+    .street-view-point-marker .map-banner-marker__camera-lens {
+        inset: 10px;
+    }
+
+    .street-view-legend {
+        gap: 8px;
+        padding: 6px 10px;
+    }
+
+    .street-view-legend .street-view-point-marker {
+        width: 28px;
+        height: 28px;
     }
 
     .map-mode-control__select {
