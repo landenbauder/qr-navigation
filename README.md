@@ -110,7 +110,7 @@ Optional custom port:
 **Street View access**
 - After selecting an office, the map shows all saved Street View points as camera icons.
 - Tap any camera icon to open that exact Street View location.
-- The bottom legend `Press for Street View` indicates those camera markers are interactive.
+- The bottom legend `Street View Buttons` indicates those camera markers are interactive.
 
 **Office boundary tracing**
 - Open the map first, then use the `Trace Offices` panel in the lower-left corner.

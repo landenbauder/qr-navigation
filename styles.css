@@ -1344,6 +1344,9 @@ body.panorama-split-active #panoClose {
 
 .street-view-point-marker .map-banner-marker__camera-core {
     inset: 8px;
+    border: none;
+    background: rgba(65, 75, 67, 0.94);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
 }
 
 .street-view-point-marker .map-banner-marker__camera-lens {
@@ -1463,7 +1466,7 @@ body.panorama-split-active .street-view-legend {
 }
 
 /* Mobile Optimizations */
-@media (max-width: 480px) {
+@media (max-width: 640px) {
     .map-mode-control {
         right: 16px;
         left: 16px;
