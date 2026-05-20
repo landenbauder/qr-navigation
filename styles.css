@@ -43,10 +43,12 @@ body {
 
 .developer-mode-button {
     position: fixed;
-    top: max(16px, env(safe-area-inset-top, 0px) + 16px);
-    left: max(16px, env(safe-area-inset-left, 0px) + 16px);
-    width: 46px;
-    height: 46px;
+    top: auto;
+    left: auto;
+    right: max(16px, env(safe-area-inset-right, 0px) + 16px);
+    bottom: max(16px, env(safe-area-inset-bottom, 0px) + 16px);
+    width: 42px;
+    height: 42px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1327,15 +1329,21 @@ body.panorama-split-active #panoClose {
 
 .street-view-point-marker {
     display: inline-flex;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     align-items: center;
     justify-content: center;
     border-radius: 999px;
     background: transparent;
     backdrop-filter: none;
     box-shadow: none;
-    transition: transform 0.16s ease;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.18));
+    transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+.street-view-point-marker.map-banner-marker__icon--camera {
+    width: 30px;
+    height: 30px;
 }
 
 .street-view-point-marker .map-banner-marker__camera-pulse {
@@ -1343,22 +1351,26 @@ body.panorama-split-active #panoClose {
 }
 
 .street-view-point-marker .map-banner-marker__camera-core {
-    inset: 8px;
+    inset: 6px;
     border: none;
-    background: rgba(65, 75, 67, 0.94);
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    border-radius: 9px;
+    background: linear-gradient(180deg, rgba(88, 95, 93, 0.98), rgba(60, 66, 64, 0.98));
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
 }
 
 .street-view-point-marker .map-banner-marker__camera-lens {
     inset: 11px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: inset 0 0 0 1px rgba(38, 45, 42, 0.16);
 }
 
 .street-view-point-marker.is-active {
     transform: scale(1.08);
+    filter: drop-shadow(0 7px 14px rgba(0, 0, 0, 0.22));
 }
 
 .street-view-point-marker.is-active .map-banner-marker__camera-core {
-    background: rgba(65, 75, 67, 0.92);
+    background: linear-gradient(180deg, rgba(74, 82, 79, 0.98), rgba(49, 55, 53, 0.98));
 }
 
 .street-view-legend {
@@ -1474,13 +1486,6 @@ body.panorama-split-active .street-view-legend {
         gap: 12px;
     }
 
-    .developer-mode-button {
-        top: auto;
-        left: auto;
-        right: max(16px, env(safe-area-inset-right, 0px) + 16px);
-        bottom: max(16px, env(safe-area-inset-bottom, 0px) + 16px);
-    }
-
     .office-marker .office-pin {
         width: 28px;
         height: 36px;
@@ -1535,12 +1540,17 @@ body.panorama-split-active .street-view-legend {
         height: 28px;
     }
 
+    .street-view-point-marker.map-banner-marker__icon--camera {
+        width: 28px;
+        height: 28px;
+    }
+
     .street-view-point-marker .map-banner-marker__camera-core {
-        inset: 7px;
+        inset: 5px;
     }
 
     .street-view-point-marker .map-banner-marker__camera-lens {
-        inset: 10px;
+        inset: 9px;
     }
 
     .street-view-legend {

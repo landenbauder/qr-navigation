@@ -102,7 +102,7 @@ Optional custom port:
 **Developer-only localhost testing**
 - Opening the app on `127.0.0.1` or `localhost` now shows the normal production search flow by default.
 - To enable local testing tools in VS Code, set `ENABLE_LOCAL_TEST_MODE: true` in `app-config.js`, then refresh the page.
-- You can also use the small lock button and enter PIN `9719` to enable developer mode at runtime. On small screens it moves to the bottom-right corner so it stays clear of the search UI.
+- You can also use the small lock button in the bottom-right corner and enter PIN `9719` to enable developer mode at runtime.
 - When that flag is on, the app starts in testing mode, shows the testing toolbar, and exposes the office tracing panel.
 - While testing mode is active, use the target button in the testing toolbar to arm map placement, then tap any point on the map to move the user marker and recalculate the route.
 - Set `ENABLE_LOCAL_TEST_MODE: false` again before publishing.
