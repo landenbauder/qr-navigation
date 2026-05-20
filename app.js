@@ -1795,14 +1795,8 @@ class NavigationApp {
     }
 
     buildOfficeMarkerHtml(office, { expanded = false } = {}) {
-        const fullLabel = this.formatOfficeLabel(office);
-        const markerTitle = expanded
-            ? fullLabel
-            : this.truncateMarkerText(fullLabel, 35);
-
         return `
-            <div class="office-pin${expanded ? ' is-expanded' : ''}" aria-hidden="true" title="${this.escapeHtml(fullLabel)}">
-                <span class="office-pin__title">${this.escapeHtml(markerTitle)}</span>
+            <div class="office-pin${expanded ? ' is-expanded' : ''}" aria-hidden="true">
                 <svg class="office-pin__svg" viewBox="0 0 36 46" focusable="false" aria-hidden="true">
                     <defs>
                         <linearGradient id="officePinBody" x1="18" y1="3" x2="18" y2="37" gradientUnits="userSpaceOnUse">

@@ -1276,31 +1276,6 @@ body.panorama-split-active #panoClose {
     cursor: pointer;
 }
 
-.office-pin__title {
-    position: absolute;
-    display: block;
-    left: 50%;
-    bottom: calc(100% + 6px);
-    transform: translateX(-50%);
-    width: max-content;
-    max-width: 144px;
-    padding: 5px 9px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(6px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
-    color: #111111;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    line-height: 1.1;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: max-width 0.18s ease, padding 0.18s ease, font-size 0.18s ease, line-height 0.18s ease, transform 0.18s ease;
-}
-
 .office-pin__svg {
     display: block;
     width: 36px;
@@ -1308,18 +1283,6 @@ body.panorama-split-active #panoClose {
     overflow: visible;
     transform-origin: center bottom;
     transition: transform 0.18s ease, filter 0.18s ease;
-}
-
-.office-pin.is-expanded .office-pin__title {
-    width: max-content;
-    max-width: min(360px, calc(100vw - 40px));
-    padding: 8px 14px;
-    font-size: 12px;
-    line-height: 1.2;
-    white-space: nowrap;
-    overflow: visible;
-    text-overflow: clip;
-    transform: translateX(-50%) translateY(-4px);
 }
 
 .office-pin.is-expanded .office-pin__svg {
@@ -1491,24 +1454,9 @@ body.panorama-split-active .street-view-legend {
         height: 36px;
     }
 
-    .office-pin__title {
-        display: none;
-        bottom: calc(100% + 4px);
-        max-width: 116px;
-        padding: 4px 7px;
-        font-size: 9px;
-    }
-
     .office-pin__svg {
         width: 28px;
         height: 36px;
-    }
-
-    .office-pin.is-expanded .office-pin__title {
-        display: block;
-        max-width: min(220px, calc(100vw - 32px));
-        padding: 6px 10px;
-        font-size: 11px;
     }
 
     .map-banner-marker__label {
