@@ -25,6 +25,7 @@ Make sure you have all these files ready:
 - Make sure your `offices.json` file has the correct coordinates
 - Set your Google Maps key in `app-config.js` (used for 360° Street View)
 - Restrict that key to Maps JavaScript API + your allowed HTTP referrer domains
+- If `GOOGLE_MAPS_API_KEY` is blank, navigation still works but Street View will show: `360° Street View needs a Google Maps API key. Set GOOGLE_MAPS_API_KEY in app-config.js.`
 - GitHub Pages automatically provides HTTPS, which is required for geolocation to work
 - The `_headers` file is not needed for GitHub Pages (it's Netlify-specific)
 
@@ -154,6 +155,11 @@ git push
 - Check internet connection (needs connection for map tiles)
 - Open browser console (F12) to check for errors
 - Verify Leaflet CDN links are accessible
+
+**Street View says it needs a Google Maps API key?**
+- Open `app-config.js` and set `GOOGLE_MAPS_API_KEY`
+- In Google Cloud Console, enable the Maps JavaScript API for that project
+- Add the deployed GitHub Pages URL and any local test URL you use, such as `http://127.0.0.1:4173/*`, to the key's allowed HTTP referrers
 
 **Repository name changed?**
 - If you rename your repository, your GitHub Pages URL will change

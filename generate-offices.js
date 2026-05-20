@@ -1,137 +1,168 @@
 /**
  * Office Data Generator
- * 
- * This script processes the input data files and generates the offices.json
- * with calculated walking paths, panorama locations, and headings.
+ *
+ * Generates offices.json from the source data files in this repository.
  */
 
 const fs = require('fs');
 
-// ============== Input Data ==============
-
-// Panorama GPS locations from panorama_gps_locations.txt
-const panoramaLocations = [
-    { lat: 41.7511194, lng: -87.9379323 },
-    { lat: 41.750734, lng: -87.938074 },
-    { lat: 41.7505959, lng: -87.9383613 },
-    { lat: 41.7505913, lng: -87.9385998 },
-    { lat: 41.7505951, lng: -87.9388395 },
-    { lat: 41.7503311, lng: -87.939071 },
-    { lat: 41.7501557, lng: -87.9390648 },
-    { lat: 41.7499133, lng: -87.9383599 },
-    { lat: 41.7499151, lng: -87.9381163 },
-    { lat: 41.7499172, lng: -87.9376287 },
-    { lat: 41.7503195, lng: -87.9371575 },
-    { lat: 41.7505893, lng: -87.9371618 },
-    { lat: 41.7509454, lng: -87.9371685 }
-];
-
-// Sidewalk locations from sidewalk_locations.txt
-const sidewalkLocations = [
-    { lat: 41.750445923674235, lng: -87.9386316210123 },
-    { lat: 41.750365520430144, lng: -87.938629747798 },
-    { lat: 41.75031197517248, lng: -87.93852274374395 },
-    { lat: 41.75032979431038, lng: -87.93831995112046 },
-    { lat: 41.75035165357097, lng: -87.93823567379341 },
-    { lat: 41.750367983166406, lng: -87.93813921914038 },
-    { lat: 41.75042804258351, lng: -87.93799083941116 },
-    { lat: 41.75047325035494, lng: -87.9379069720579 },
-    { lat: 41.75063241588521, lng: -87.93791285977184 },
-    { lat: 41.75050647368678, lng: -87.93790865688118 },
-    { lat: 41.75064434500341, lng: -87.93790871435489 },
-    { lat: 41.750689050964624, lng: -87.93790808981116 },
-    { lat: 41.75080103413551, lng: -87.93787531453482 },
-    { lat: 41.75088607570387, lng: -87.93784600469861 },
-    { lat: 41.75092046629779, lng: -87.93783978333184 },
-    { lat: 41.75104540367769, lng: -87.93783009569648 },
-    { lat: 41.750979881791054, lng: -87.93782764943904 },
-    { lat: 41.75100649196475, lng: -87.93783089838844 },
-    { lat: 41.751052946886105, lng: -87.93782710994861 },
-    { lat: 41.75062977670847, lng: -87.93755200302425 },
-    { lat: 41.75047133883866, lng: -87.93761708598252 },
-    { lat: 41.750351783994866, lng: -87.937624572321 },
-    { lat: 41.75023136042119, lng: -87.93754627804522 },
-    { lat: 41.75004652104912, lng: -87.93774352444832 },
-    { lat: 41.750035315943144, lng: -87.93870902584237 },
-    { lat: 41.75005406114093, lng: -87.93893635645779 },
-    { lat: 41.75023484528061, lng: -87.93893971865157 },
-    { lat: 41.750331764642524, lng: -87.93894030809467 },
-    { lat: 41.75049621594158, lng: -87.93890021744136 },
-    { lat: 41.75034620493217, lng: -87.93863273701585 }
-];
-
-// Building entrances from new_office_building_entrances
-const buildingEntrances = [
-    { name: "Firmus Medical, LLC", lat: 41.750732234024795, lng: -87.93782490440809 },
-    { name: "Advanced Physicians, SC", lat: 41.75091151786369, lng: -87.93774959455097 },
-    { name: "Advanced Physicians, SC", lat: 41.750910198631985, lng: -87.93750238104288 },
-    { name: "Precise Bioscience, LLC", lat: 41.75105449411903, lng: -87.93775206372628 },
-    { name: "Precise Bioscience, LLC", lat: 41.75105136724749, lng: -87.93750584390918 },
-    { name: "Ecodrive, Inc.", lat: 41.75080586913622, lng: -87.93782966730564 },
-    { name: "Firmus Medical, LLC", lat: 41.75073166442561, lng: -87.9378235955908 },
-    { name: "Firmus Medical, LLC", lat: 41.75076925924362, lng: -87.937576371582 },
-    { name: "Donnelly Transportation, Inc.", lat: 41.750601873157436, lng: -87.93782359652893 },
-    { name: "Henrich Electronics Corporation", lat: 41.750623885117584, lng: -87.9375746756993 },
-    { name: "Charland, LLC", lat: 41.75050024575575, lng: -87.93763306554625 },
-    { name: "Charland, LLC", lat: 41.75050163842362, lng: -87.93789059631246 },
-    { name: "Thomas Murphy", lat: 41.750462265609734, lng: -87.93764724280851 },
-    { name: "Perform Technologies, Inc.", lat: 41.75036020568787, lng: -87.93762971599958 },
-    { name: "Perform Technologies, Inc.", lat: 41.750345172837974, lng: -87.9378900740968 },
-    { name: "Shahid Khwaja", lat: 41.75030795495643, lng: -87.93788651518841 },
-    { name: "SFUSA", lat: 41.750331356400984, lng: -87.93764202219648 },
-    { name: "Airtex Manufacturing Inc.", lat: 41.75022785236671, lng: -87.93755539583547 },
-    { name: "Airtex Manufacturing Inc.", lat: 41.75005177898899, lng: -87.93773303928613 },
-    { name: "Syndem, LLC", lat: 41.750062045203144, lng: -87.93777526876156 },
-    { name: "Clean Slate, Inc.", lat: 41.7502426935211, lng: -87.93779071170579 },
-    { name: "Lifetime Restoration, Inc. (Unit 608)", lat: 41.75005758372081, lng: -87.93793661490287 },
-    { name: "John Devae Insurance Agency, Inc.", lat: 41.750241481857415, lng: -87.93794284863885 },
-    { name: "Donald E. Morris Architect, PC", lat: 41.75023932447109, lng: -87.93798513810351 },
-    { name: "Redwood Construction Group LLC", lat: 41.75024166605386, lng: -87.93810643467737 },
-    { name: "Equitec Group LLC", lat: 41.7502413146349, lng: -87.93814273176567 },
-    { name: "Armond Cozzi", lat: 41.75023913053949, lng: -87.93834800614171 },
-    { name: "The Forest Electric Company", lat: 41.75023670187888, lng: -87.93849439390733 },
-    { name: "Lifetime Restoration, Inc. (Unit 624)", lat: 41.750236162629214, lng: -87.93851952320344 },
-    { name: "Nightingale Home Healthcare of Illinois, Inc.", lat: 41.75004975419288, lng: -87.93869447638328 },
-    { name: "Green Home Makeover, LLC", lat: 41.75005620420816, lng: -87.93889915239004 },
-    { name: "Envirotest Perry Labs, Inc.", lat: 41.750220103388344, lng: -87.93890116392828 },
-    { name: "Jay Building Group, LLC", lat: 41.750049517397905, lng: -87.93869642771517 },
-    { name: "Jay Building Group, LLC", lat: 41.75023403155062, lng: -87.93870921767343 },
-    { name: "Law Office of Robert J. Chio", lat: 41.750322613780995, lng: -87.93890340427834 },
-    { name: "The Best Veneer Company LLC", lat: 41.75033974786989, lng: -87.9389043549276 },
-    { name: "Troop Contracting, Inc.", lat: 41.75047508768822, lng: -87.93889530946517 },
-    { name: "Troop Contracting, Inc.", lat: 41.750477501546996, lng: -87.93867110104341 },
-    { name: "Troop Contracting, Inc.", lat: 41.75034001148625, lng: -87.93866092702801 }
-];
-
-// Office icon locations from new_office_locations.json
-const officeIconLocations = {
-    "Firmus Medical, LLC": { lat: 41.750736, lng: -87.937705 },
-    "Donnelly Transportation, Inc.": { lat: 41.750599, lng: -87.937755 },
-    "Henrich Electronics Corporation": { lat: 41.750595, lng: -87.937635 },
-    "Charland, LLC": { lat: 41.750521, lng: -87.937774 },
-    "Thomas Murphy": { lat: 41.750450, lng: -87.937711 },
-    "Perform Technologies, Inc.": { lat: 41.750379, lng: -87.937771 },
-    "Shahid Khwaja": { lat: 41.750312, lng: -87.937817 },
-    "SFUSA": { lat: 41.750312, lng: -87.937718 },
-    "Airtex Manufacturing Inc.": { lat: 41.750162, lng: -87.937614 },
-    "Syndem, LLC": { lat: 41.750109, lng: -87.937680 },
-    "Lifetime Restoration, Inc. (Unit 608)": { lat: 41.750105, lng: -87.937768 },
-    "Clean Slate, Inc.": { lat: 41.750188, lng: -87.937774 },
-    "John Devae Insurance Agency, Inc.": { lat: 41.750151, lng: -87.937897 },
-    "Donald E. Morris Architect, PC": { lat: 41.750150, lng: -87.937977 },
-    "Redwood Construction Group LLC": { lat: 41.750153, lng: -87.938083 },
-    "Equitec Group LLC": { lat: 41.750150, lng: -87.938168 },
-    "Armond Cozzi": { lat: 41.750185, lng: -87.938375 },
-    "The Forest Electric Company": { lat: 41.750143, lng: -87.938458 },
-    "Lifetime Restoration, Inc. (Unit 624)": { lat: 41.750142, lng: -87.938557 },
-    "Nightingale Home Healthcare of Illinois, Inc.": { lat: 41.750097, lng: -87.938663 },
-    "Green Home Makeover, LLC": { lat: 41.750098, lng: -87.938846 },
-    "Envirotest Perry Labs, Inc.": { lat: 41.7501802267786, lng: -87.93884586603167 },
-    "Jay Building Group, LLC": { lat: 41.75014513538613, lng: -87.9387571728452 },
-    "Law Office of Robert J. Chio": { lat: 41.750302, lng: -87.938853 },
-    "The Best Veneer Company LLC": { lat: 41.750370, lng: -87.938831 },
-    "Troop Contracting, Inc.": { lat: 41.750408, lng: -87.938720 }
+const DEFAULT_BUILDING_CENTER = {
+    lat: 41.750197,
+    lng: -87.937808,
+    name: 'Willowbrook Office Building'
 };
+
+function readTextFile(filePath) {
+    return fs.readFileSync(filePath, 'utf8');
+}
+
+function isValidCoordinate(lat, lng) {
+    return Number.isFinite(lat) && Number.isFinite(lng);
+}
+
+function normalizeOfficeName(name) {
+    return String(name || '')
+        .toLowerCase()
+        .replace(/\s*\(\s*unit\s+[^\)]+\)\s*$/i, '')
+        .replace(/[^a-z0-9]/g, '');
+}
+
+function parseCoordinatePairs(filePath) {
+    const content = readTextFile(filePath);
+    const matches = content.matchAll(/\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)/g);
+    const points = [];
+
+    for (const match of matches) {
+        const lat = Number(match[1]);
+        const lng = Number(match[2]);
+        if (isValidCoordinate(lat, lng)) {
+            points.push({ lat, lng });
+        }
+    }
+
+    if (points.length === 0) {
+        throw new Error(`No coordinate pairs found in ${filePath}`);
+    }
+
+    return points;
+}
+
+function parseOfficeLocations(filePath) {
+    const content = readTextFile(filePath);
+    const data = JSON.parse(content);
+
+    if (!data || !Array.isArray(data.offices)) {
+        throw new Error(`Invalid office locations file: ${filePath}`);
+    }
+
+    const officeLocations = {};
+
+    for (const office of data.offices) {
+        const lat = Number(office.lat);
+        const lng = Number(office.lng);
+        if (!office.name || !isValidCoordinate(lat, lng)) {
+            throw new Error(`Invalid office location entry for ${office.name || 'unknown office'}`);
+        }
+
+        officeLocations[office.name] = { lat, lng };
+    }
+
+    return officeLocations;
+}
+
+function parseBuildingEntrances(filePath) {
+    const lines = readTextFile(filePath)
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(Boolean);
+
+    const entrances = [];
+    const linePattern = /^(.*?)\s+(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)$/;
+
+    for (const line of lines) {
+        const match = line.match(linePattern);
+        if (!match) {
+            throw new Error(`Invalid entrance line: ${line}`);
+        }
+
+        const lat = Number(match[2]);
+        const lng = Number(match[3]);
+        if (!isValidCoordinate(lat, lng)) {
+            throw new Error(`Invalid entrance coordinates for ${match[1]}`);
+        }
+
+        entrances.push({ name: match[1], lat, lng });
+    }
+
+    return entrances;
+}
+
+function parseCsvLine(line) {
+    const values = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let index = 0; index < line.length; index += 1) {
+        const char = line[index];
+        const nextChar = line[index + 1];
+
+        if (char === '"') {
+            if (inQuotes && nextChar === '"') {
+                current += '"';
+                index += 1;
+            } else {
+                inQuotes = !inQuotes;
+            }
+            continue;
+        }
+
+        if (char === ',' && !inQuotes) {
+            values.push(current.trim());
+            current = '';
+            continue;
+        }
+
+        current += char;
+    }
+
+    values.push(current.trim());
+    return values;
+}
+
+function parseUnitMap(filePath) {
+    const lines = readTextFile(filePath)
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(Boolean);
+
+    if (lines.length < 2) {
+        throw new Error(`Unit CSV is empty: ${filePath}`);
+    }
+
+    const header = parseCsvLine(lines[0]);
+    const nameIndex = header.indexOf('lease_name');
+    const unitIndex = header.indexOf('unit_number');
+
+    if (nameIndex === -1 || unitIndex === -1) {
+        throw new Error(`Unit CSV is missing required headers: ${filePath}`);
+    }
+
+    const unitMap = new Map();
+
+    for (const line of lines.slice(1)) {
+        const columns = parseCsvLine(line);
+        const leaseName = columns[nameIndex];
+        const unitNumber = columns[unitIndex];
+
+        if (!leaseName || !unitNumber) {
+            continue;
+        }
+
+        unitMap.set(normalizeOfficeName(leaseName), unitNumber);
+    }
+
+    return unitMap;
+}
 
 // ============== Helper Functions ==============
 
@@ -209,125 +240,138 @@ function calculateCentroid(points) {
     };
 }
 
+function buildPathForEntrance(entrance, sidewalkLocations, panoramaLocations) {
+    const nearestSidewalk = findNearest(entrance.lat, entrance.lng, sidewalkLocations);
+    const nearestPanorama = findNearest(nearestSidewalk.point.lat, nearestSidewalk.point.lng, panoramaLocations);
+
+    return {
+        entrance,
+        sidewalk: nearestSidewalk.point,
+        panorama: nearestPanorama.point,
+        walkingPath: [
+            { lat: nearestPanorama.point.lat, lng: nearestPanorama.point.lng },
+            { lat: nearestSidewalk.point.lat, lng: nearestSidewalk.point.lng },
+            { lat: entrance.lat, lng: entrance.lng }
+        ]
+    };
+}
+
 // ============== Main Processing ==============
 
-function generateOffices() {
-    // Group entrances by office name
+function generateOffices({ panoramaLocations, sidewalkLocations, buildingEntrances, officeIconLocations, unitMap }) {
     const entrancesByOffice = {};
-    
+
     for (const entrance of buildingEntrances) {
         if (!entrancesByOffice[entrance.name]) {
             entrancesByOffice[entrance.name] = [];
         }
         entrancesByOffice[entrance.name].push({ lat: entrance.lat, lng: entrance.lng });
     }
-    
-    // Generate office data
+
     const offices = [];
-    
+
     for (const [officeName, entrances] of Object.entries(entrancesByOffice)) {
-        // Get icon location (from predefined or calculate centroid)
         let iconLocation = officeIconLocations[officeName];
         if (!iconLocation) {
-            // Calculate centroid of entrances for offices not in the predefined list
             iconLocation = calculateCentroid(entrances);
             console.log(`Calculated centroid for ${officeName}: ${iconLocation.lat}, ${iconLocation.lng}`);
         }
-        
-        // Use the first entrance as the primary reference for path calculation
-        const primaryEntrance = entrances[0];
-        
-        // Find nearest sidewalk point to the primary entrance
-        const nearestSidewalk = findNearest(primaryEntrance.lat, primaryEntrance.lng, sidewalkLocations);
-        
-        // Find nearest panorama to that sidewalk point
-        const nearestPanorama = findNearest(nearestSidewalk.point.lat, nearestSidewalk.point.lng, panoramaLocations);
-        
-        // Calculate heading from panorama toward entrance
-        const heading = calculateHeading(
-            nearestPanorama.point.lat, 
-            nearestPanorama.point.lng,
-            primaryEntrance.lat,
-            primaryEntrance.lng
-        );
-        
-        // Build walking path: panorama -> sidewalk -> entrance
-        const walkingPath = [
-            { lat: nearestPanorama.point.lat, lng: nearestPanorama.point.lng },
-            { lat: nearestSidewalk.point.lat, lng: nearestSidewalk.point.lng },
-            { lat: primaryEntrance.lat, lng: primaryEntrance.lng }
-        ];
-        
-        // Extract unit number if present in name
-        let unit = null;
-        const unitMatch = officeName.match(/\(Unit (\d+)\)/);
-        if (unitMatch) {
-            unit = unitMatch[1];
+
+        const unit = unitMap.get(normalizeOfficeName(officeName));
+        if (!unit) {
+            throw new Error(`Missing unit mapping for ${officeName}`);
         }
-        
+
+        const entrancePlans = entrances.map(entrance => buildPathForEntrance(entrance, sidewalkLocations, panoramaLocations));
+        const primaryPlan = entrancePlans[0];
+
+        const heading = calculateHeading(
+            primaryPlan.panorama.lat,
+            primaryPlan.panorama.lng,
+            primaryPlan.entrance.lat,
+            primaryPlan.entrance.lng
+        );
+
         const office = {
             name: officeName,
+            unit,
             lat: iconLocation.lat,
             lng: iconLocation.lng,
             panorama: {
-                provider: "google",
-                lat: nearestPanorama.point.lat,
-                lng: nearestPanorama.point.lng,
+                provider: 'google',
+                lat: primaryPlan.panorama.lat,
+                lng: primaryPlan.panorama.lng,
                 heading: Math.round(heading),
                 pitch: 0,
                 radius: 60
             },
-            walkingPath: walkingPath
+            walkingPath: primaryPlan.walkingPath
         };
-        
-        // Add unit if present
-        if (unit) {
-            office.unit = unit;
-        }
-        
-        // Add entrances array if multiple entrances exist
+
         if (entrances.length > 1) {
             office.entrances = entrances;
+            office.walkingPathsByEntrance = Object.fromEntries(
+                entrancePlans.map((plan, index) => [String(index), plan.walkingPath])
+            );
         }
-        
+
         offices.push(office);
-        
+
         console.log(`Processed: ${officeName}`);
         console.log(`  Icon: ${iconLocation.lat}, ${iconLocation.lng}`);
-        console.log(`  Panorama: ${nearestPanorama.point.lat}, ${nearestPanorama.point.lng} (distance: ${nearestPanorama.distance.toFixed(1)}m)`);
-        console.log(`  Sidewalk: ${nearestSidewalk.point.lat}, ${nearestSidewalk.point.lng} (distance: ${nearestSidewalk.distance.toFixed(1)}m)`);
+        console.log(`  Unit: ${unit}`);
+        console.log(`  Panorama: ${primaryPlan.panorama.lat}, ${primaryPlan.panorama.lng}`);
+        console.log(`  Sidewalk: ${primaryPlan.sidewalk.lat}, ${primaryPlan.sidewalk.lng}`);
         console.log(`  Heading: ${Math.round(heading)}°`);
         console.log(`  Entrances: ${entrances.length}`);
         console.log('');
     }
-    
-    // Sort offices by name for consistency
-    offices.sort((a, b) => a.name.localeCompare(b.name));
-    
+
+    offices.sort((left, right) => {
+        const leftUnit = Number(left.unit);
+        const rightUnit = Number(right.unit);
+        if (Number.isFinite(leftUnit) && Number.isFinite(rightUnit) && leftUnit !== rightUnit) {
+            return leftUnit - rightUnit;
+        }
+        return left.name.localeCompare(right.name);
+    });
+
     return offices;
 }
 
-// Generate and save
-const newOffices = generateOffices();
-
-// Read existing offices.json to preserve TRP Investments
-let existingData = { buildingCenter: { lat: 41.750197, lng: -87.937808, name: "Willowbrook Office Building" }, offices: [] };
-try {
-    const existingContent = fs.readFileSync('offices.json', 'utf8');
-    existingData = JSON.parse(existingContent);
-} catch (e) {
-    console.log('Could not read existing offices.json, creating new one');
+function readBuildingCenter() {
+    try {
+        const existingContent = readTextFile('offices.json');
+        const existingData = JSON.parse(existingContent);
+        return existingData.buildingCenter || DEFAULT_BUILDING_CENTER;
+    } catch (error) {
+        return DEFAULT_BUILDING_CENTER;
+    }
 }
 
-// Combine existing offices with new ones
-const allOffices = [...existingData.offices, ...newOffices];
+const panoramaLocations = parseCoordinatePairs('panorama_gps_locations.txt');
+const sidewalkLocations = parseCoordinatePairs('sidewalk_locations.txt');
+const buildingEntrances = parseBuildingEntrances('new_office_building_entrances');
+const officeIconLocations = parseOfficeLocations('new_office_locations.json');
+const unitMap = parseUnitMap('tenant-units-from-pdf.csv');
+
+const newOffices = generateOffices({
+    panoramaLocations,
+    sidewalkLocations,
+    buildingEntrances,
+    officeIconLocations,
+    unitMap
+});
 
 const outputData = {
-    buildingCenter: existingData.buildingCenter,
-    offices: allOffices
+    buildingCenter: readBuildingCenter(),
+    offices: newOffices
 };
 
-fs.writeFileSync('offices.json', JSON.stringify(outputData, null, 2));
-console.log(`\nGenerated offices.json with ${allOffices.length} offices total`);
-console.log(`  - Existing offices: ${existingData.offices.length}`);
-console.log(`  - New offices: ${newOffices.length}`);
+try {
+    fs.writeFileSync('offices.json', JSON.stringify(outputData, null, 2));
+    console.log(`\nGenerated offices.json with ${newOffices.length} offices total`);
+} catch (error) {
+    console.error(`Failed to write offices.json: ${error.message}`);
+    process.exitCode = 1;
+}

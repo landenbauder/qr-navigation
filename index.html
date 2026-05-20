@@ -23,6 +23,17 @@
 </head>
 <body>
     <div class="container">
+        <button id="developerModeBtn" class="developer-mode-button" type="button" aria-label="Enable developer mode" title="Enable developer mode">
+            <svg class="developer-mode-button__icon developer-mode-button__icon--locked" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M7 10V8a5 5 0 0 1 10 0v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <rect x="5" y="10" width="14" height="10" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect>
+            </svg>
+            <svg class="developer-mode-button__icon developer-mode-button__icon--unlocked" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M17 10V8a5 5 0 0 0-9.8-1.4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <rect x="5" y="10" width="14" height="10" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect>
+            </svg>
+        </button>
+
         <!-- Landing Menu (Search Interface) -->
         <div id="landingMenu" class="landing-menu">
             <div class="landing-content">
@@ -41,7 +52,15 @@
         </div>
 
         <!-- Map Container -->
+        <div id="googleMapBase" class="google-map-base" aria-hidden="true"></div>
         <div id="map"></div>
+
+        <div id="mapModeControl" class="map-mode-control" style="display: none;">
+            <label for="mapModeSelect" class="map-mode-control__label">Map</label>
+            <select id="mapModeSelect" class="map-mode-control__select" aria-label="Map mode">
+                <option value="open">Open Map</option>
+            </select>
+        </div>
 
         <!-- Top Bar Overlay (Floating Panel) -->
         <div id="destinationPanel" class="destination-panel" aria-live="polite" style="display: none;">
@@ -77,6 +96,65 @@
 
         <!-- Status Message -->
         <div id="statusMessage" class="status-message"></div>
+
+        <div id="testLocationPanel" class="test-location-panel" style="display: none;">
+            <div class="test-location-panel__content">
+                <div class="test-location-panel__copy">
+                    <span class="test-location-panel__label">Testing Mode</span>
+                    <span id="testLocationStatus" class="test-location-panel__status">Marker at 41.751205, -87.937978</span>
+                </div>
+                <div class="test-location-panel__actions">
+                    <button id="testSearchOfficeBtn" class="test-location-action" type="button">Search Office</button>
+                    <button id="testPickPointBtn" class="test-location-icon-button" type="button" aria-label="Pick a point on the map" title="Pick a point on the map">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="4"></circle>
+                            <path d="M12 2v3"></path>
+                            <path d="M12 19v3"></path>
+                            <path d="M2 12h3"></path>
+                            <path d="M19 12h3"></path>
+                        </svg>
+                    </button>
+                    <button id="exitTestModeBtn" class="test-location-action test-location-action--secondary" type="button">Exit</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="streetViewLegend" class="street-view-legend" style="display: none;">
+            <span class="street-view-point-marker map-banner-marker__icon map-banner-marker__icon--camera" aria-hidden="true" style="--panorama-camera-heading: 0deg;">
+                <span class="map-banner-marker__camera-pulse"></span>
+                <span class="map-banner-marker__camera-core"></span>
+                <span class="map-banner-marker__camera-lens"></span>
+            </span>
+            <span class="street-view-legend__copy">Press for Street View</span>
+        </div>
+
+        <div id="officeTracePanel" class="office-trace-panel" style="display: none;">
+            <div class="office-trace-panel__header">
+                <div class="office-trace-panel__copy">
+                    <span class="office-trace-panel__eyebrow">Office Tracing</span>
+                    <strong id="officeTraceTitle" class="office-trace-panel__title">Ready to trace</strong>
+                    <span id="officeTraceStatus" class="office-trace-panel__status">Trace each office outline point by point, then save and continue.</span>
+                </div>
+                <button id="toggleTraceModeBtn" class="office-trace-panel__toggle" type="button" aria-pressed="false">Trace Offices</button>
+            </div>
+            <div class="office-trace-panel__progress">
+                <span id="officeTraceProgress" class="office-trace-panel__progress-text">0 of 0 saved</span>
+                <span id="officeTraceVertexCount" class="office-trace-panel__progress-text">0 points</span>
+                <span id="officeTraceRotation" class="office-trace-panel__progress-text">Rotation 0°</span>
+            </div>
+            <div class="office-trace-panel__actions">
+                <button id="traceUndoBtn" class="office-trace-panel__action" type="button">Undo Point</button>
+                <button id="traceResetBtn" class="office-trace-panel__action office-trace-panel__action--secondary" type="button">Reset Shape</button>
+                <button id="traceSetOfficePointBtn" class="office-trace-panel__action office-trace-panel__action--secondary" type="button">Set Office Dot</button>
+                <button id="traceSetEntrancePointBtn" class="office-trace-panel__action office-trace-panel__action--secondary" type="button">Set Entrance Dot</button>
+                <button id="traceRotateLeftBtn" class="office-trace-panel__action office-trace-panel__action--secondary" type="button">Rotate -1°</button>
+                <button id="traceRotateRightBtn" class="office-trace-panel__action office-trace-panel__action--secondary" type="button">Rotate +1°</button>
+                <button id="traceRotateResetBtn" class="office-trace-panel__action office-trace-panel__action--secondary" type="button">Reset Rotation</button>
+                <button id="traceSaveNextBtn" class="office-trace-panel__action office-trace-panel__action--primary" type="button">Save & Next</button>
+                <button id="traceSkipBtn" class="office-trace-panel__action office-trace-panel__action--secondary" type="button">Skip</button>
+                <button id="traceDownloadBtn" class="office-trace-panel__action" type="button">Download JSON</button>
+            </div>
+        </div>
     </div>
 
     <div 
@@ -85,19 +163,20 @@
         aria-modal="true" 
         aria-label="360 degree panorama" 
         tabindex="-1"
-        style="display:none; position:fixed; inset:0; z-index:9999; background:#000;"
+        style="display:none;"
     ></div>
     <button 
         id="panoClose" 
         type="button" 
         aria-label="Exit 360 degree view" 
-        style="display:none; position:fixed; top:12px; right:12px; z-index:10000;"
+        style="display:none;"
     >
         Exit 360°
     </button>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-rotate@0.2.8/dist/leaflet-rotate.js"></script>
     
     <!-- Leaflet Routing Machine JS -->
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>

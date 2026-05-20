@@ -8,7 +8,10 @@ A mobile-friendly web application for navigating to office locations using QR co
 - **Office Search**: Search for offices with autocomplete functionality and "View All" button
 - **Real-time GPS Tracking**: Your current position is continuously tracked and displayed on the map with accuracy indicator
 - **Dynamic Route Updates**: Routes automatically update as you move (updates every 15+ meters)
-- **Walking Directions**: Get optimized walking routes to any office location using OSRM routing
+- **Walking Directions**: Get optimized walking routes directly to the selected office entrance using OSRM routing
+- **Split-Screen 360 Preview**: Open Street View in the top half of the screen with an interactive context map in the bottom half showing the camera location, viewing direction, and front door target
+- **Office Boundary Tracing Tools**: Trace each office footprint point by point, snap the closing point back to the start, save progress locally, and export the collected polygons as JSON
+- **Navigation Boundary Overlay**: When navigation starts, the map can show faint office outlines above the basemap and below the office icons, with the selected destination slightly more visible
 - **Browser-Specific Location Handling**: Smart prompts with detailed instructions for Safari, Chrome, Firefox, and Android browsers
 - **Mobile Optimized**: Responsive design optimized for smartphone use with touch-friendly controls
 - **Light Map Style**: Uses CartoDB Positron tiles for a clean, light grey map appearance ideal for outdoor navigation
@@ -37,6 +40,10 @@ Edit `offices.json` with your actual office locations:
 }
 ```
 
+If `office-boundaries.json` is present, the app also merges those saved office-center coordinates, entrance coordinates, and footprint polygons at runtime. That file is the intended place to apply tracing/export updates without manually rewriting the generated `offices.json` structure.
+
+If you make more edits in the tracer later, export the JSON again and replace `office-boundaries.json` with the new file contents. The app reads that file at runtime, so the latest saved export becomes the live override for office centers, entrances, and polygons.
+
 **How to get coordinates:**
 1. Use Google Maps: Right-click on a location → Click coordinates → Copy lat/lng
 2. Or use an online tool like [LatLong.net](https://www.latlong.net/)
@@ -52,31 +59,75 @@ The app now reads the Google Maps key from `app-config.js` instead of hardcoding
 2. Set:
 ```javascript
 window.APP_CONFIG = {
-  GOOGLE_MAPS_API_KEY: "YOUR_RESTRICTED_GOOGLE_MAPS_KEY"
+  GOOGLE_MAPS_API_KEY: "YOUR_RESTRICTED_GOOGLE_MAPS_KEY",
+  ENABLE_LOCAL_TEST_MODE: false
 };
 ```
 3. In Google Cloud Console, restrict this key by:
    - API restrictions: Maps JavaScript API only
    - Application restrictions: HTTP referrers for your domain(s)
 
-If this key is empty, core navigation still works and only 360° Street View is disabled.
+If this key is empty, core navigation still works and only 360° Street View is disabled. The Street View map markers will still appear for offices with panorama data, but opening them will show the unavailable message until a valid key is configured.
 
 ### 3. Test Locally
 
-Since the Geolocation API requires HTTPS, you have a few options:
+For local development, `localhost` is enough. You do not need to push to GitHub Pages just to see content updates, and modern browsers treat `localhost` as a secure context for geolocation testing.
 
-**Option A: Use a local HTTPS server**
-```bash
-# Install a simple HTTPS server (if you have Python)
-python -m http.server 8000 --bind localhost
+**Fastest local loop in VS Code**
+1. Open the Command Palette.
+2. Run `Tasks: Run Task`.
+3. Choose `Serve QR Navigation Locally`.
+4. Your browser will open to `http://127.0.0.1:4173/`.
+5. Make edits, then refresh the page to see the updated files.
+6. Stop the server with `Ctrl+C` in the task terminal.
 
-# Or use Node.js http-server with HTTPS
-npx http-server --ssl --cert cert.pem --key key.pem
+**Manual local server**
+```powershell
+./serve-local.ps1 -OpenBrowser
 ```
 
-**Option B: Test on a mobile device**
-- Deploy to a free hosting service (see below)
-- Access from your phone to test
+Optional custom port:
+```powershell
+./serve-local.ps1 -Port 8000 -OpenBrowser
+```
+
+**Important notes for local testing**
+- Local edits show up after a normal browser refresh because the app reads files directly from your workspace through the local server.
+- GitHub Pages will not reflect changes until you commit and push.
+- Testing on `127.0.0.1` or `localhost` is ideal for quick data checks, search behavior, and route rendering.
+- If you want to test the exact public deployment, push to `main` and then open the GitHub Pages URL.
+
+**Developer-only localhost testing**
+- Opening the app on `127.0.0.1` or `localhost` now shows the normal production search flow by default.
+- To enable local testing tools in VS Code, set `ENABLE_LOCAL_TEST_MODE: true` in `app-config.js`, then refresh the page.
+- You can also use the small lock button in the top-left corner and enter PIN `9719` to enable developer mode at runtime.
+- When that flag is on, the app starts in testing mode, shows the testing toolbar, and exposes the office tracing panel.
+- While testing mode is active, use the target button in the testing toolbar to arm map placement, then tap any point on the map to move the user marker and recalculate the route.
+- Set `ENABLE_LOCAL_TEST_MODE: false` again before publishing.
+
+**Street View access**
+- After selecting an office, the map shows all saved Street View points as camera icons.
+- Tap any camera icon to open that exact Street View location.
+- The bottom legend `Press for Street View` indicates those camera markers are interactive.
+
+**Office boundary tracing**
+- Open the map first, then use the `Trace Offices` panel in the lower-left corner.
+- The tracer starts on the first office without a saved shape.
+- Entering trace mode shows the current office center as a black dot and the current entrance coordinate as an orange dot.
+- Click each corner in sequence around the office perimeter.
+- Press `Z` to toggle axis snap on or off while tracing.
+- Use `Set Office Dot` and `Set Entrance Dot`, then click the map to update those coordinates for the current office.
+- Use `Save & Next` to store that office polygon in browser local storage and automatically advance to the next office. The app closes the polygon for you when it saves.
+- If every office already has a saved polygon, `Save & Next` and `Skip` still continue through the office list so you can do a full review/edit pass.
+- Saved traces persist across refreshes in the same browser on the same device unless you clear browser storage or the trace storage version is intentionally reset in code.
+- Use `Download JSON` at any time to export the collected trace data into a file you can merge back into your office data.
+- The downloaded file contains one entry per office with the saved office center, entrance coordinate, and either a saved `polygon` array or `null` if that office border has not been traced yet.
+
+**Trace map controls**
+- Use `Rotate -1°`, `Rotate +1°`, and `Reset Rotation` to rotate the Leaflet map degree by degree while tracing.
+
+**Navigation office outlines**
+- After you select an office and navigation starts, the app draws only that office's saved polygon as a faint overlay above the map tiles and below the office icons.
 
 ### 4. Deploy
 
@@ -128,7 +179,7 @@ QRLocation/
 ## Customization
 
 ### Change Map Style
-Edit the tile layer in `app.js` (currently using CartoDB Positron):
+The app now includes a built-in toggle between the default animated map and a real-world aerial view. If you still want to change the underlying default tiles in code, edit the tile layer configuration in `app.js`:
 ```javascript
 // Current: Light grey CartoDB Positron
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -176,6 +227,11 @@ lineOptions: {
 - Verify office coordinates are correct in `offices.json`
 - Make sure you've selected an office and granted location permission
 - Try refreshing the page
+
+**360° Street View not opening:**
+- Check `app-config.js` and confirm `GOOGLE_MAPS_API_KEY` is set to a valid Google Maps JavaScript API key
+- In Google Cloud Console, make sure the key allows the Maps JavaScript API and your current site referrer
+- If you see `360° Street View needs a Google Maps API key. Set GOOGLE_MAPS_API_KEY in app-config.js.`, the key is missing or blank rather than the office panorama coordinates being the first problem
 
 **Map not loading:**
 - Check internet connection (needed for map tiles)
