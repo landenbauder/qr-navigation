@@ -1531,6 +1531,10 @@ class NavigationApp {
 
         this.testLocationPanel.style.display = this.isLocalTestMode ? 'flex' : 'none';
 
+        if (this.mobileTestLocationBtn) {
+            this.mobileTestLocationBtn.style.display = this.isLocalTestMode ? 'inline-flex' : 'none';
+        }
+
         if (this.testModePickPointBtn) {
             this.testModePickPointBtn.classList.toggle('is-active', this.testingModePickActive);
             this.testModePickPointBtn.setAttribute('aria-pressed', this.testingModePickActive ? 'true' : 'false');
