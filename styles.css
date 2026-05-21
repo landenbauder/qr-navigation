@@ -90,6 +90,35 @@ body {
     display: block;
 }
 
+.mobile-test-button {
+    display: none;
+    position: fixed;
+    top: 50%;
+    right: max(10px, env(safe-area-inset-right, 0px) + 10px);
+    transform: translateY(-50%);
+    min-width: 40px;
+    height: 24px;
+    padding: 0 10px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(65, 75, 67, 0.22);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    color: var(--brand-dark);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+    z-index: 2250;
+    cursor: pointer;
+}
+
+.mobile-test-button:active {
+    transform: translateY(-50%) scale(0.96);
+}
+
 .google-map-base {
     position: absolute;
     inset: 0;
@@ -947,6 +976,10 @@ body.panorama-split-active .developer-mode-button {
     display: none !important;
 }
 
+body.panorama-split-active .mobile-test-button {
+    display: none !important;
+}
+
 body.panorama-split-active .leaflet-routing-container,
 body.panorama-split-active .leaflet-routing-alternatives-container,
 body.panorama-split-active .leaflet-routing-alt {
@@ -1609,5 +1642,11 @@ body.panorama-split-active .street-view-legend {
     
     .compass-distance {
         font-size: 16px;
+    }
+}
+
+@media (hover: none) and (pointer: coarse), (max-width: 900px) {
+    .mobile-test-button {
+        display: inline-flex;
     }
 }

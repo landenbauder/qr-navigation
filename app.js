@@ -55,6 +55,7 @@ class NavigationApp {
         this.streetViewLegend = null;
         this.manualPanoramaPoint = null;
         this.developerModeBtn = null;
+        this.mobileTestLocationBtn = null;
         this.mapViewToggle = null;
         this.animatedViewBtn = null;
         this.realWorldViewBtn = null;
@@ -95,6 +96,7 @@ class NavigationApp {
         this.officeBoundaryLayers = [];
         this.mapRotationDegrees = 0;
         this.testingModeStartLocation = { lat: 41.751205, lng: -87.937978 };
+        this.mobileTestLocation = { lat: 41.751260, lng: -87.937991 };
         this.testingModeLocation = null;
         this.testingModePickActive = false;
         this.enterTestModeBtn = null;
@@ -140,6 +142,7 @@ class NavigationApp {
         this.destinationNameEl = document.getElementById('destinationName');
         this.destinationRouteEl = document.getElementById('destinationRoute');
         this.developerModeBtn = document.getElementById('developerModeBtn');
+        this.mobileTestLocationBtn = document.getElementById('mobileTestLocationBtn');
         this.landingMenu = document.getElementById('landingMenu');
         this.enterTestModeBtn = document.getElementById('enterTestModeBtn');
         this.returnToSearchBtn = document.getElementById('returnToSearchBtn');
@@ -240,6 +243,19 @@ class NavigationApp {
             this.developerModeBtn.addEventListener('click', () => {
                 this.handleDeveloperModeToggle();
             });
+        }
+
+        if (this.mobileTestLocationBtn) {
+            const applyMobileTestLocation = (event) => {
+                if (event) {
+                    event.preventDefault();
+                }
+
+                this.handleMobileTestLocationShortcut();
+            };
+
+            this.mobileTestLocationBtn.addEventListener('click', applyMobileTestLocation);
+            this.mobileTestLocationBtn.addEventListener('touchend', applyMobileTestLocation, { passive: false });
         }
 
         if (this.testModePickPointBtn) {
@@ -1646,6 +1662,23 @@ class NavigationApp {
         if (announce) {
             this.showStatus(`Testing marker moved to ${lat.toFixed(6)}, ${lng.toFixed(6)}.`);
         }
+    }
+
+    handleMobileTestLocationShortcut() {
+        const { lat, lng } = this.mobileTestLocation;
+
+        this.stopLiveLocationWatch();
+        this.applyTestingModePosition(lat, lng, {
+            announce: false,
+            centerMap: !this.selectedOffice
+        });
+
+        if (this.selectedOffice) {
+            this.showStatus(`Test location applied. Route recalculated from ${lat.toFixed(6)}, ${lng.toFixed(6)}.`);
+            return;
+        }
+
+        this.showStatus(`Test location applied at ${lat.toFixed(6)}, ${lng.toFixed(6)}.`);
     }
 
     enterTestingMode({ announce = true, centerMap = true } = {}) {

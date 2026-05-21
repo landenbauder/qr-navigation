@@ -13,6 +13,7 @@ A mobile-friendly web application for navigating to office locations using QR co
 - **Office Boundary Tracing Tools**: Trace each office footprint point by point, snap the closing point back to the start, save progress locally, and export the collected polygons as JSON
 - **Navigation Boundary Overlay**: When navigation starts, the map can show faint office outlines above the basemap and below the office icons, with the selected destination slightly more visible
 - **Browser-Specific Location Handling**: Smart prompts with detailed instructions for Safari, Chrome, Firefox, and Android browsers
+- **Mobile Test Shortcut**: A small mobile `Test` button can place the user at a fixed demo coordinate and immediately recalculate routes from there
 - **Mobile Optimized**: Responsive design optimized for smartphone use with touch-friendly controls
 - **Light Map Style**: Uses CartoDB Positron tiles for a clean, light grey map appearance ideal for outdoor navigation
 
