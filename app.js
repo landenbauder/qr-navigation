@@ -173,6 +173,8 @@ class NavigationApp {
         this.traceSkipBtn = document.getElementById('traceSkipBtn');
         this.traceDownloadBtn = document.getElementById('traceDownloadBtn');
 
+        this.configureDeveloperControls();
+
         if (this.toggleTraceModeBtn) {
             this.toggleTraceModeBtn.addEventListener('click', () => {
                 this.setTraceModeActive(!this.traceModeActive);
@@ -429,9 +431,7 @@ class NavigationApp {
     }
 
     shouldEnableLocalTestMode() {
-        const host = window.location.hostname;
-        const isLocalHost = host === 'localhost' || host === '127.0.0.1';
-        if (!isLocalHost) {
+        if (!this.isLoopbackHost()) {
             return false;
         }
 
@@ -447,10 +447,62 @@ class NavigationApp {
         return value === true;
     }
 
+    isLoopbackHost(hostname = window.location.hostname) {
+        return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '[::1]';
+    }
+
+    shouldRenderDeveloperControls(hostname = window.location.hostname) {
+        if (this.isLoopbackHost(hostname)) {
+            return true;
+        }
+
+        if (typeof hostname !== 'string' || !hostname) {
+            return false;
+        }
+
+        const private172Match = hostname.match(/^172\.(\d{1,2})(?:\.\d{1,3}){2}$/);
+        if (private172Match) {
+            const secondOctet = Number(private172Match[1]);
+            if (secondOctet >= 16 && secondOctet <= 31) {
+                return true;
+            }
+        }
+
+        return /^10(?:\.\d{1,3}){3}$/.test(hostname)
+            || /^192\.168(?:\.\d{1,3}){2}$/.test(hostname)
+            || hostname.endsWith('.local');
+    }
+
+    configureDeveloperControls() {
+        if (!this.shouldRenderDeveloperControls()) {
+            if (this.developerModeBtn) {
+                this.developerModeBtn.remove();
+                this.developerModeBtn = null;
+            }
+
+            if (this.mobileTestLocationBtn) {
+                this.mobileTestLocationBtn.remove();
+                this.mobileTestLocationBtn = null;
+            }
+
+            return;
+        }
+
+        if (this.developerModeBtn) {
+            this.developerModeBtn.style.display = 'inline-flex';
+        }
+
+        if (this.mobileTestLocationBtn) {
+            this.mobileTestLocationBtn.style.display = 'none';
+        }
+    }
+
     updateDeveloperModeButton() {
         if (!this.developerModeBtn) {
             return;
         }
+
+        this.developerModeBtn.style.display = 'inline-flex';
 
         const isEnabled = !!this.isLocalTestMode;
         this.developerModeBtn.classList.toggle('is-active', isEnabled);

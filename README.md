@@ -13,7 +13,7 @@ A mobile-friendly web application for navigating to office locations using QR co
 - **Office Boundary Tracing Tools**: Trace each office footprint point by point, snap the closing point back to the start, save progress locally, and export the collected polygons as JSON
 - **Navigation Boundary Overlay**: When navigation starts, the map can show faint office outlines above the basemap and below the office icons, with the selected destination slightly more visible
 - **Browser-Specific Location Handling**: Smart prompts with detailed instructions for Safari, Chrome, Firefox, and Android browsers
-- **Mobile Test Shortcut**: A small mobile `Test` button can place the user at a fixed demo coordinate and immediately recalculate routes from there
+- **Local Testing Tools**: Local-only testing controls can place the user at a fixed demo coordinate and immediately recalculate routes without exposing those controls on the published site
 - **Mobile Optimized**: Responsive design optimized for smartphone use with touch-friendly controls
 - **Light Map Style**: Uses CartoDB Positron tiles for a clean, light grey map appearance ideal for outdoor navigation
 
@@ -100,12 +100,13 @@ Optional custom port:
 - `127.0.0.1` on your phone points back to the phone itself. For mobile testing, open the PC's `LAN URL` from the terminal, such as `http://10.0.0.150:4173/`.
 - If you want to test the exact public deployment, push to `main` and then open the GitHub Pages URL.
 
-**Developer-only localhost testing**
+**Developer-only local testing**
 - Opening the app on `127.0.0.1` or `localhost` now shows the normal production search flow by default.
 - To enable local testing tools in VS Code, set `ENABLE_LOCAL_TEST_MODE: true` in `app-config.js`, then refresh the page.
-- You can also use the small lock button in the bottom-right corner and enter PIN `9719` to enable developer mode at runtime.
+- On `localhost`, `127.0.0.1`, or a private LAN test URL, you can use the small lock button in the bottom-right corner and enter PIN `9719` to enable developer mode at runtime.
 - When that flag is on, the app starts in testing mode, shows the testing toolbar, and exposes the office tracing panel.
 - While testing mode is active, use the target button in the testing toolbar to arm map placement, then tap any point on the map to move the user marker and recalculate the route.
+- These controls are hidden on the published GitHub Pages site even though the underlying testing logic remains available for local development.
 - Set `ENABLE_LOCAL_TEST_MODE: false` again before publishing.
 
 **Street View access**
