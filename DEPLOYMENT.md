@@ -24,9 +24,11 @@ Make sure you have all these files ready:
 **Important Notes:**
 - Make sure your `offices.json` file has the correct coordinates
 - Set your Google Maps key in `app-config.js` (used for 360° Street View)
+- Configure Firebase Authentication and Firestore before enabling live tenant administration; see `README.md`
 - Restrict that key to Maps JavaScript API + your allowed HTTP referrer domains
 - If `GOOGLE_MAPS_API_KEY` is blank, navigation still works but Street View will show: `360° Street View needs a Google Maps API key. Set GOOGLE_MAPS_API_KEY in app-config.js.`
 - GitHub Pages automatically provides HTTPS, which is required for geolocation to work
+- Deploy the rules in `firestore.rules` from the Firebase console and replace its admin email placeholder before publishing
 - The `_headers` file is not needed for GitHub Pages (it's Netlify-specific)
 
 ### Step 2: Create GitHub Account

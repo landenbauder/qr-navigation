@@ -6,6 +6,7 @@ A mobile-friendly web application for navigating to office locations using QR co
 
 - **QR Code Access**: Scan a QR code to instantly access the navigation interface
 - **Office Search**: Search for offices with autocomplete functionality and "View All" button
+- **Tenant Administration**: Authorized property managers can update tenant names and move front-door coordinates directly on the property map
 - **Real-time GPS Tracking**: Your current position is continuously tracked and displayed on the map with accuracy indicator
 - **Dynamic Route Updates**: Routes automatically update as you move (updates every 15+ meters)
 - **Walking Directions**: Get optimized walking routes directly to the selected office entrance using OSRM routing
@@ -69,6 +70,37 @@ window.APP_CONFIG = {
    - Application restrictions: HTTP referrers for your domain(s)
 
 If this key is empty, core navigation still works and only 360° Street View is disabled. The Street View map markers will still appear for offices with panorama data, but opening them will show the unavailable message until a valid key is configured.
+
+### 2a. Configure tenant administration
+
+The published app remains on GitHub Pages, while Firebase Authentication and Cloud Firestore securely store shared tenant updates. The admin passcode is the Firebase user's password and is never embedded in this public repository.
+
+1. Create a Firebase project and add a Web app.
+2. In **Authentication > Sign-in method**, enable **Email/Password**.
+3. In **Authentication > Users**, create one admin user with the property manager's email and the requested admin passcode.
+4. Create a Cloud Firestore database.
+5. Open `firestore.rules`, replace `REPLACE_WITH_ADMIN_EMAIL` with the same admin email, and publish those rules in the Firestore Rules console.
+6. In `app-config.js`, set the Firebase Web API key, project ID, and admin email:
+
+```javascript
+FIREBASE: {
+  apiKey: 'YOUR_FIREBASE_WEB_API_KEY',
+  projectId: 'YOUR_FIREBASE_PROJECT_ID',
+  adminEmail: 'property-manager@example.com'
+}
+```
+
+7. Add the live site domain to **Authentication > Settings > Authorized domains**. If the Firebase API key has HTTP referrer restrictions, allow the live HTTPS domain there as well.
+
+The `tenantOverrides` collection permits public reads so visitors receive current names and destinations, but Firestore rules allow writes only from the authenticated admin email. A failed Firebase request does not block the static office data from loading.
+
+**Admin workflow**
+1. Tap the small lock below the tenant search box.
+2. Enter the admin passcode.
+3. Choose a tenant and edit its name.
+4. To update the entrance, tap **Move front door**, then tap the exact location on the map.
+5. Tap **Save changes** and confirm. The update is immediately available to all visitors.
+6. Use the close button to exit admin mode.
 
 ### 3. Test Locally
 

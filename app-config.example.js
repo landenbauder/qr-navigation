@@ -1,4 +1,9 @@
 window.APP_CONFIG = {
     GOOGLE_MAPS_API_KEY: 'YOUR_RESTRICTED_GOOGLE_MAPS_KEY',
-    ENABLE_LOCAL_TEST_MODE: false
+    ENABLE_LOCAL_TEST_MODE: false,
+    FIREBASE: {
+        apiKey: 'YOUR_FIREBASE_WEB_API_KEY',
+        projectId: 'YOUR_FIREBASE_PROJECT_ID',
+        adminEmail: 'YOUR_FIREBASE_ADMIN_EMAIL'
+    }
 };

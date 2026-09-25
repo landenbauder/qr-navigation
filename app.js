@@ -54,6 +54,21 @@ class NavigationApp {
         this.streetViewMarkers = [];
         this.streetViewLegend = null;
         this.manualPanoramaPoint = null;
+        this.adminModeActive = false;
+        this.adminIdToken = null;
+        this.adminSelectedOffice = null;
+        this.adminPendingEntrance = null;
+        this.adminEntrancePickActive = false;
+        this.adminEntranceMarker = null;
+        this.adminModeBtn = null;
+        this.adminPanel = null;
+        this.adminOfficeSelect = null;
+        this.adminTenantNameInput = null;
+        this.adminPickEntranceBtn = null;
+        this.adminSaveBtn = null;
+        this.adminExitBtn = null;
+        this.adminStatus = null;
+        this.adminHasUnsavedChanges = false;
         this.developerModeBtn = null;
         this.mobileTestLocationBtn = null;
         this.mapViewToggle = null;
@@ -141,6 +156,14 @@ class NavigationApp {
         this.destinationPanel = document.getElementById('destinationPanel');
         this.destinationNameEl = document.getElementById('destinationName');
         this.destinationRouteEl = document.getElementById('destinationRoute');
+        this.adminModeBtn = document.getElementById('adminModeBtn');
+        this.adminPanel = document.getElementById('adminPanel');
+        this.adminOfficeSelect = document.getElementById('adminOfficeSelect');
+        this.adminTenantNameInput = document.getElementById('adminTenantNameInput');
+        this.adminPickEntranceBtn = document.getElementById('adminPickEntranceBtn');
+        this.adminSaveBtn = document.getElementById('adminSaveBtn');
+        this.adminExitBtn = document.getElementById('adminExitBtn');
+        this.adminStatus = document.getElementById('adminStatus');
         this.developerModeBtn = document.getElementById('developerModeBtn');
         this.mobileTestLocationBtn = document.getElementById('mobileTestLocationBtn');
         this.landingMenu = document.getElementById('landingMenu');
@@ -247,6 +270,40 @@ class NavigationApp {
             });
         }
 
+        if (this.adminModeBtn) {
+            this.adminModeBtn.addEventListener('click', () => this.enterAdminMode());
+        }
+
+        if (this.adminOfficeSelect) {
+            this.adminOfficeSelect.addEventListener('change', () => {
+                if (this.adminHasUnsavedChanges && !window.confirm('Discard unsaved changes and switch tenants?')) {
+                    this.adminOfficeSelect.value = this.adminSelectedOffice ? this.adminSelectedOffice.adminDocumentId : '';
+                    return;
+                }
+                this.selectAdminOffice(this.adminOfficeSelect.value);
+            });
+        }
+
+        if (this.adminTenantNameInput) {
+            this.adminTenantNameInput.addEventListener('input', () => {
+                this.adminHasUnsavedChanges = true;
+            });
+        }
+
+        if (this.adminPickEntranceBtn) {
+            this.adminPickEntranceBtn.addEventListener('click', () => {
+                this.setAdminEntrancePickActive(!this.adminEntrancePickActive);
+            });
+        }
+
+        if (this.adminSaveBtn) {
+            this.adminSaveBtn.addEventListener('click', () => this.saveAdminChanges());
+        }
+
+        if (this.adminExitBtn) {
+            this.adminExitBtn.addEventListener('click', () => this.exitAdminMode());
+        }
+
         if (this.mobileTestLocationBtn) {
             const applyMobileTestLocation = (event) => {
                 if (event) {
@@ -314,7 +371,9 @@ class NavigationApp {
             }
 
             if (event.key === 'Escape') {
-                if (this.panoOverlay && this.panoOverlay.style.display === 'block') {
+                if (this.adminModeActive) {
+                    this.exitAdminMode();
+                } else if (this.panoOverlay && this.panoOverlay.style.display === 'block') {
                     this.closePanorama();
                 } else if (this.landingMenu && this.landingMenu.style.display === 'none') {
                     // If on map view (landing menu hidden), go back to search
@@ -542,6 +601,8 @@ class NavigationApp {
                 : null;
 
             this.offices = this.mergeOfficeBoundaryData(data.offices, boundaryData);
+            this.assignAdminDocumentIds();
+            await this.loadTenantOverrides();
             this.buildNavigationNodeIndex();
             
             // Set building center from first office or use provided center
@@ -624,6 +685,92 @@ class NavigationApp {
 
             return mergedOffice;
         });
+    }
+
+    getFirebaseAdminConfig() {
+        const firebaseConfig = window.APP_CONFIG && window.APP_CONFIG.FIREBASE;
+        if (!firebaseConfig || typeof firebaseConfig !== 'object') {
+            return null;
+        }
+
+        const apiKey = typeof firebaseConfig.apiKey === 'string' ? firebaseConfig.apiKey.trim() : '';
+        const projectId = typeof firebaseConfig.projectId === 'string' ? firebaseConfig.projectId.trim() : '';
+        const adminEmail = typeof firebaseConfig.adminEmail === 'string' ? firebaseConfig.adminEmail.trim() : '';
+        return apiKey && projectId && adminEmail ? { apiKey, projectId, adminEmail } : null;
+    }
+
+    getAdminDocumentId(office) {
+        const bytes = new TextEncoder().encode(this.getOfficeKey(office));
+        let binaryValue = '';
+        bytes.forEach((byte) => {
+            binaryValue += String.fromCharCode(byte);
+        });
+
+        return window.btoa(binaryValue).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+    }
+
+    assignAdminDocumentIds() {
+        this.offices.forEach((office) => {
+            office.adminDocumentId = this.getAdminDocumentId(office);
+        });
+    }
+
+    getFirestoreCollectionUrl(config) {
+        return `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(config.projectId)}/databases/(default)/documents/tenantOverrides`;
+    }
+
+    readFirestoreString(fields, fieldName) {
+        const field = fields && fields[fieldName];
+        return field && typeof field.stringValue === 'string' ? field.stringValue : null;
+    }
+
+    readFirestoreNumber(fields, fieldName) {
+        const field = fields && fields[fieldName];
+        const value = field && (field.doubleValue ?? field.integerValue);
+        const numberValue = Number(value);
+        return Number.isFinite(numberValue) ? numberValue : null;
+    }
+
+    async loadTenantOverrides() {
+        const config = this.getFirebaseAdminConfig();
+        if (!config) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${this.getFirestoreCollectionUrl(config)}?key=${encodeURIComponent(config.apiKey)}`);
+            if (response.status === 404) {
+                return;
+            }
+            if (!response.ok) {
+                throw new Error(`Firestore returned ${response.status}`);
+            }
+
+            const payload = await response.json();
+            const overridesById = new Map((payload.documents || []).map(document => {
+                const documentId = document.name.split('/').pop();
+                return [documentId, document.fields || {}];
+            }));
+
+            this.offices.forEach((office) => {
+                const fields = overridesById.get(office.adminDocumentId);
+                if (!fields) {
+                    return;
+                }
+
+                const tenantName = this.readFirestoreString(fields, 'name');
+                const entranceLat = this.readFirestoreNumber(fields, 'entranceLat');
+                const entranceLng = this.readFirestoreNumber(fields, 'entranceLng');
+                if (tenantName && tenantName.trim()) {
+                    office.name = tenantName.trim();
+                }
+                if (Number.isFinite(entranceLat) && Number.isFinite(entranceLng)) {
+                    this.applyOfficeEntrance(office, { lat: entranceLat, lng: entranceLng });
+                }
+            });
+        } catch (error) {
+            console.warn('Unable to load live tenant updates:', error);
+        }
     }
 
     isFiniteNumber(value) {
@@ -1792,6 +1939,11 @@ class NavigationApp {
     }
 
     handleMapClick(event) {
+        if (this.adminModeActive) {
+            this.handleAdminMapClick(event);
+            return;
+        }
+
         if (this.traceModeActive) {
             this.handleTraceMapClick(event);
             return;
@@ -1803,6 +1955,267 @@ class NavigationApp {
 
         this.applyTestingModePosition(event.latlng.lat, event.latlng.lng, { announce: true, centerMap: false });
         this.setTestingModePickActive(false);
+    }
+
+    async enterAdminMode() {
+        const config = this.getFirebaseAdminConfig();
+        if (!config) {
+            this.showStatus('Tenant administration is not configured yet.');
+            return;
+        }
+
+        const passcode = window.prompt('Enter admin passcode');
+        if (passcode === null) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${encodeURIComponent(config.apiKey)}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: config.adminEmail,
+                    password: passcode,
+                    returnSecureToken: true
+                })
+            });
+            if (!response.ok) {
+                throw new Error('Authentication failed');
+            }
+
+            const authResult = await response.json();
+            this.adminIdToken = authResult.idToken;
+            this.adminModeActive = true;
+            this.clearRoute();
+            this.hideLocationPrompt();
+            this.populateAdminOfficeSelect();
+
+            if (this.landingMenu) {
+                this.landingMenu.style.display = 'none';
+            }
+            if (this.mapContainer) {
+                this.mapContainer.style.display = 'block';
+                this.mapContainer.style.visibility = 'visible';
+            }
+            if (this.adminPanel) {
+                this.adminPanel.style.display = 'flex';
+            }
+            if (this.map) {
+                this.map.invalidateSize();
+            }
+
+            const firstOffice = this.offices[0];
+            if (firstOffice) {
+                this.selectAdminOffice(firstOffice.adminDocumentId);
+            }
+        } catch (error) {
+            console.warn('Admin authentication failed:', error);
+            this.showStatus('Incorrect admin passcode.');
+        }
+    }
+
+    populateAdminOfficeSelect() {
+        if (!this.adminOfficeSelect) {
+            return;
+        }
+
+        this.adminOfficeSelect.innerHTML = '';
+        this.offices.forEach((office) => {
+            const option = document.createElement('option');
+            option.value = office.adminDocumentId;
+            option.textContent = this.formatOfficeLabel(office);
+            this.adminOfficeSelect.appendChild(option);
+        });
+    }
+
+    selectAdminOffice(documentId) {
+        const office = this.offices.find(candidate => candidate.adminDocumentId === documentId);
+        if (!office) {
+            return;
+        }
+
+        this.adminSelectedOffice = office;
+        this.adminPendingEntrance = this.getOfficeEntrancePoint(office) || { lat: office.lat, lng: office.lng };
+        this.adminHasUnsavedChanges = false;
+        this.setAdminEntrancePickActive(false);
+
+        if (this.adminOfficeSelect) {
+            this.adminOfficeSelect.value = office.adminDocumentId;
+        }
+        if (this.adminTenantNameInput) {
+            this.adminTenantNameInput.value = this.getBaseOfficeName(office);
+        }
+        if (this.adminStatus) {
+            this.adminStatus.textContent = 'Edit the name, or choose Move front door and tap the map.';
+        }
+        if (this.map) {
+            this.map.setView([this.adminPendingEntrance.lat, this.adminPendingEntrance.lng], 20);
+        }
+        this.updateAdminEntranceMarker();
+    }
+
+    setAdminEntrancePickActive(active) {
+        this.adminEntrancePickActive = !!active && this.adminModeActive;
+        if (this.adminPickEntranceBtn) {
+            this.adminPickEntranceBtn.classList.toggle('is-active', this.adminEntrancePickActive);
+            this.adminPickEntranceBtn.setAttribute('aria-pressed', this.adminEntrancePickActive ? 'true' : 'false');
+            this.adminPickEntranceBtn.textContent = this.adminEntrancePickActive ? 'Tap the new front door' : 'Move front door';
+        }
+        if (this.adminEntrancePickActive && this.adminStatus) {
+            this.adminStatus.textContent = 'Tap the exact front-door location on the map.';
+        }
+    }
+
+    handleAdminMapClick(event) {
+        if (!this.adminEntrancePickActive || !event || !event.latlng) {
+            return;
+        }
+
+        this.adminPendingEntrance = { lat: event.latlng.lat, lng: event.latlng.lng };
+        this.adminHasUnsavedChanges = true;
+        this.updateAdminEntranceMarker();
+        this.setAdminEntrancePickActive(false);
+        if (this.adminStatus) {
+            this.adminStatus.textContent = 'Front door moved. Save changes to publish it.';
+        }
+    }
+
+    updateAdminEntranceMarker() {
+        if (!this.map) {
+            return;
+        }
+        if (this.adminEntranceMarker) {
+            this.map.removeLayer(this.adminEntranceMarker);
+            this.adminEntranceMarker = null;
+        }
+        if (!this.adminModeActive || !this.adminPendingEntrance) {
+            return;
+        }
+
+        this.adminEntranceMarker = L.circleMarker(
+            [this.adminPendingEntrance.lat, this.adminPendingEntrance.lng],
+            {
+                radius: 9,
+                color: '#713d0c',
+                weight: 3,
+                fillColor: '#f2a23a',
+                fillOpacity: 1
+            }
+        ).addTo(this.map).bindTooltip('Front door', { permanent: true, direction: 'top' });
+    }
+
+    applyOfficeEntrance(office, entrance) {
+        if (!office || !this.isValidCoordinatePair(entrance)) {
+            return;
+        }
+
+        const normalizedEntrance = { lat: entrance.lat, lng: entrance.lng };
+        office.entrances = [normalizedEntrance];
+        delete office.walkingPathsByEntrance;
+        if (Array.isArray(office.walkingPath) && office.walkingPath.length > 0) {
+            office.walkingPath = [
+                ...office.walkingPath.slice(0, -1),
+                normalizedEntrance
+            ];
+        }
+    }
+
+    async saveAdminChanges() {
+        const config = this.getFirebaseAdminConfig();
+        const office = this.adminSelectedOffice;
+        const tenantName = this.adminTenantNameInput ? this.adminTenantNameInput.value.trim() : '';
+        if (!config || !this.adminIdToken || !office || !tenantName || !this.isValidCoordinatePair(this.adminPendingEntrance)) {
+            if (this.adminStatus) {
+                this.adminStatus.textContent = 'Enter a tenant name and choose a valid front-door location.';
+            }
+            return;
+        }
+
+        if (!window.confirm(`Save and publish changes for Unit ${office.unit || 'without a unit number'}?`)) {
+            return;
+        }
+
+        if (this.adminSaveBtn) {
+            this.adminSaveBtn.disabled = true;
+        }
+        if (this.adminStatus) {
+            this.adminStatus.textContent = 'Saving changes...';
+        }
+
+        const fields = {
+            sourceKey: { stringValue: office.adminDocumentId },
+            name: { stringValue: tenantName },
+            entranceLat: { doubleValue: this.adminPendingEntrance.lat },
+            entranceLng: { doubleValue: this.adminPendingEntrance.lng },
+            updatedAt: { timestampValue: new Date().toISOString() }
+        };
+
+        try {
+            const documentUrl = `${this.getFirestoreCollectionUrl(config)}/${encodeURIComponent(office.adminDocumentId)}?key=${encodeURIComponent(config.apiKey)}`;
+            const response = await fetch(documentUrl, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${this.adminIdToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ fields })
+            });
+            if (!response.ok) {
+                throw new Error(`Firestore returned ${response.status}`);
+            }
+
+            office.name = tenantName;
+            this.applyOfficeEntrance(office, this.adminPendingEntrance);
+            this.adminHasUnsavedChanges = false;
+            this.populateAdminOfficeSelect();
+            if (this.adminOfficeSelect) {
+                this.adminOfficeSelect.value = office.adminDocumentId;
+            }
+            if (this.adminStatus) {
+                this.adminStatus.textContent = 'Changes are live for all visitors.';
+            }
+        } catch (error) {
+            console.error('Unable to save tenant update:', error);
+            if (this.adminStatus) {
+                this.adminStatus.textContent = 'Save failed. Exit admin mode, sign in again, and retry.';
+            }
+        } finally {
+            if (this.adminSaveBtn) {
+                this.adminSaveBtn.disabled = false;
+            }
+        }
+    }
+
+    exitAdminMode() {
+        if (this.adminHasUnsavedChanges && !window.confirm('Exit without saving your changes?')) {
+            return;
+        }
+
+        this.adminModeActive = false;
+        this.adminIdToken = null;
+        this.adminSelectedOffice = null;
+        this.adminPendingEntrance = null;
+        this.adminHasUnsavedChanges = false;
+        this.setAdminEntrancePickActive(false);
+        if (this.adminEntranceMarker && this.map) {
+            this.map.removeLayer(this.adminEntranceMarker);
+            this.adminEntranceMarker = null;
+        }
+        if (this.adminPanel) {
+            this.adminPanel.style.display = 'none';
+        }
+        if (this.landingMenu) {
+            this.landingMenu.style.display = 'flex';
+        }
+        if (this.mapContainer) {
+            this.mapContainer.style.display = 'none';
+        }
+        const searchInput = document.getElementById('officeSearch');
+        if (searchInput) {
+            searchInput.value = '';
+            searchInput.focus();
+        }
+        this.checkLocationPermission();
     }
 
     applyTestLocation(index, { announce = true, centerMap = false } = {}) {
@@ -3117,6 +3530,10 @@ class NavigationApp {
     }
 
     showLocationPrompt() {
+        if (this.adminModeActive) {
+            return;
+        }
+
         const prompt = document.getElementById('locationPrompt');
         if (prompt) {
             prompt.style.display = 'flex';
@@ -3131,6 +3548,10 @@ class NavigationApp {
     }
 
     showBrowserInstructions(browser) {
+        if (this.adminModeActive) {
+            return;
+        }
+
         const promptContent = document.querySelector('.location-prompt-content');
         if (!promptContent) return;
         
@@ -3242,6 +3663,10 @@ class NavigationApp {
     }
 
     requestLocation() {
+        if (this.adminModeActive) {
+            return;
+        }
+
         if (!navigator.geolocation) {
             this.showLocationInstructions('Geolocation is not supported by your browser. Please use a modern browser.');
             return;
@@ -3399,6 +3824,12 @@ class NavigationApp {
     }
 
     handleLocationError(error) {
+        if (this.adminModeActive) {
+            this.hideLocationPrompt();
+            this.hideLocationInstructions();
+            return;
+        }
+
         let message = '';
         let instructions = '';
         const protocol = window.location.protocol;
@@ -3513,6 +3944,10 @@ class NavigationApp {
     }
 
     showLocationInstructions(content) {
+        if (this.adminModeActive) {
+            return;
+        }
+
         let backdrop = document.getElementById('locationInstructionsBackdrop');
         if (!backdrop) {
             backdrop = document.createElement('div');

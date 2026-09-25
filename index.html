@@ -51,6 +51,12 @@
                     >
                     <div id="searchResults" class="search-results"></div>
                 </div>
+                <button id="adminModeBtn" class="admin-mode-button" type="button" aria-label="Enter tenant admin mode" title="Tenant administration">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M7 10V8a5 5 0 0 1 10 0v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <rect x="5" y="10" width="14" height="10" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"></rect>
+                    </svg>
+                </button>
             </div>
         </div>
 
@@ -130,6 +136,31 @@
             </span>
             <span class="street-view-legend__copy">- Street View Buttons</span>
         </div>
+
+        <section id="adminPanel" class="admin-panel" aria-label="Tenant administration" style="display: none;">
+            <div class="admin-panel__header">
+                <div>
+                    <span class="admin-panel__eyebrow">Admin Mode</span>
+                    <h2 class="admin-panel__title">Update tenant</h2>
+                </div>
+                <button id="adminExitBtn" class="admin-panel__icon-button" type="button" aria-label="Exit admin mode" title="Exit admin mode">
+                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"></path>
+                    </svg>
+                </button>
+            </div>
+            <label class="admin-panel__field">
+                <span>Tenant</span>
+                <select id="adminOfficeSelect"></select>
+            </label>
+            <label class="admin-panel__field">
+                <span>Tenant name</span>
+                <input id="adminTenantNameInput" type="text" maxlength="120" autocomplete="off">
+            </label>
+            <button id="adminPickEntranceBtn" class="admin-panel__action admin-panel__action--secondary" type="button" aria-pressed="false">Move front door</button>
+            <p id="adminStatus" class="admin-panel__status" aria-live="polite">Choose a tenant to begin.</p>
+            <button id="adminSaveBtn" class="admin-panel__action admin-panel__action--primary" type="button">Save changes</button>
+        </section>
 
         <div id="officeTracePanel" class="office-trace-panel" style="display: none;">
             <div class="office-trace-panel__header">
