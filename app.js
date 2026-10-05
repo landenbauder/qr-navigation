@@ -91,6 +91,24 @@ class NavigationApp {
         this.traceSaveNextBtn = null;
         this.traceSkipBtn = null;
         this.traceDownloadBtn = null;
+        this.openNetworkEditorBtn = null;
+        this.networkEditor = null;
+        this.networkEditorActive = false;
+        this.propertyId = 'willowbrook';
+        this.walkingNetworkUrl = 'data/properties/willowbrook/network.geojson';
+        // GPS thresholds are starting values to tune from field tests; they are not a precision guarantee.
+        this.walkingConfig = { gpsMaxAccuracyM: 25, gpsMaxAgeMs: 15000, maxAttachM: 30, doorMatchToleranceM: 2 };
+        this.walkingNetwork = null;
+        this.walkingRequested = false;
+        this.walkingEnabled = false;
+        this.walkingObstacles = null;
+        this.walkStart = null;
+        this.walkStartProblem = null;
+        this.walkRouteLayer = null;
+        this.qrSigns = new Map();
+        this.adminSignPickMode = null;
+        this.adminSelectedSignId = null;
+        this.adminSignLayer = null;
         this.officeTraceStorageKey = 'qr-navigation-office-trace-v3';
         this.legacyOfficeTraceStorageKeys = [
             'qr-navigation-office-trace-v1',
@@ -195,6 +213,23 @@ class NavigationApp {
         this.traceSaveNextBtn = document.getElementById('traceSaveNextBtn');
         this.traceSkipBtn = document.getElementById('traceSkipBtn');
         this.traceDownloadBtn = document.getElementById('traceDownloadBtn');
+        this.openNetworkEditorBtn = document.getElementById('openNetworkEditorBtn');
+        this.landingStartNote = document.getElementById('landingStartNote');
+        this.walkStartBanner = document.getElementById('walkStartBanner');
+        this.walkStartText = document.getElementById('walkStartText');
+        this.walkChangeStartBtn = document.getElementById('walkChangeStartBtn');
+        this.startPicker = document.getElementById('startPicker');
+        this.startPickerMessage = document.getElementById('startPickerMessage');
+        this.startPickerList = document.getElementById('startPickerList');
+        this.startPickerGpsBtn = document.getElementById('startPickerGpsBtn');
+        this.startPickerCancelBtn = document.getElementById('startPickerCancelBtn');
+        this.adminSignSelect = document.getElementById('adminSignSelect');
+        this.adminSignNameInput = document.getElementById('adminSignNameInput');
+        this.adminSignInfo = document.getElementById('adminSignInfo');
+        this.adminSignAddBtn = document.getElementById('adminSignAddBtn');
+        this.adminSignMoveBtn = document.getElementById('adminSignMoveBtn');
+        this.adminSignRenameBtn = document.getElementById('adminSignRenameBtn');
+        this.adminSignRemoveBtn = document.getElementById('adminSignRemoveBtn');
 
         this.configureDeveloperControls();
 
@@ -262,6 +297,47 @@ class NavigationApp {
             this.traceDownloadBtn.addEventListener('click', () => {
                 this.downloadOfficeTraceData();
             });
+        }
+
+        if (this.openNetworkEditorBtn) {
+            this.openNetworkEditorBtn.addEventListener('click', () => {
+                this.openNetworkEditor();
+            });
+        }
+
+        if (this.walkChangeStartBtn) {
+            this.walkChangeStartBtn.addEventListener('click', () => this.showStartPicker(''));
+        }
+
+        if (this.startPickerGpsBtn) {
+            this.startPickerGpsBtn.addEventListener('click', () => this.useCurrentLocationStart());
+        }
+
+        if (this.startPickerCancelBtn) {
+            this.startPickerCancelBtn.addEventListener('click', () => this.hideStartPicker());
+        }
+
+        if (this.adminSignSelect) {
+            this.adminSignSelect.addEventListener('change', () => {
+                this.setAdminSignPick(null);
+                this.selectAdminSign(this.adminSignSelect.value);
+            });
+        }
+
+        if (this.adminSignAddBtn) {
+            this.adminSignAddBtn.addEventListener('click', () => this.startAdminSignAdd());
+        }
+
+        if (this.adminSignMoveBtn) {
+            this.adminSignMoveBtn.addEventListener('click', () => this.startAdminSignMove());
+        }
+
+        if (this.adminSignRenameBtn) {
+            this.adminSignRenameBtn.addEventListener('click', () => this.renameAdminSign());
+        }
+
+        if (this.adminSignRemoveBtn) {
+            this.adminSignRemoveBtn.addEventListener('click', () => this.removeAdminSign());
         }
 
         if (this.developerModeBtn) {
@@ -355,6 +431,10 @@ class NavigationApp {
         }
 
         document.addEventListener('keydown', (event) => {
+            if (this.networkEditorActive) {
+                return;
+            }
+
             const key = typeof event.key === 'string' ? event.key.toLowerCase() : '';
 
             if (key === 'z' && this.isLocalTestMode && this.traceModeActive && !event.repeat && !this.isTextInputTarget(event.target)) {
@@ -371,6 +451,11 @@ class NavigationApp {
             }
 
             if (event.key === 'Escape') {
+                if (this.startPicker && this.startPicker.style.display !== 'none') {
+                    this.hideStartPicker();
+                    return;
+                }
+
                 if (this.adminModeActive) {
                     this.exitAdminMode();
                 } else if (this.panoOverlay && this.panoOverlay.style.display === 'block') {
@@ -398,6 +483,7 @@ class NavigationApp {
         try {
             // Load office data
             await this.loadOffices();
+            await this.loadWalkingNetwork();
             this.loadOfficeTraceData();
             
             // Initialize map
@@ -405,6 +491,8 @@ class NavigationApp {
             
             // Set up search functionality
             this.setupSearch();
+
+            this.initWalkingEntry();
 
             if (this.isLocalTestMode) {
                 this.enterTestingMode({ announce: false, centerMap: true });
@@ -482,7 +570,12 @@ class NavigationApp {
             }
             
             // Check if we should show the prompt or auto-request
-            this.checkLocationPermission();
+            if (this.walkingEnabled) {
+                // Walking mode asks for location only when the visitor taps "Use my current location".
+                this.hideLocationPrompt();
+            } else {
+                this.checkLocationPermission();
+            }
         } catch (error) {
             console.error('Initialization error:', error);
             this.showStatus('Error loading navigation. Please refresh the page.');
@@ -1303,6 +1396,11 @@ class NavigationApp {
     }
 
     handleMapMouseMove(event) {
+        if (this.networkEditorActive && this.networkEditor) {
+            this.networkEditor.handleMapMouseMove(event);
+            return;
+        }
+
         if (!this.traceModeActive || this.currentTraceClosed || !event || !event.latlng) {
             return;
         }
@@ -1939,6 +2037,11 @@ class NavigationApp {
     }
 
     handleMapClick(event) {
+        if (this.networkEditorActive && this.networkEditor) {
+            this.networkEditor.handleMapClick(event);
+            return;
+        }
+
         if (this.adminModeActive) {
             this.handleAdminMapClick(event);
             return;
@@ -1955,6 +2058,760 @@ class NavigationApp {
 
         this.applyTestingModePosition(event.latlng.lat, event.latlng.lng, { announce: true, centerMap: false });
         this.setTestingModePickActive(false);
+    }
+
+    loadDevAsset(url) {
+        return new Promise((resolve, reject) => {
+            const isStylesheet = url.endsWith('.css');
+            const alreadyLoaded = Array.from(document.querySelectorAll('[data-dev-asset]'))
+                .some(element => element.dataset.devAsset === url);
+            if (alreadyLoaded) {
+                resolve();
+                return;
+            }
+
+            const element = document.createElement(isStylesheet ? 'link' : 'script');
+            element.dataset.devAsset = url;
+            if (isStylesheet) {
+                element.rel = 'stylesheet';
+                element.href = url;
+            } else {
+                element.src = url;
+                element.async = false;
+            }
+            element.onload = () => resolve();
+            element.onerror = () => {
+                element.remove();
+                reject(new Error(`Failed to load ${url}`));
+            };
+            document.head.appendChild(element);
+        });
+    }
+
+    // Developer-only; the editor scripts are never loaded for visitors.
+    async openNetworkEditor() {
+        if (!this.shouldRenderDeveloperControls() || !this.isLocalTestMode) {
+            return;
+        }
+
+        try {
+            await this.loadDevAsset('css/dev-network-editor.css');
+            await this.loadDevAsset('js/dev-network-editor.js');
+            if (!this.networkEditor) {
+                this.networkEditor = new window.QRNavCore.NetworkEditor(this);
+            }
+            await this.networkEditor.open();
+        } catch (error) {
+            console.error('Unable to open the walkway editor:', error);
+            this.showStatus('The walkway editor could not load. Check the browser console.');
+        }
+    }
+
+    // ---------- Walking navigation over the property walkway network ----------
+
+    getOfficeId(office) {
+        const normalized = String((office && office.unit) || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+        return normalized ? `u${normalized}` : null;
+    }
+
+    getWalkingCore() {
+        const core = window.QRNavCore;
+        return core && core.geo && core.validate && core.graph ? core : null;
+    }
+
+    // Office outlines stand in for buildings when connecting a start point; whole-building outlines are not mapped yet.
+    getWalkingObstacles() {
+        if (this.walkingObstacles) {
+            return this.walkingObstacles;
+        }
+
+        this.walkingObstacles = this.offices
+            .filter(office => Array.isArray(office.polygon) && office.polygon.length >= 3)
+            .map((office) => {
+                const ring = office.polygon.map(point => [point.lng, point.lat]);
+                ring.push(ring[0].slice());
+                return ring;
+            });
+        return this.walkingObstacles;
+    }
+
+    async loadWalkingNetwork() {
+        const params = new URLSearchParams(window.location.search);
+        this.walkingRequested = params.has('start') || params.get('pilot') === 'walking';
+        const core = this.getWalkingCore();
+
+        if (core) {
+            try {
+                const response = await fetch(this.walkingNetworkUrl, { cache: 'no-cache' });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const collection = await response.json();
+                const metadata = collection.metadata || {};
+                if (metadata.publishStatus !== 'pilot' && metadata.publishStatus !== 'published') {
+                    throw new Error('network file is not published');
+                }
+
+                const lats = this.offices.map(office => office.lat).filter(Number.isFinite);
+                const lngs = this.offices.map(office => office.lng).filter(Number.isFinite);
+                const validation = core.validate.validateNetworkDraft(collection, {
+                    disallowSynthetic: true,
+                    officeIds: this.offices.map(office => this.getOfficeId(office)).filter(Boolean),
+                    bbox: lats.length ? [Math.min(...lngs) - 0.005, Math.min(...lats) - 0.005, Math.max(...lngs) + 0.005, Math.max(...lats) + 0.005] : null
+                });
+                if (!validation.ok) {
+                    throw new Error(`${validation.errors.length} data error(s), first: ${validation.errors[0].message}`);
+                }
+
+                this.walkingNetwork = {
+                    graph: core.graph.buildGraph(collection, {
+                        minVerification: metadata.publishStatus === 'published' ? 'field-verified' : 'imagery-reviewed'
+                    }),
+                    status: metadata.publishStatus,
+                    dataVersion: metadata.dataVersion || null
+                };
+
+                collection.features
+                    .filter(feature => feature.properties && feature.properties.featureType === 'start')
+                    .forEach((feature) => {
+                        this.qrSigns.set(feature.id, {
+                            id: feature.id,
+                            label: feature.properties.label,
+                            lat: feature.geometry.coordinates[1],
+                            lng: feature.geometry.coordinates[0],
+                            status: feature.properties.status === 'active' ? 'active' : 'removed'
+                        });
+                    });
+                await this.loadQrSignOverrides();
+            } catch (error) {
+                console.warn('Walking network unavailable:', error);
+                this.walkingNetwork = null;
+            }
+        }
+
+        this.walkingEnabled = this.walkingRequested
+            || (!!this.walkingNetwork && this.walkingNetwork.status === 'published');
+    }
+
+    getQrSignsCollectionUrl(config) {
+        return `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(config.projectId)}/databases/(default)/documents/qrSigns`;
+    }
+
+    // Live admin edits override the sign list shipped in the network file, matched by sign ID.
+    async loadQrSignOverrides() {
+        const config = this.getFirebaseAdminConfig();
+        if (!config) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${this.getQrSignsCollectionUrl(config)}?key=${encodeURIComponent(config.apiKey)}&pageSize=200`);
+            if (response.status === 404 || response.status === 403) {
+                return;
+            }
+            if (!response.ok) {
+                throw new Error(`Firestore returned ${response.status}`);
+            }
+
+            const payload = await response.json();
+            (payload.documents || []).forEach((document) => {
+                const id = document.name.split('/').pop();
+                const fields = document.fields || {};
+                const label = this.readFirestoreString(fields, 'label');
+                const lat = this.readFirestoreNumber(fields, 'lat');
+                const lng = this.readFirestoreNumber(fields, 'lng');
+                const status = this.readFirestoreString(fields, 'status');
+                if (!/^[a-z0-9-]{1,40}$/.test(id) || !label || !label.trim() || !Number.isFinite(lat) || !Number.isFinite(lng)) {
+                    return;
+                }
+
+                this.qrSigns.set(id, { id, label: label.trim(), lat, lng, status: status === 'removed' ? 'removed' : 'active' });
+            });
+        } catch (error) {
+            console.warn('Unable to load live QR sign updates:', error);
+        }
+    }
+
+    getActiveQrSigns() {
+        return Array.from(this.qrSigns.values())
+            .filter(sign => sign.status === 'active')
+            .sort((left, right) => left.label.localeCompare(right.label));
+    }
+
+    // Reads ?property=&start= from the QR link. Values are validated and never inserted as HTML.
+    initWalkingEntry() {
+        this.walkStart = null;
+        this.walkStartProblem = null;
+        if (!this.walkingEnabled) {
+            this.updateLandingStartNote();
+            return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const rawProperty = params.get('property');
+        const rawStart = params.get('start');
+
+        if (rawProperty !== null && rawProperty !== this.propertyId) {
+            this.walkStartProblem = 'This sign link is for a different property.';
+        } else if (rawStart !== null) {
+            const sign = /^[a-z0-9-]{1,40}$/.test(rawStart) ? this.qrSigns.get(rawStart) : null;
+            if (sign && sign.status === 'active') {
+                this.walkStart = this.buildSignStart(sign, 'sign');
+            } else {
+                this.walkStartProblem = 'This sign link was not recognized.';
+            }
+        }
+
+        this.updateLandingStartNote();
+    }
+
+    buildSignStart(sign, source) {
+        return { kind: 'sign', source, id: sign.id, label: sign.label, lngLat: [sign.lng, sign.lat] };
+    }
+
+    updateLandingStartNote() {
+        if (!this.landingStartNote) {
+            return;
+        }
+
+        let text = '';
+        if (this.walkingEnabled && this.walkStart) {
+            text = `Starting at: ${this.walkStart.label}. Search for an office to get walking directions.`;
+        } else if (this.walkingEnabled && this.walkStartProblem) {
+            text = `${this.walkStartProblem} After you choose an office, pick where you are starting.`;
+        }
+
+        this.landingStartNote.textContent = text;
+        this.landingStartNote.style.display = text ? 'block' : 'none';
+    }
+
+    startWalkingRoute(office) {
+        this.clearWalkingRoute();
+
+        if (!this.walkStart) {
+            if (this.destinationRouteEl) {
+                this.destinationRouteEl.textContent = 'Choose a start';
+            }
+            this.updateWalkBanner();
+            this.showStartPicker(this.walkStartProblem || '');
+            return;
+        }
+
+        this.computeWalkingRoute(office);
+    }
+
+    // One authoritative door: the network door must match the entrance used for labels and Street View.
+    resolveWalkingDoor(office) {
+        const graph = this.walkingNetwork && this.walkingNetwork.graph;
+        const nodeId = graph ? graph.doors.get(this.getOfficeId(office)) : null;
+        if (!nodeId) {
+            return { ok: false, reason: 'destination-unavailable' };
+        }
+
+        const entrance = this.getOfficeEntrancePoint(office);
+        const doorCoord = graph.nodes.get(nodeId).coord;
+        if (!entrance
+            || this.calculateDistance(entrance.lat, entrance.lng, doorCoord[1], doorCoord[0]) > this.walkingConfig.doorMatchToleranceM) {
+            return { ok: false, reason: 'destination-unavailable' };
+        }
+
+        return { ok: true, nodeId };
+    }
+
+    computeWalkingRoute(office) {
+        this.clearWalkingRoute();
+        const core = this.getWalkingCore();
+        const network = this.walkingNetwork;
+        const start = this.walkStart;
+        const failWith = (message) => {
+            if (this.destinationRouteEl) {
+                this.destinationRouteEl.textContent = 'No route';
+            }
+            this.updateWalkBanner(message);
+        };
+
+        if (!core || !network || !start) {
+            failWith('Walking directions are not available right now.');
+            return;
+        }
+
+        this.activeRoutePlan = this.resolveOfficeNavigationPlan(office, { lat: start.lngLat[1], lng: start.lngLat[0] });
+        this.selectedEntrance = this.activeRoutePlan ? this.activeRoutePlan.entrance : null;
+        this.updateEntranceLabel(this.getOfficeEntrancePoint(office));
+        this.refreshStreetViewMarkers();
+
+        const door = this.resolveWalkingDoor(office);
+        if (!door.ok) {
+            failWith(core.graph.describeFailure(door.reason));
+            return;
+        }
+
+        const route = core.graph.findRoute(network.graph, start.lngLat, door.nodeId, {
+            obstacles: this.getWalkingObstacles(),
+            maxAttachM: this.walkingConfig.maxAttachM
+        });
+        if (!route.ok) {
+            failWith(route.message);
+            return;
+        }
+
+        const latlngs = route.coords.map(coord => [coord[1], coord[0]]);
+        const lineBase = { lineCap: 'round', lineJoin: 'round', interactive: false };
+        this.walkRouteLayer = L.layerGroup([
+            L.polyline(latlngs, { ...lineBase, color: this.routeCasingColor, opacity: 0.94, weight: 10 }),
+            L.polyline(latlngs, { ...lineBase, color: this.brandColor, opacity: 0.95, weight: 7 }),
+            L.polyline(latlngs, { ...lineBase, color: this.routeAccentColor, opacity: 0.9, weight: 2.5, dashArray: '10 14' }),
+            L.circleMarker(latlngs[0], { radius: 9, color: '#ffffff', weight: 3, fillColor: '#2e7d32', fillOpacity: 1 })
+                .bindTooltip(start.label, { permanent: true, direction: 'right', offset: [12, 0], className: 'map-caption-tooltip map-caption-tooltip--user' })
+        ]).addTo(this.map);
+
+        const end = route.coords[route.coords.length - 1];
+        this.lastRouteEndpoint = { lat: end[1], lng: end[0] };
+        this.map.fitBounds(L.latLngBounds(latlngs), { paddingTopLeft: [30, 150], paddingBottomRight: [30, 110] });
+
+        const distanceText = route.lengthM >= 1000 ? `${(route.lengthM / 1000).toFixed(1)} km` : `${Math.round(route.lengthM)} m`;
+        const minutes = Math.max(1, Math.round(route.estimatedSeconds / 60));
+        if (this.destinationRouteEl) {
+            this.destinationRouteEl.textContent = `${distanceText} | ~${minutes} min walk (est.)`;
+        }
+        this.updateWalkBanner(network.status === 'pilot' ? 'Pilot route: still being verified on site.' : '');
+    }
+
+    clearWalkingRoute() {
+        if (this.walkRouteLayer && this.map) {
+            this.map.removeLayer(this.walkRouteLayer);
+        }
+        this.walkRouteLayer = null;
+    }
+
+    updateWalkBanner(message = '') {
+        if (!this.walkStartBanner || !this.walkStartText) {
+            return;
+        }
+
+        if (!this.walkingEnabled || !this.selectedOffice) {
+            this.walkStartBanner.style.display = 'none';
+            return;
+        }
+
+        const start = this.walkStart;
+        let text = 'Choose where you are starting.';
+        if (start && start.kind === 'gps') {
+            text = `Starting from where you were when you tapped (${start.accuracyText}). Not live tracking.`;
+        } else if (start && start.source === 'sign') {
+            text = `Starting at: ${start.label}`;
+        } else if (start) {
+            text = `Preview from: ${start.label} (not your live location)`;
+        }
+
+        this.walkStartText.textContent = message ? `${text}\n${message}` : text;
+        this.walkStartText.style.whiteSpace = 'pre-line';
+        this.walkStartBanner.style.display = 'flex';
+    }
+
+    showStartPicker(message = '') {
+        if (!this.startPicker || !this.startPickerList) {
+            return;
+        }
+
+        this.startPickerList.replaceChildren();
+        this.getActiveQrSigns().forEach((sign) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'start-picker__option';
+            button.textContent = sign.label;
+            button.classList.toggle('is-active', !!this.walkStart && this.walkStart.id === sign.id);
+            button.addEventListener('click', () => this.chooseWalkStart(sign));
+            this.startPickerList.appendChild(button);
+        });
+
+        if (this.startPickerMessage) {
+            this.startPickerMessage.textContent = message;
+        }
+        if (this.startPickerGpsBtn) {
+            this.startPickerGpsBtn.disabled = false;
+        }
+        this.startPicker.style.display = 'flex';
+    }
+
+    hideStartPicker() {
+        if (this.startPicker) {
+            this.startPicker.style.display = 'none';
+        }
+    }
+
+    chooseWalkStart(sign) {
+        this.walkStart = this.buildSignStart(sign, 'picker');
+        this.walkStartProblem = null;
+        this.hideStartPicker();
+        this.updateLandingStartNote();
+        if (this.selectedOffice) {
+            this.computeWalkingRoute(this.selectedOffice);
+        }
+    }
+
+    // One-time position check, not live tracking: it must be fresh, precise, and match a reachable walkway.
+    useCurrentLocationStart() {
+        const core = this.getWalkingCore();
+        const setMessage = (text) => {
+            if (this.startPickerMessage) {
+                this.startPickerMessage.textContent = text;
+            }
+            if (this.startPickerGpsBtn) {
+                this.startPickerGpsBtn.disabled = false;
+            }
+        };
+
+        if (!navigator.geolocation) {
+            setMessage('This browser cannot share your location. Choose a sign instead.');
+            return;
+        }
+
+        setMessage('Finding your location...');
+        if (this.startPickerGpsBtn) {
+            this.startPickerGpsBtn.disabled = true;
+        }
+
+        navigator.geolocation.getCurrentPosition((position) => {
+            const { latitude, longitude, accuracy } = position.coords;
+            if (Date.now() - position.timestamp > this.walkingConfig.gpsMaxAgeMs) {
+                setMessage('Your location reading is out of date. Try again or choose a sign.');
+                return;
+            }
+            if (!(accuracy <= this.walkingConfig.gpsMaxAccuracyM)) {
+                setMessage(`Your location is not precise enough (about ${Math.round(accuracy)} m). Choose a sign instead.`);
+                return;
+            }
+
+            const attachment = core && this.walkingNetwork
+                ? core.graph.attachPoint(this.walkingNetwork.graph, [longitude, latitude], {
+                    obstacles: this.getWalkingObstacles(),
+                    maxAttachM: this.walkingConfig.maxAttachM
+                })
+                : { ok: false, reason: 'data-unavailable', message: 'Walking directions are not available right now.' };
+            if (!attachment.ok) {
+                setMessage(attachment.reason === 'start-not-on-network'
+                    ? 'You do not appear to be next to a mapped walkway. Choose a sign to preview a route.'
+                    : attachment.message);
+                return;
+            }
+
+            this.walkStart = {
+                kind: 'gps',
+                source: 'gps',
+                id: null,
+                label: 'Your location',
+                lngLat: [longitude, latitude],
+                accuracyText: `about ${Math.round(accuracy)} m accuracy`
+            };
+            this.walkStartProblem = null;
+            this.hideStartPicker();
+            this.updateLandingStartNote();
+            if (this.selectedOffice) {
+                this.computeWalkingRoute(this.selectedOffice);
+            }
+        }, (error) => {
+            setMessage(error && error.code === 1
+                ? 'Location permission was denied. Choose a sign instead.'
+                : 'Could not get your location. Choose a sign instead.');
+        }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 });
+    }
+
+    // ---------- Admin: QR sign management ----------
+
+    buildSignLink(id) {
+        return `${window.location.origin}${window.location.pathname}?property=${this.propertyId}&start=${id}`;
+    }
+
+    setAdminSignInfo(text) {
+        if (this.adminSignInfo) {
+            this.adminSignInfo.textContent = text;
+        }
+    }
+
+    populateAdminSignSelect(selectedId = null) {
+        if (!this.adminSignSelect) {
+            return;
+        }
+
+        const signs = this.getActiveQrSigns();
+        this.adminSignSelect.replaceChildren();
+        if (signs.length === 0) {
+            const empty = document.createElement('option');
+            empty.value = '';
+            empty.textContent = 'No signs yet';
+            this.adminSignSelect.appendChild(empty);
+        }
+        signs.forEach((sign) => {
+            const option = document.createElement('option');
+            option.value = sign.id;
+            option.textContent = sign.label;
+            this.adminSignSelect.appendChild(option);
+        });
+
+        const targetId = selectedId && signs.some(sign => sign.id === selectedId)
+            ? selectedId
+            : (signs[0] ? signs[0].id : '');
+        this.adminSignSelect.value = targetId;
+        this.selectAdminSign(targetId, { recenter: false });
+    }
+
+    selectAdminSign(id, { recenter = true } = {}) {
+        const sign = id ? this.qrSigns.get(id) : null;
+        this.adminSelectedSignId = sign ? sign.id : null;
+        if (this.adminSignNameInput) {
+            this.adminSignNameInput.value = sign ? sign.label : '';
+        }
+        this.setAdminSignInfo(sign
+            ? `QR link: ${this.buildSignLink(sign.id)}`
+            : 'Type a name, press Add sign, then tap the map.');
+        this.updateAdminSignMarkers();
+        if (sign && recenter && this.map) {
+            this.map.setView([sign.lat, sign.lng], Math.max(this.map.getZoom(), 19));
+        }
+    }
+
+    setAdminSignPick(mode) {
+        this.adminSignPickMode = mode || null;
+        if (this.adminSignAddBtn) {
+            this.adminSignAddBtn.classList.toggle('is-active', mode === 'add');
+            this.adminSignAddBtn.setAttribute('aria-pressed', mode === 'add' ? 'true' : 'false');
+        }
+        if (this.adminSignMoveBtn) {
+            this.adminSignMoveBtn.classList.toggle('is-active', mode === 'move');
+            this.adminSignMoveBtn.setAttribute('aria-pressed', mode === 'move' ? 'true' : 'false');
+        }
+        if (mode) {
+            this.setAdminEntrancePickActive(false);
+        }
+    }
+
+    startAdminSignAdd() {
+        if (this.adminSignPickMode === 'add') {
+            this.setAdminSignPick(null);
+            return;
+        }
+
+        const name = this.adminSignNameInput ? this.adminSignNameInput.value.trim() : '';
+        const selected = this.adminSelectedSignId ? this.qrSigns.get(this.adminSelectedSignId) : null;
+        if (!name || (selected && selected.label === name)) {
+            this.setAdminSignInfo('Type a new name for the new sign first, then press Add sign.');
+            if (this.adminSignNameInput) {
+                this.adminSignNameInput.focus();
+                this.adminSignNameInput.select();
+            }
+            return;
+        }
+
+        this.setAdminSignPick('add');
+        this.setAdminSignInfo(`Tap the map where "${name}" stands. It must be within ${this.walkingConfig.maxAttachM} m of a mapped walkway.`);
+    }
+
+    startAdminSignMove() {
+        const sign = this.adminSelectedSignId ? this.qrSigns.get(this.adminSelectedSignId) : null;
+        if (!sign) {
+            this.setAdminSignInfo('Choose a sign to move first.');
+            return;
+        }
+
+        if (this.adminSignPickMode === 'move') {
+            this.setAdminSignPick(null);
+            return;
+        }
+
+        this.setAdminSignPick('move');
+        this.setAdminSignInfo(`Tap the map where "${sign.label}" now stands.`);
+    }
+
+    checkSignPlacement(lat, lng) {
+        const core = this.getWalkingCore();
+        if (!core || !this.walkingNetwork) {
+            return { ok: false, message: 'The walkway network is not loaded, so signs cannot be placed yet.' };
+        }
+
+        const attachment = core.graph.attachPoint(this.walkingNetwork.graph, [lng, lat], {
+            obstacles: this.getWalkingObstacles(),
+            maxAttachM: this.walkingConfig.maxAttachM
+        });
+        if (attachment.ok) {
+            return { ok: true };
+        }
+
+        return {
+            ok: false,
+            message: attachment.reason === 'start-not-on-network'
+                ? `That spot is more than ${this.walkingConfig.maxAttachM} m from a mapped walkway. Tap closer to one.`
+                : attachment.message
+        };
+    }
+
+    makeSignId(label) {
+        const base = label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 32) || 'sign';
+        let id = base;
+        let suffix = 2;
+        while (this.qrSigns.has(id)) {
+            id = `${base}-${suffix}`;
+            suffix += 1;
+        }
+        return id;
+    }
+
+    async handleAdminSignMapClick(event) {
+        const mode = this.adminSignPickMode;
+        if (!mode || !event || !event.latlng) {
+            return;
+        }
+
+        const lat = Math.round(event.latlng.lat * 1e7) / 1e7;
+        const lng = Math.round(event.latlng.lng * 1e7) / 1e7;
+        const placement = this.checkSignPlacement(lat, lng);
+        if (!placement.ok) {
+            this.setAdminSignInfo(placement.message);
+            return;
+        }
+
+        this.setAdminSignPick(null);
+        if (mode === 'add') {
+            const label = this.adminSignNameInput ? this.adminSignNameInput.value.trim() : '';
+            const id = this.makeSignId(label);
+            if (await this.saveQrSign({ id, label, lat, lng, status: 'active' }, 'Sign added.')) {
+                this.populateAdminSignSelect(id);
+                this.setAdminSignInfo(`Sign added. QR link: ${this.buildSignLink(id)}`);
+            }
+            return;
+        }
+
+        const sign = this.qrSigns.get(this.adminSelectedSignId);
+        if (sign && await this.saveQrSign({ ...sign, lat, lng }, 'Sign moved.')) {
+            this.populateAdminSignSelect(sign.id);
+            this.setAdminSignInfo(`Sign moved. QR link (unchanged): ${this.buildSignLink(sign.id)}`);
+        }
+    }
+
+    async renameAdminSign() {
+        const sign = this.adminSelectedSignId ? this.qrSigns.get(this.adminSelectedSignId) : null;
+        const label = this.adminSignNameInput ? this.adminSignNameInput.value.trim() : '';
+        if (!sign || !label) {
+            this.setAdminSignInfo('Choose a sign and type its new name.');
+            return;
+        }
+
+        if (label === sign.label) {
+            this.setAdminSignInfo('That is already the sign name.');
+            return;
+        }
+
+        if (await this.saveQrSign({ ...sign, label }, 'Sign renamed. Its QR link did not change.')) {
+            this.populateAdminSignSelect(sign.id);
+            this.setAdminSignInfo(`Sign renamed. QR link (unchanged): ${this.buildSignLink(sign.id)}`);
+        }
+    }
+
+    async removeAdminSign() {
+        const sign = this.adminSelectedSignId ? this.qrSigns.get(this.adminSelectedSignId) : null;
+        if (!sign) {
+            this.setAdminSignInfo('Choose a sign to remove.');
+            return;
+        }
+
+        if (!window.confirm(`Remove "${sign.label}"? Printed QR codes for it will ask visitors to choose where they are starting.`)) {
+            return;
+        }
+
+        if (await this.saveQrSign({ ...sign, status: 'removed' }, 'Sign removed.')) {
+            this.populateAdminSignSelect();
+            this.setAdminSignInfo(`Sign "${sign.label}" removed.`);
+        }
+    }
+
+    async saveQrSign(sign, successMessage) {
+        const config = this.getFirebaseAdminConfig();
+        if (!config || !this.adminIdToken || !sign.label || sign.label.length > 60) {
+            this.setAdminSignInfo('Enter a sign name of up to 60 characters.');
+            return false;
+        }
+
+        const fields = {
+            label: { stringValue: sign.label },
+            lat: { doubleValue: sign.lat },
+            lng: { doubleValue: sign.lng },
+            status: { stringValue: sign.status },
+            updatedAt: { timestampValue: new Date().toISOString() }
+        };
+
+        try {
+            const response = await fetch(`${this.getQrSignsCollectionUrl(config)}/${encodeURIComponent(sign.id)}?key=${encodeURIComponent(config.apiKey)}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${this.adminIdToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ fields })
+            });
+            if (!response.ok) {
+                throw new Error(String(response.status));
+            }
+
+            this.qrSigns.set(sign.id, { id: sign.id, label: sign.label, lat: sign.lat, lng: sign.lng, status: sign.status });
+            this.setAdminSignInfo(successMessage);
+            return true;
+        } catch (error) {
+            console.error('Unable to save QR sign:', error);
+            this.setAdminSignInfo(error.message === '403'
+                ? 'Saving signs is not allowed yet. Publish the updated firestore.rules in Firebase, then try again.'
+                : 'Save failed. Exit admin mode, sign in again, and retry.');
+            return false;
+        }
+    }
+
+    updateAdminSignMarkers() {
+        if (!this.map) {
+            return;
+        }
+
+        this.clearAdminSignMarkers();
+        if (!this.adminModeActive) {
+            return;
+        }
+
+        this.adminSignLayer = L.layerGroup().addTo(this.map);
+        this.getActiveQrSigns().forEach((sign) => {
+            const selected = sign.id === this.adminSelectedSignId;
+            L.circleMarker([sign.lat, sign.lng], {
+                radius: selected ? 11 : 8,
+                color: '#ffffff',
+                weight: 3,
+                fillColor: selected ? '#2e7d32' : '#66bb6a',
+                fillOpacity: 1,
+                interactive: false
+            }).bindTooltip(sign.label, { permanent: true, direction: 'right', offset: [12, 0], className: 'map-caption-tooltip' })
+                .addTo(this.adminSignLayer);
+        });
+    }
+
+    clearAdminSignMarkers() {
+        if (this.adminSignLayer && this.map) {
+            this.map.removeLayer(this.adminSignLayer);
+        }
+        this.adminSignLayer = null;
+    }
+
+    // Warns before an admin door move leaves the mapped walkway connection.
+    getDoorMoveWarning(office, entrance) {
+        const graph = this.walkingNetwork && this.walkingNetwork.graph;
+        const nodeId = graph ? graph.doors.get(this.getOfficeId(office)) : null;
+        if (!nodeId || !this.isValidCoordinatePair(entrance)) {
+            return null;
+        }
+
+        const doorCoord = graph.nodes.get(nodeId).coord;
+        const distance = this.calculateDistance(entrance.lat, entrance.lng, doorCoord[1], doorCoord[0]);
+        if (distance <= this.walkingConfig.doorMatchToleranceM) {
+            return null;
+        }
+
+        return `This door is ${distance.toFixed(0)} m from its mapped walkway connection. Walking directions to this office will say "being updated" until a developer reconnects it. Save anyway?`;
     }
 
     async enterAdminMode() {
@@ -1989,6 +2846,7 @@ class NavigationApp {
             this.clearRoute();
             this.hideLocationPrompt();
             this.populateAdminOfficeSelect();
+            this.populateAdminSignSelect();
 
             if (this.landingMenu) {
                 this.landingMenu.style.display = 'none';
@@ -2056,6 +2914,9 @@ class NavigationApp {
 
     setAdminEntrancePickActive(active) {
         this.adminEntrancePickActive = !!active && this.adminModeActive;
+        if (this.adminEntrancePickActive && this.adminSignPickMode) {
+            this.setAdminSignPick(null);
+        }
         if (this.adminPickEntranceBtn) {
             this.adminPickEntranceBtn.classList.toggle('is-active', this.adminEntrancePickActive);
             this.adminPickEntranceBtn.setAttribute('aria-pressed', this.adminEntrancePickActive ? 'true' : 'false');
@@ -2067,6 +2928,11 @@ class NavigationApp {
     }
 
     handleAdminMapClick(event) {
+        if (this.adminSignPickMode) {
+            this.handleAdminSignMapClick(event);
+            return;
+        }
+
         if (!this.adminEntrancePickActive || !event || !event.latlng) {
             return;
         }
@@ -2128,6 +2994,11 @@ class NavigationApp {
             if (this.adminStatus) {
                 this.adminStatus.textContent = 'Enter a tenant name and choose a valid front-door location.';
             }
+            return;
+        }
+
+        const doorWarning = this.getDoorMoveWarning(office, this.adminPendingEntrance);
+        if (doorWarning && !window.confirm(doorWarning)) {
             return;
         }
 
@@ -2197,6 +3068,8 @@ class NavigationApp {
         this.adminPendingEntrance = null;
         this.adminHasUnsavedChanges = false;
         this.setAdminEntrancePickActive(false);
+        this.setAdminSignPick(null);
+        this.clearAdminSignMarkers();
         if (this.adminEntranceMarker && this.map) {
             this.map.removeLayer(this.adminEntranceMarker);
             this.adminEntranceMarker = null;
@@ -3277,6 +4150,11 @@ class NavigationApp {
         this.updateEntranceLabel(this.getOfficeEntrancePoint(office));
         this.showStreetViewMarkers();
 
+        if (this.walkingEnabled) {
+            this.startWalkingRoute(office);
+            return;
+        }
+
         const destination = this.getRouteDestinationCoords(office);
         
         if (this.userMarker) {
@@ -4010,6 +4888,8 @@ class NavigationApp {
         this.lastRouteUpdatePosition = null; // Reset route tracking
         this.routeDestinationName = null;
         this.lastRouteEndpoint = null;
+        this.clearWalkingRoute();
+        this.updateWalkBanner();
         this.updateDestinationPanel(null);
         this.closePanorama();
         // Hide panorama button when route is cleared

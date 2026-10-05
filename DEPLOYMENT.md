@@ -137,6 +137,11 @@ git push
 
 **Note**: GitHub Pages automatically rebuilds when you push changes. Wait 1-2 minutes for updates to go live.
 
+### Publishing the walkway network and sign rules
+
+- **Network data:** after editing `draft/walking-network-draft.geojson`, run `node tools/publish-network.js --status pilot` and commit `data/properties/willowbrook/network.geojson`. Roll back by reverting that file. Browsers revalidate it on each visit.
+- **Firestore rules (one-time, needed for admin sign editing):** open Firebase console → Firestore Database → Rules, paste the contents of `firestore.rules`, and click Publish. Until this is done, admin sign changes fail with "Saving signs is not allowed yet"; visitors and the three built-in signs are unaffected.
+
 ## Troubleshooting
 
 **Site not loading?**

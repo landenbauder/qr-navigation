@@ -11,6 +11,18 @@ Examples of deployed URLs:
 - `https://yourusername.github.io/willowbrook-navigation/`
 - `https://navigation.yourbuilding.com/` (if using custom domain)
 
+### Per-sign links (walking directions)
+
+Give each physical sign its own link so the app knows where the visitor is standing without GPS:
+
+| Sign | Link |
+|---|---|
+| Main parking lot | `https://wbc-guide.com/?property=willowbrook&start=main-lot` |
+| West parking lot | `https://wbc-guide.com/?property=willowbrook&start=west-lot` |
+| East parking lot | `https://wbc-guide.com/?property=willowbrook&start=east-lot` |
+
+Signs are added, moved, renamed, and removed in admin mode (QR signs section), which also shows each sign's link. Renaming or moving a sign never changes its link. Scan every printed code on a phone before installing it. These three signs are proposed locations from the owner's sketch and are not yet marked as installed.
+
 ## Step 2: Generate QR Code
 
 ### Option A: Online QR Code Generators (Free)

@@ -1,0 +1,58 @@
+{
+  "propertyId": "willowbrook",
+  "snapshotDate": "2026-10-05",
+  "createdAt": "2026-10-05T02:07:32.790Z",
+  "note": "Unmodified copies of legacy inputs. Do not edit; create a new snapshot instead.",
+  "files": [
+    {
+      "file": "offices.json",
+      "bytes": 21015,
+      "sha256": "4a0f20a68ec467fb19de92967867232d5001c655b7f8ebad7ae183ff09792302"
+    },
+    {
+      "file": "office-boundaries.json",
+      "bytes": 29913,
+      "sha256": "a9e98ce951dcad0a50e3aba783885499288356693a03cd332dba39a1f5a137f9"
+    },
+    {
+      "file": "new_office_locations.json",
+      "bytes": 3230,
+      "sha256": "95fe239aabe112acea1b2291fe08cf7345e079304bb2066cb538aeb06f9f9863"
+    },
+    {
+      "file": "new_office_building_entrances",
+      "bytes": 1745,
+      "sha256": "6cd55a9072b29661cda1f78d5c4941c25032bf7cab2c37c0770e44e1b5b220a4"
+    },
+    {
+      "file": "sidewalk_locations.txt",
+      "bytes": 1231,
+      "sha256": "09eec9156de0ea5408f5f3ed398f5836750c649f4516cf4f242f04b33f651982"
+    },
+    {
+      "file": "panorama_gps_locations.txt",
+      "bytes": 334,
+      "sha256": "aad75e06d8eecaa421035decaac52d8eb76b59e1b310d62d7a73c3cc7b63afb7"
+    },
+    {
+      "file": "tenant-units-from-pdf.csv",
+      "bytes": 1703,
+      "sha256": "0f2d7e2619c8c4ba5d61b3c693a1c9e17c81b41e6185e4824fbfce7632812fa0"
+    },
+    {
+      "file": "tenant-coordinate-reuse-map.csv",
+      "bytes": 5271,
+      "sha256": "4deb8b4799da0ec21132a971ef8775d4615a35f8a5b305a11c2c5b01a3635cd4"
+    },
+    {
+      "file": "remaining-office-coordinate-capture.csv",
+      "bytes": 1093,
+      "sha256": "b48e61c5b870cccced5da4a45f1326b989ca3d54c88b734eca3a80cdda07d151"
+    },
+    {
+      "file": "firestore-tenant-overrides.json",
+      "bytes": 468,
+      "sha256": "d572cb7b5e452e573a658d77441f69e6f5399f992ad16bf1727f8fbf904a6b62"
+    }
+  ]
+}

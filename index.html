@@ -51,6 +51,7 @@
                     >
                     <div id="searchResults" class="search-results"></div>
                 </div>
+                <p id="landingStartNote" class="landing-start-note" aria-live="polite" style="display: none;"></p>
                 <button id="adminModeBtn" class="admin-mode-button" type="button" aria-label="Enter tenant admin mode" title="Tenant administration">
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <path d="M7 10V8a5 5 0 0 1 10 0v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -106,6 +107,21 @@
         <!-- Status Message -->
         <div id="statusMessage" class="status-message"></div>
 
+        <div id="walkStartBanner" class="walk-start-banner" aria-live="polite" style="display: none;">
+            <span id="walkStartText" class="walk-start-banner__text"></span>
+            <button id="walkChangeStartBtn" class="walk-start-banner__button" type="button">Change start</button>
+        </div>
+
+        <div id="startPicker" class="start-picker" role="dialog" aria-modal="true" aria-labelledby="startPickerTitle" style="display: none;">
+            <div class="start-picker__sheet">
+                <h2 id="startPickerTitle" class="start-picker__title">Where are you starting?</h2>
+                <p id="startPickerMessage" class="start-picker__message" aria-live="polite"></p>
+                <div id="startPickerList" class="start-picker__list"></div>
+                <button id="startPickerGpsBtn" class="start-picker__gps" type="button">Use my current location</button>
+                <button id="startPickerCancelBtn" class="start-picker__cancel" type="button">Cancel</button>
+            </div>
+        </div>
+
         <div id="testLocationPanel" class="test-location-panel" style="display: none;">
             <div class="test-location-panel__content">
                 <div class="test-location-panel__copy">
@@ -160,6 +176,25 @@
             <button id="adminPickEntranceBtn" class="admin-panel__action admin-panel__action--secondary" type="button" aria-pressed="false">Move front door</button>
             <p id="adminStatus" class="admin-panel__status" aria-live="polite">Choose a tenant to begin.</p>
             <button id="adminSaveBtn" class="admin-panel__action admin-panel__action--primary" type="button">Save changes</button>
+
+            <div class="admin-panel__signs">
+                <span class="admin-panel__eyebrow">QR signs</span>
+                <label class="admin-panel__field">
+                    <span>Sign</span>
+                    <select id="adminSignSelect"></select>
+                </label>
+                <label class="admin-panel__field">
+                    <span>Sign name</span>
+                    <input id="adminSignNameInput" type="text" maxlength="60" autocomplete="off" placeholder="e.g. North parking lot">
+                </label>
+                <p id="adminSignInfo" class="admin-panel__status" aria-live="polite"></p>
+                <div class="admin-panel__row">
+                    <button id="adminSignAddBtn" class="admin-panel__action admin-panel__action--secondary" type="button" aria-pressed="false">Add sign</button>
+                    <button id="adminSignMoveBtn" class="admin-panel__action admin-panel__action--secondary" type="button" aria-pressed="false">Move</button>
+                    <button id="adminSignRenameBtn" class="admin-panel__action admin-panel__action--secondary" type="button">Rename</button>
+                    <button id="adminSignRemoveBtn" class="admin-panel__action admin-panel__action--secondary" type="button">Remove</button>
+                </div>
+            </div>
         </section>
 
         <div id="officeTracePanel" class="office-trace-panel" style="display: none;">
@@ -177,6 +212,7 @@
                 <span id="officeTraceRotation" class="office-trace-panel__progress-text">Rotation 0°</span>
             </div>
             <div class="office-trace-panel__actions">
+                <button id="openNetworkEditorBtn" class="office-trace-panel__action office-trace-panel__action--primary" type="button">Walkway Editor</button>
                 <button id="traceUndoBtn" class="office-trace-panel__action" type="button">Undo Point</button>
                 <button id="traceResetBtn" class="office-trace-panel__action office-trace-panel__action--secondary" type="button">Reset Shape</button>
                 <button id="traceSetOfficePointBtn" class="office-trace-panel__action office-trace-panel__action--secondary" type="button">Set Office Dot</button>
@@ -216,6 +252,10 @@
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
 
     <script src="app-config.js"></script>
+
+    <script src="js/nav-geo.js"></script>
+    <script src="js/nav-validate.js"></script>
+    <script src="js/nav-graph.js"></script>
 
     <script src="https://unpkg.com/pannellum/build/pannellum.js" defer></script>
     

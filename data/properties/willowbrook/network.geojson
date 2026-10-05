@@ -1,0 +1,4358 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "propertyId": "willowbrook",
+    "schemaVersion": 1,
+    "status": "pilot",
+    "coordinateOrder": "[longitude, latitude] WGS84",
+    "source": "owner-sketch:2026-10-04",
+    "notes": [
+      "Walkway shapes follow the owner sketch; positions are anchored to reference doors and sidewalk points S1-S30.",
+      "Owner statement 2026-10-04: anywhere in the parking lots is walkable. Parking lots are not drawn yet.",
+      "Buildings and the navigation boundary are not drawn yet; trace them in the walkway editor on aerial imagery."
+    ],
+    "publishStatus": "pilot",
+    "dataVersion": "2026.10.05-1",
+    "publishedAt": "2026-10-05T02:52:23.725Z",
+    "minVerification": "imagery-reviewed",
+    "routableWalkways": 84,
+    "skippedWalkways": 0
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "n-wSW",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93891097,
+          41.75001264
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-w636",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93891097,
+          41.7500594
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-wSign",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93891097,
+          41.75014304
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-w638",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93891097,
+          41.75022308
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-wPass",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93891097,
+          41.75024646
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-w642",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93891097,
+          41.7503229
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-w646",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93891097,
+          41.75033999
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-wNW",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93891097,
+          41.75048029
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-eNE",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93859756,
+          41.75048029
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-e648",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93859756,
+          41.75034089
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-eB",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93859756,
+          41.75030492
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-ePass",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93859756,
+          41.75024646
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-s632",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9387169,
+          41.75001264
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-s628",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93868435,
+          41.75001264
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-b624",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93847702,
+          41.75031616
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-b620",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93828415,
+          41.75033909
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-f620",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93829017,
+          41.75026895
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-b618",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93818168,
+          41.75036068
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-cW",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93811418,
+          41.75027074
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-c614",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9379852,
+          41.75027074
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-c612",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93794421,
+          41.75027074
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-cD",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93790926,
+          41.75027074
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-c610",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93779112,
+          41.75025096
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-cE",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93758861,
+          41.75025096
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-cSE",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93751267,
+          41.75025096
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-se600",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93751267,
+          41.7500621
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-seC",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93751267,
+          41.75001893
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-s604",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93774532,
+          41.75001893
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-s608",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9377646,
+          41.75001893
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-d7670",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93790926,
+          41.75030762
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-dS8",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93790685,
+          41.75047309
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-dLoopB",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93790926,
+          41.75060529
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-dLoopT",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93788515,
+          41.75076807
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-d7632",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9378297,
+          41.75104596
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-d7630",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93782849,
+          41.75106394
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-dNW",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93782849,
+          41.75114129
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-lB",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93782005,
+          41.75060529
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-l7654",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93782005,
+          41.75061608
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-l7650",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93782005,
+          41.75062238
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-l7646",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93782005,
+          41.75075278
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-lT",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93782005,
+          41.75076807
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-nNE",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93746325,
+          41.75114129
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-nEnd",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93741021,
+          41.75114129
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-wbSE",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93746325,
+          41.75083102
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-eTop",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93753075,
+          41.7507276
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-e7648",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93753075,
+          41.75064126
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-e7652",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93753075,
+          41.75061878
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-e7656",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93758861,
+          41.75049198
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-e7660",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93758861,
+          41.75047399
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-eSign",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93758861,
+          41.75042183
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-e7664",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93758861,
+          41.75035888
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n-e7668",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93758861,
+          41.7503292
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u600",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93752280619985,
+          41.75006227769781
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u600",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Airtex Manufacturing Inc.__600"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u604",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9377450534087,
+          41.75003464989969
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u604",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Syndem, LLC__604"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u608",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9377643134039,
+          41.75003188933654
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u608",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Sam International, LLC__608"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u610",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93779157399045,
+          41.75025702314436
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u610",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Clean Slate, Inc__610"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u612",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93794438991488,
+          41.750262625233
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u612",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#John Devae Insurance Agency, Inc.__612"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u614",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93798573154828,
+          41.75026134825452
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u614",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Donald E. Morris Architect, PC__614"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u618",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93814490470515,
+          41.75025733459236
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u618",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Equitec Group LLC__618"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u620",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93829784909227,
+          41.75025623478498
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u620",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Jay Building Group LLC__620"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u622",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93835004009202,
+          41.75025197887941
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u622",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Armond Cozzi__622"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u624",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93847184006674,
+          41.7502508546603
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u624",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Lifetime Restoration, Inc.__624"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u626",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93856,
+          41.750249
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u626",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#The Forest Electric Company__626"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u628",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9386849021605,
+          41.75002202519741
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u628",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Nightingale Home Healthcare of Illinois, Inc.__628"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u632",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93871710984848,
+          41.75001895786286
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u632",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Elevate Hospice LLC__632"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u636",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.938903,
+          41.750059
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u636",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Father & Sons Plumbing & Sewer Corp.__636"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u638",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93889948325962,
+          41.7502230104432
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u638",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Envirotest Perry Labs, Inc.__638"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u642",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9388884576044,
+          41.75032272576179
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u642",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Law Office of Robert J. Chio__642"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u646",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93888747683236,
+          41.75034014199952
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u646",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#The Best Veneer Company LLC__646"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u648",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93860818742124,
+          41.75034087970753
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u648",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Troop Contracting, Inc.__648"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7630",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.937764,
+          41.751064
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7630",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Redwood Construction Group LLC__7630"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7632",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93775465982769,
+          41.7510463875647
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7632",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Advanced Physicians, SC__7632"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7646",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9378008415608,
+          41.75075245003324
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7646",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Firmus Medical, LLC__7646"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7648",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93753882489035,
+          41.75064109053827
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7648",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Faron and Associates, Inc.__7648"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7650",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93780255221638,
+          41.75062202857697
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7650",
+        "verification": "owner-confirmed",
+        "source": [
+          "firestore:tenantOverrides/VFJQIEludmVzdG1lbnRzLCBMTENfXzc2NTA"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7652",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93754580279385,
+          41.75061838451117
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7652",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Ecodrive, Inc.__7652"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7654",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93780661867359,
+          41.75061583893841
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7654",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Donnelly Transportation, Inc__7654"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7656",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93761255614079,
+          41.750492284419664
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7656",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Charland, LLC__7656"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7660",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93761601628566,
+          41.75047432551582
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7660",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Thomas Murphy__7660"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7664",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93760799087319,
+          41.75035866364809
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7664",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Proform Technologies, Inc.__7664"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7668",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93760072016401,
+          41.75032941300963
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7668",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#SFUSA__7668"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7670",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9378952643016,
+          41.750307576919965
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "officeId": "u7670",
+        "verification": "owner-confirmed",
+        "source": [
+          "legacy:office-boundaries.json#Shahid Khwaja__7670"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e1",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.75001264
+          ],
+          [
+            -87.93891097,
+            41.7500594
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-wSW",
+        "to": "n-w636",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e2",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.7500594
+          ],
+          [
+            -87.93891097,
+            41.75014304
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-w636",
+        "to": "n-wSign",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e3",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.75014304
+          ],
+          [
+            -87.93891097,
+            41.75022308
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-wSign",
+        "to": "n-w638",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e4",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.75022308
+          ],
+          [
+            -87.93891097,
+            41.75024646
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-w638",
+        "to": "n-wPass",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e5",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.75024646
+          ],
+          [
+            -87.93891097,
+            41.7503229
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-wPass",
+        "to": "n-w642",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e6",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.7503229
+          ],
+          [
+            -87.93891097,
+            41.75033999
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-w642",
+        "to": "n-w646",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e7",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.75033999
+          ],
+          [
+            -87.93891097,
+            41.75048029
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-w646",
+        "to": "n-wNW",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e8",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.75048029
+          ],
+          [
+            -87.93859756,
+            41.75048029
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-wNW",
+        "to": "n-eNE",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e9",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93859756,
+            41.75048029
+          ],
+          [
+            -87.93859756,
+            41.75034089
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-eNE",
+        "to": "n-e648",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e10",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93859756,
+            41.75034089
+          ],
+          [
+            -87.93859756,
+            41.75030492
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e648",
+        "to": "n-eB",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e11",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93859756,
+            41.75030492
+          ],
+          [
+            -87.93859756,
+            41.75024646
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-eB",
+        "to": "n-ePass",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e12",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.75024646
+          ],
+          [
+            -87.93859756,
+            41.75024646
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-wPass",
+        "to": "n-ePass",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk",
+        "notes": "Passage between the west buildings (from sketch)."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e13",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.75001264
+          ],
+          [
+            -87.9387169,
+            41.75001264
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-wSW",
+        "to": "n-s632",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e14",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.9387169,
+            41.75001264
+          ],
+          [
+            -87.93868435,
+            41.75001264
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-s632",
+        "to": "n-s628",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e15",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93859756,
+            41.75030492
+          ],
+          [
+            -87.93852282,
+            41.75031211
+          ],
+          [
+            -87.93847702,
+            41.75031616
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-eB",
+        "to": "n-b624",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e16",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93847702,
+            41.75031616
+          ],
+          [
+            -87.93832031,
+            41.7503301
+          ],
+          [
+            -87.93828415,
+            41.75033909
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-b624",
+        "to": "n-b620",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e17",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93828415,
+            41.75033909
+          ],
+          [
+            -87.93823593,
+            41.75035168
+          ],
+          [
+            -87.93818168,
+            41.75036068
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-b620",
+        "to": "n-b618",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e18",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93818168,
+            41.75036068
+          ],
+          [
+            -87.93813949,
+            41.75036787
+          ],
+          [
+            -87.93799123,
+            41.75042813
+          ],
+          [
+            -87.93790685,
+            41.75047309
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-b618",
+        "to": "n-dS8",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e19",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93828415,
+            41.75033909
+          ],
+          [
+            -87.93829017,
+            41.75026895
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-b620",
+        "to": "n-f620",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "path",
+        "notes": "Sketch stub toward doors 620/622; confirm where it meets the building."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e20",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93818168,
+            41.75036068
+          ],
+          [
+            -87.93811418,
+            41.75027074
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-b618",
+        "to": "n-cW",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "path",
+        "notes": "Diagonal path through the landscaping (from sketch)."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e21",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93811418,
+            41.75027074
+          ],
+          [
+            -87.9379852,
+            41.75027074
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-cW",
+        "to": "n-c614",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e22",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.9379852,
+            41.75027074
+          ],
+          [
+            -87.93794421,
+            41.75027074
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-c614",
+        "to": "n-c612",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e23",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93794421,
+            41.75027074
+          ],
+          [
+            -87.93790926,
+            41.75027074
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-c612",
+        "to": "n-cD",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e24",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93790926,
+            41.75027074
+          ],
+          [
+            -87.93788635,
+            41.75025096
+          ],
+          [
+            -87.93779112,
+            41.75025096
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-cD",
+        "to": "n-c610",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e25",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93779112,
+            41.75025096
+          ],
+          [
+            -87.93758861,
+            41.75025096
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-c610",
+        "to": "n-cE",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e26",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93758861,
+            41.75025096
+          ],
+          [
+            -87.93751267,
+            41.75025096
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-cE",
+        "to": "n-cSE",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e27",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93751267,
+            41.75025096
+          ],
+          [
+            -87.93751267,
+            41.7500621
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-cSE",
+        "to": "n-se600",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e28",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93751267,
+            41.7500621
+          ],
+          [
+            -87.93751267,
+            41.75001893
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-se600",
+        "to": "n-seC",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e29",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93751267,
+            41.75001893
+          ],
+          [
+            -87.93774532,
+            41.75001893
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-seC",
+        "to": "n-s604",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e30",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93774532,
+            41.75001893
+          ],
+          [
+            -87.9377646,
+            41.75001893
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-s604",
+        "to": "n-s608",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e31",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93790926,
+            41.75027074
+          ],
+          [
+            -87.93790926,
+            41.75030762
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-cD",
+        "to": "n-d7670",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e32",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93790926,
+            41.75030762
+          ],
+          [
+            -87.93790685,
+            41.75047309
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-d7670",
+        "to": "n-dS8",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e33",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93790685,
+            41.75047309
+          ],
+          [
+            -87.93790926,
+            41.75050637
+          ],
+          [
+            -87.93790926,
+            41.75060529
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-dS8",
+        "to": "n-dLoopB",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e34",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93790926,
+            41.75060529
+          ],
+          [
+            -87.93791287,
+            41.75063227
+          ],
+          [
+            -87.93790926,
+            41.75064396
+          ],
+          [
+            -87.93790805,
+            41.75068893
+          ],
+          [
+            -87.93788515,
+            41.75076807
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-dLoopB",
+        "to": "n-dLoopT",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e35",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93788515,
+            41.75076807
+          ],
+          [
+            -87.9378755,
+            41.75080134
+          ],
+          [
+            -87.93784657,
+            41.75088588
+          ],
+          [
+            -87.93783934,
+            41.75092005
+          ],
+          [
+            -87.93782729,
+            41.75098031
+          ],
+          [
+            -87.9378309,
+            41.75100639
+          ],
+          [
+            -87.9378297,
+            41.75104596
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-dLoopT",
+        "to": "n-d7632",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e36",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.9378297,
+            41.75104596
+          ],
+          [
+            -87.93782849,
+            41.75106394
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-d7632",
+        "to": "n-d7630",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e37",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93782849,
+            41.75106394
+          ],
+          [
+            -87.93782849,
+            41.75114129
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-d7630",
+        "to": "n-dNW",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e38",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93790926,
+            41.75060529
+          ],
+          [
+            -87.93782005,
+            41.75060529
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-dLoopB",
+        "to": "n-lB",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e39",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93782005,
+            41.75060529
+          ],
+          [
+            -87.93782005,
+            41.75061608
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-lB",
+        "to": "n-l7654",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e40",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93782005,
+            41.75061608
+          ],
+          [
+            -87.93782005,
+            41.75062238
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-l7654",
+        "to": "n-l7650",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e41",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93782005,
+            41.75062238
+          ],
+          [
+            -87.93782005,
+            41.75075278
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-l7650",
+        "to": "n-l7646",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e42",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93782005,
+            41.75075278
+          ],
+          [
+            -87.93782005,
+            41.75076807
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-l7646",
+        "to": "n-lT",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e43",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93782005,
+            41.75076807
+          ],
+          [
+            -87.93788515,
+            41.75076807
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-lT",
+        "to": "n-dLoopT",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e44",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93782849,
+            41.75114129
+          ],
+          [
+            -87.93746325,
+            41.75114129
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-dNW",
+        "to": "n-nNE",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e45",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93746325,
+            41.75114129
+          ],
+          [
+            -87.93741021,
+            41.75114129
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-nNE",
+        "to": "n-nEnd",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e46",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93746325,
+            41.75114129
+          ],
+          [
+            -87.93746325,
+            41.75083102
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-nNE",
+        "to": "n-wbSE",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk",
+        "notes": "Sketch line ends near the east walkway of the next building; not connected until confirmed."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e47",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93753075,
+            41.7507276
+          ],
+          [
+            -87.93753075,
+            41.75064126
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-eTop",
+        "to": "n-e7648",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e48",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93753075,
+            41.75064126
+          ],
+          [
+            -87.93753075,
+            41.75061878
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7648",
+        "to": "n-e7652",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e49",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93753075,
+            41.75061878
+          ],
+          [
+            -87.93753075,
+            41.75054324
+          ],
+          [
+            -87.93758861,
+            41.75051626
+          ],
+          [
+            -87.93758861,
+            41.75049198
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7652",
+        "to": "n-e7656",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e50",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93758861,
+            41.75049198
+          ],
+          [
+            -87.93758861,
+            41.75047399
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7656",
+        "to": "n-e7660",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e51",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93758861,
+            41.75047399
+          ],
+          [
+            -87.93758861,
+            41.75042183
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7660",
+        "to": "n-eSign",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e52",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93758861,
+            41.75042183
+          ],
+          [
+            -87.93758861,
+            41.75035888
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-eSign",
+        "to": "n-e7664",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e53",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93758861,
+            41.75035888
+          ],
+          [
+            -87.93758861,
+            41.7503292
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7664",
+        "to": "n-e7668",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e54",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93758861,
+            41.7503292
+          ],
+          [
+            -87.93758861,
+            41.75025096
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7668",
+        "to": "n-cE",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e55",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93751267,
+            41.7500621
+          ],
+          [
+            -87.93752280619985,
+            41.75006227769781
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-se600",
+        "to": "door-u600",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e56",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93774532,
+            41.75001893
+          ],
+          [
+            -87.9377450534087,
+            41.75003464989969
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-s604",
+        "to": "door-u604",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e57",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.9377646,
+            41.75001893
+          ],
+          [
+            -87.9377643134039,
+            41.75003188933654
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-s608",
+        "to": "door-u608",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e58",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93779112,
+            41.75025096
+          ],
+          [
+            -87.93779157399045,
+            41.75025702314436
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-c610",
+        "to": "door-u610",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e59",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93794421,
+            41.75027074
+          ],
+          [
+            -87.93794438991488,
+            41.750262625233
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-c612",
+        "to": "door-u612",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e60",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.9379852,
+            41.75027074
+          ],
+          [
+            -87.93798573154828,
+            41.75026134825452
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-c614",
+        "to": "door-u614",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e61",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93811418,
+            41.75027074
+          ],
+          [
+            -87.93814490470515,
+            41.75025733459236
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-cW",
+        "to": "door-u618",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e62",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93829017,
+            41.75026895
+          ],
+          [
+            -87.93829784909227,
+            41.75025623478498
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-f620",
+        "to": "door-u620",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "imagery-reviewed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector",
+        "notes": "Door connection inferred from the aerial image, not drawn in the sketch; confirm on site."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e63",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93829017,
+            41.75026895
+          ],
+          [
+            -87.93835004009202,
+            41.75025197887941
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-f620",
+        "to": "door-u622",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "imagery-reviewed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector",
+        "notes": "Door connection inferred from the aerial image, not drawn in the sketch; confirm on site."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e64",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93847702,
+            41.75031616
+          ],
+          [
+            -87.93847184006674,
+            41.7502508546603
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-b624",
+        "to": "door-u624",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e65",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93859756,
+            41.75024646
+          ],
+          [
+            -87.93856,
+            41.750249
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-ePass",
+        "to": "door-u626",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "imagery-reviewed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector",
+        "notes": "Door connection inferred from the aerial image, not drawn in the sketch; confirm on site."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e66",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93868435,
+            41.75001264
+          ],
+          [
+            -87.9386849021605,
+            41.75002202519741
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-s628",
+        "to": "door-u628",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e67",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.9387169,
+            41.75001264
+          ],
+          [
+            -87.93871710984848,
+            41.75001895786286
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-s632",
+        "to": "door-u632",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e68",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.7500594
+          ],
+          [
+            -87.938903,
+            41.750059
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-w636",
+        "to": "door-u636",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e69",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.75022308
+          ],
+          [
+            -87.93889948325962,
+            41.7502230104432
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-w638",
+        "to": "door-u638",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e70",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.7503229
+          ],
+          [
+            -87.9388884576044,
+            41.75032272576179
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-w642",
+        "to": "door-u642",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e71",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93891097,
+            41.75033999
+          ],
+          [
+            -87.93888747683236,
+            41.75034014199952
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-w646",
+        "to": "door-u646",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e72",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93859756,
+            41.75034089
+          ],
+          [
+            -87.93860818742124,
+            41.75034087970753
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e648",
+        "to": "door-u648",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e73",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93782849,
+            41.75106394
+          ],
+          [
+            -87.937764,
+            41.751064
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-d7630",
+        "to": "door-u7630",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "imagery-reviewed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector",
+        "notes": "Door connection inferred from the aerial image, not drawn in the sketch; confirm on site."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e74",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.9378297,
+            41.75104596
+          ],
+          [
+            -87.93775465982769,
+            41.7510463875647
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-d7632",
+        "to": "door-u7632",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "imagery-reviewed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector",
+        "notes": "Door connection inferred from the aerial image, not drawn in the sketch; confirm on site."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e75",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93782005,
+            41.75075278
+          ],
+          [
+            -87.9378008415608,
+            41.75075245003324
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-l7646",
+        "to": "door-u7646",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e76",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93753075,
+            41.75064126
+          ],
+          [
+            -87.93753882489035,
+            41.75064109053827
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7648",
+        "to": "door-u7648",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e77",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93782005,
+            41.75062238
+          ],
+          [
+            -87.93780255221638,
+            41.75062202857697
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-l7650",
+        "to": "door-u7650",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e78",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93753075,
+            41.75061878
+          ],
+          [
+            -87.93754580279385,
+            41.75061838451117
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7652",
+        "to": "door-u7652",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e79",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93782005,
+            41.75061608
+          ],
+          [
+            -87.93780661867359,
+            41.75061583893841
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-l7654",
+        "to": "door-u7654",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e80",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93758861,
+            41.75049198
+          ],
+          [
+            -87.93761255614079,
+            41.750492284419664
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7656",
+        "to": "door-u7656",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e81",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93758861,
+            41.75047399
+          ],
+          [
+            -87.93761601628566,
+            41.75047432551582
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7660",
+        "to": "door-u7660",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e82",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93758861,
+            41.75035888
+          ],
+          [
+            -87.93760799087319,
+            41.75035866364809
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7664",
+        "to": "door-u7664",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e83",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93758861,
+            41.7503292
+          ],
+          [
+            -87.93760072016401,
+            41.75032941300963
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-e7668",
+        "to": "door-u7668",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e84",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93790926,
+            41.75030762
+          ],
+          [
+            -87.9378952643016,
+            41.750307576919965
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-d7670",
+        "to": "door-u7670",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "entrance-connector"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "main-lot",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93828415,
+          41.75033909
+        ]
+      },
+      "properties": {
+        "featureType": "start",
+        "nodeId": "n-b620",
+        "label": "Main parking lot",
+        "status": "active",
+        "signInstalled": false,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "west-lot",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93891097,
+          41.75014304
+        ]
+      },
+      "properties": {
+        "featureType": "start",
+        "nodeId": "n-wSign",
+        "label": "West parking lot",
+        "status": "active",
+        "signInstalled": false,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "east-lot",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93758861,
+          41.75042183
+        ]
+      },
+      "properties": {
+        "featureType": "start",
+        "nodeId": "n-eSign",
+        "label": "East parking lot",
+        "status": "active",
+        "signInstalled": false,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ]
+      }
+    }
+  ]
+}

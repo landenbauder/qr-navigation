@@ -5,7 +5,27 @@ service cloud.firestore {
     match /tenantOverrides/{documentId} {
       allow read: if true;
       allow write: if request.auth != null
-        && request.auth.token.email == 'REPLACE_WITH_ADMIN_EMAIL';
+        && request.auth.token.email == 'jteglia@trpinv.com';
+    }
+
+    // QR sign locations and names edited in admin mode; "removed" hides a sign without deleting its ID.
+    match /qrSigns/{signId} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        && request.auth.token.email == 'jteglia@trpinv.com'
+        && signId.matches('^[a-z0-9-]{1,40}$')
+        && request.resource.data.keys().hasOnly(['label', 'lat', 'lng', 'status', 'updatedAt'])
+        && request.resource.data.keys().hasAll(['label', 'lat', 'lng', 'status', 'updatedAt'])
+        && request.resource.data.label is string
+        && request.resource.data.label.size() > 0
+        && request.resource.data.label.size() <= 60
+        && request.resource.data.lat is number
+        && request.resource.data.lat >= -90 && request.resource.data.lat <= 90
+        && request.resource.data.lng is number
+        && request.resource.data.lng >= -180 && request.resource.data.lng <= 180
+        && request.resource.data.status in ['active', 'removed']
+        && request.resource.data.updatedAt is timestamp;
+      allow delete: if false;
     }
   }
 }

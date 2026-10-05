@@ -1,0 +1,3566 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "propertyId": "willowbrook",
+    "status": "draft-reference-only",
+    "coordinateOrder": "[longitude, latitude] WGS84",
+    "sourceSnapshot": "legacy-snapshot-2026-10-05",
+    "firestoreOverridesIncluded": true,
+    "note": "Reference features for drawing the walking network. Contains no walking edges."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "door-u600",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93752280619985,
+          41.75006227769781
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u600",
+        "unit": "600",
+        "tenantName": "Airtex Manufacturing Inc.",
+        "legacyKey": "Airtex Manufacturing Inc.__600",
+        "adminDocumentId": "QWlydGV4IE1hbnVmYWN0dXJpbmcgSW5jLl9fNjAw",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#Airtex Manufacturing Inc.__600"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u600",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93759737672872,
+          41.75014077125865
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u600",
+        "source": [
+          "legacy:office-boundaries.json#Airtex Manufacturing Inc.__600"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u600",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93753138272176,
+              41.75004759845933
+            ],
+            [
+              -87.9375360771152,
+              41.7502445825481
+            ],
+            [
+              -87.9376622607504,
+              41.75024318509863
+            ],
+            [
+              -87.93765762328341,
+              41.75004622346758
+            ],
+            [
+              -87.93753138272176,
+              41.75004759845933
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u600",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Airtex Manufacturing Inc.__600"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u604",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9377450534087,
+          41.75003464989969
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u604",
+        "unit": "604",
+        "tenantName": "Syndem, LLC",
+        "legacyKey": "Syndem, LLC__604",
+        "adminDocumentId": "U3luZGVtLCBMTENfXzYwNA",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Syndem, LLC__604"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u604",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93770466508931,
+          41.750095747002064
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u604",
+        "source": [
+          "legacy:office-boundaries.json#Syndem, LLC__604"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u604",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93765475641473,
+              41.75004644643441
+            ],
+            [
+              -87.93765740449514,
+              41.750155280738475
+            ],
+            [
+              -87.9377500782048,
+              41.75015407389986
+            ],
+            [
+              -87.93774753125801,
+              41.750045463627316
+            ],
+            [
+              -87.93765475641473,
+              41.75004644643441
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u604",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Syndem, LLC__604"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u608",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9377643134039,
+          41.75003188933654
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u608",
+        "unit": "608",
+        "tenantName": "Sam International, LLC",
+        "legacyKey": "Sam International, LLC__608",
+        "adminDocumentId": "U2FtIEludGVybmF0aW9uYWwsIExMQ19fNjA4",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Sam International, LLC__608"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u608",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9377945193241,
+          41.75009474646259
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u608",
+        "source": [
+          "legacy:office-boundaries.json#Sam International, LLC__608"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u608",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93774518955017,
+              41.750045640991075
+            ],
+            [
+              -87.93774788224553,
+              41.75015278000171
+            ],
+            [
+              -87.93783992071008,
+              41.75015158143551
+            ],
+            [
+              -87.93783742026078,
+              41.75004470840026
+            ],
+            [
+              -87.93774518955017,
+              41.750045640991075
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u608",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Sam International, LLC__608"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u610",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93779157399045,
+          41.75025702314436
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u610",
+        "unit": "610",
+        "tenantName": "Clean Slate, Inc",
+        "legacyKey": "Clean Slate, Inc__610",
+        "adminDocumentId": "Q2xlYW4gU2xhdGUsIEluY19fNjEw",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "door-far-from-footprint"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Clean Slate, Inc__610"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u610",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93779977663004,
+          41.750189002639615
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u610",
+        "source": [
+          "legacy:office-boundaries.json#Clean Slate, Inc__610"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u610",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93784394901562,
+              41.750236164617306
+            ],
+            [
+              -87.93774873018268,
+              41.75023582233578
+            ],
+            [
+              -87.93774873018268,
+              41.750141771766984
+            ],
+            [
+              -87.93784260749818,
+              41.750141771766984
+            ],
+            [
+              -87.93784394901562,
+              41.750236164617306
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u610",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Clean Slate, Inc__610"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u612",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93794438991488,
+          41.750262625233
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u612",
+        "unit": "612",
+        "tenantName": "John Devae Insurance Agency, Inc.",
+        "legacyKey": "John Devae Insurance Agency, Inc.__612",
+        "adminDocumentId": "Sm9obiBEZXZhZSBJbnN1cmFuY2UgQWdlbmN5LCBJbmMuX182MTI",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#John Devae Insurance Agency, Inc.__612"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u612",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9378976893938,
+          41.75014000869309
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u612",
+        "source": [
+          "legacy:office-boundaries.json#John Devae Insurance Agency, Inc.__612"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u612",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93795245888799,
+              41.75024639295003
+            ],
+            [
+              -87.93794781424198,
+              41.7500427149043
+            ],
+            [
+              -87.93784127546607,
+              41.75004410666855
+            ],
+            [
+              -87.93784602457325,
+              41.75024759090801
+            ],
+            [
+              -87.93795245888799,
+              41.75024639295003
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u612",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#John Devae Insurance Agency, Inc.__612"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u614",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93798573154828,
+          41.75026134825452
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u614",
+        "unit": "614",
+        "tenantName": "Donald E. Morris Architect, PC",
+        "legacyKey": "Donald E. Morris Architect, PC__614",
+        "adminDocumentId": "RG9uYWxkIEUuIE1vcnJpcyBBcmNoaXRlY3QsIFBDX182MTQ",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#Donald E. Morris Architect, PC__614"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u614",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93799656489638,
+          41.750151186160316
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u614",
+        "source": [
+          "legacy:office-boundaries.json#Donald E. Morris Architect, PC__614"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u614",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93795188736149,
+              41.750247786323555
+            ],
+            [
+              -87.93794641534747,
+              41.7500417456795
+            ],
+            [
+              -87.93803689946333,
+              41.75004053242366
+            ],
+            [
+              -87.93804190178552,
+              41.75024733541853
+            ],
+            [
+              -87.93795188736149,
+              41.750247786323555
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u614",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Donald E. Morris Architect, PC__614"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u618",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93814490470515,
+          41.75025733459236
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u618",
+        "unit": "618",
+        "tenantName": "Equitec Group LLC",
+        "legacyKey": "Equitec Group LLC__618",
+        "adminDocumentId": "RXF1aXRlYyBHcm91cCBMTENfXzYxOA",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#Equitec Group LLC__618"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u618",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93818200191586,
+          41.75013798915409
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u618",
+        "source": [
+          "legacy:office-boundaries.json#Equitec Group LLC__618"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u618",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.9381298532492,
+              41.75024452812403
+            ],
+            [
+              -87.93812485204427,
+              41.75004172730607
+            ],
+            [
+              -87.93822744963674,
+              41.75004037376734
+            ],
+            [
+              -87.93823225671879,
+              41.75024383460535
+            ],
+            [
+              -87.9381298532492,
+              41.75024452812403
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u618",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Equitec Group LLC__618"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u620",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93829784909227,
+          41.75025623478498
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u620",
+        "unit": "620",
+        "tenantName": "Jay Building Group LLC",
+        "legacyKey": "Jay Building Group LLC__620",
+        "adminDocumentId": "SmF5IEJ1aWxkaW5nIEdyb3VwIExMQ19fNjIw",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#Jay Building Group LLC__620"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u620",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9382946523609,
+          41.750104004257594
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u620",
+        "source": [
+          "legacy:office-boundaries.json#Jay Building Group LLC__620"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u620",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93822914756538,
+              41.750243126780234
+            ],
+            [
+              -87.93822409418632,
+              41.7500397436847
+            ],
+            [
+              -87.93840981452385,
+              41.7500372902178
+            ],
+            [
+              -87.93841235313357,
+              41.75014279268432
+            ],
+            [
+              -87.93832265667241,
+              41.75014394328761
+            ],
+            [
+              -87.93832504031626,
+              41.750242822114444
+            ],
+            [
+              -87.93822914756538,
+              41.750243126780234
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u620",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Jay Building Group LLC__620"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u622",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93835004009202,
+          41.75025197887941
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u622",
+        "unit": "622",
+        "tenantName": "Armond Cozzi",
+        "legacyKey": "Armond Cozzi__622",
+        "adminDocumentId": "QXJtb25kIENvenppX182MjI",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#Armond Cozzi__622"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u622",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93837377962707,
+          41.75019600690393
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u622",
+        "source": [
+          "legacy:office-boundaries.json#Armond Cozzi__622"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u622",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.9383229928152,
+              41.750242329196354
+            ],
+            [
+              -87.93832042870514,
+              41.750144768330266
+            ],
+            [
+              -87.93841798171847,
+              41.75014349795098
+            ],
+            [
+              -87.93842022383762,
+              41.75024083022686
+            ],
+            [
+              -87.9383229928152,
+              41.750242329196354
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u622",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Armond Cozzi__622"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u624",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93847184006674,
+          41.7502508546603
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u624",
+        "unit": "624",
+        "tenantName": "Lifetime Restoration, Inc.",
+        "legacyKey": "Lifetime Restoration, Inc.__624",
+        "adminDocumentId": "TGlmZXRpbWUgUmVzdG9yYXRpb24sIEluYy5fXzYyNA",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#Lifetime Restoration, Inc.__624"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u624",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93846497520028,
+          41.75013698661949
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u624",
+        "source": [
+          "legacy:office-boundaries.json#Lifetime Restoration, Inc.__624"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u624",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93841929672446,
+              41.750240536807304
+            ],
+            [
+              -87.9384145302094,
+              41.75003770768572
+            ],
+            [
+              -87.93850508534807,
+              41.75003652843393
+            ],
+            [
+              -87.93850986514761,
+              41.750239573592935
+            ],
+            [
+              -87.93841929672446,
+              41.750240536807304
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u624",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Lifetime Restoration, Inc.__624"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u626",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93856,
+          41.750249
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u626",
+        "unit": "626",
+        "tenantName": "The Forest Electric Company",
+        "legacyKey": "The Forest Electric Company__626",
+        "adminDocumentId": "VGhlIEZvcmVzdCBFbGVjdHJpYyBDb21wYW55X182MjY",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#The Forest Electric Company__626"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u626",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93856019385368,
+          41.75013698612052
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u626",
+        "source": [
+          "legacy:office-boundaries.json#The Forest Electric Company__626"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u626",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93850902357222,
+              41.750239129303544
+            ],
+            [
+              -87.93850438461989,
+              41.75003572406425
+            ],
+            [
+              -87.93860700561429,
+              41.75003437022062
+            ],
+            [
+              -87.93861180058687,
+              41.75023781377094
+            ],
+            [
+              -87.93850902357222,
+              41.750239129303544
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u626",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#The Forest Electric Company__626"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u628",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9386849021605,
+          41.75002202519741
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u628",
+        "unit": "628",
+        "tenantName": "Nightingale Home Healthcare of Illinois, Inc.",
+        "legacyKey": "Nightingale Home Healthcare of Illinois, Inc.__628",
+        "adminDocumentId": "TmlnaHRpbmdhbGUgSG9tZSBIZWFsdGhjYXJlIG9mIElsbGlub2lzLCBJbmMuX182Mjg",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Nightingale Home Healthcare of Illinois, Inc.__628"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u628",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9386554122737,
+          41.75008595912176
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u628",
+        "source": [
+          "legacy:office-boundaries.json#Nightingale Home Healthcare of Illinois, Inc.__628"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u628",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93860926433798,
+              41.750035495017116
+            ],
+            [
+              -87.9386115069487,
+              41.750140782877345
+            ],
+            [
+              -87.93869888787582,
+              41.750139636231225
+            ],
+            [
+              -87.93869644480804,
+              41.75003446534714
+            ],
+            [
+              -87.93860926433798,
+              41.750035495017116
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u628",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Nightingale Home Healthcare of Illinois, Inc.__628"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u632",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93871710984848,
+          41.75001895786286
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u632",
+        "unit": "632",
+        "tenantName": "Elevate Hospice LLC",
+        "legacyKey": "Elevate Hospice LLC__632",
+        "adminDocumentId": "RWxldmF0ZSBIb3NwaWNlIExMQ19fNjMy",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Elevate Hospice LLC__632"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u632",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93874929075601,
+          41.750130962430305
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u632",
+        "source": [
+          "legacy:office-boundaries.json#Elevate Hospice LLC__632"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u632",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93870141709829,
+              41.75003388218277
+            ],
+            [
+              -87.93870593732649,
+              41.75023432161063
+            ],
+            [
+              -87.93879477623537,
+              41.75023316034581
+            ],
+            [
+              -87.93879010413319,
+              41.750032717240245
+            ],
+            [
+              -87.93870141709829,
+              41.75003388218277
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u632",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Elevate Hospice LLC__632"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u636",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.938903,
+          41.750059
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u636",
+        "unit": "636",
+        "tenantName": "Father & Sons Plumbing & Sewer Corp.",
+        "legacyKey": "Father & Sons Plumbing & Sewer Corp.__636",
+        "adminDocumentId": "RmF0aGVyICYgU29ucyBQbHVtYmluZyAmIFNld2VyIENvcnAuX182MzY",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#Father & Sons Plumbing & Sewer Corp.__636"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u636",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93883742470919,
+          41.75008371812426
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u636",
+        "source": [
+          "legacy:office-boundaries.json#Father & Sons Plumbing & Sewer Corp.__636"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u636",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93887890970852,
+              41.75003218040215
+            ],
+            [
+              -87.93878943104257,
+              41.75003337402606
+            ],
+            [
+              -87.93879181529914,
+              41.750135280828424
+            ],
+            [
+              -87.93888195357246,
+              41.7501340939087
+            ],
+            [
+              -87.93887890970852,
+              41.75003218040215
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u636",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Father & Sons Plumbing & Sewer Corp.__636"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u638",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93889948325962,
+          41.7502230104432
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u638",
+        "unit": "638",
+        "tenantName": "Envirotest Perry Labs, Inc.",
+        "legacyKey": "Envirotest Perry Labs, Inc.__638",
+        "adminDocumentId": "RW52aXJvdGVzdCBQZXJyeSBMYWJzLCBJbmMuX182Mzg",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#Envirotest Perry Labs, Inc.__638"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u638",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93884182580024,
+          41.75018200885268
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u638",
+        "source": [
+          "legacy:office-boundaries.json#Envirotest Perry Labs, Inc.__638"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u638",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93888037873678,
+              41.75013231897486
+            ],
+            [
+              -87.93879478273843,
+              41.75013338449142
+            ],
+            [
+              -87.93879716781196,
+              41.750234825784645
+            ],
+            [
+              -87.93888260810506,
+              41.750233713144205
+            ],
+            [
+              -87.93888037873678,
+              41.75013231897486
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u638",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Envirotest Perry Labs, Inc.__638"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u642",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9388884576044,
+          41.75032272576179
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u642",
+        "unit": "642",
+        "tenantName": "Law Office of Robert J. Chio",
+        "legacyKey": "Law Office of Robert J. Chio__642",
+        "adminDocumentId": "TGF3IE9mZmljZSBvZiBSb2JlcnQgSi4gQ2hpb19fNjQy",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Law Office of Robert J. Chio__642"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u642",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93882886586854,
+          41.75029774691192
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u642",
+        "source": [
+          "legacy:office-boundaries.json#Law Office of Robert J. Chio__642"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u642",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93888156440131,
+              41.75026776439455
+            ],
+            [
+              -87.93877533114934,
+              41.75026921939875
+            ],
+            [
+              -87.93877677381394,
+              41.75033038063357
+            ],
+            [
+              -87.93888330722451,
+              41.7503289845793
+            ],
+            [
+              -87.93888156440131,
+              41.75026776439455
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u642",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Law Office of Robert J. Chio__642"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u646",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93888747683236,
+          41.75034014199952
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u646",
+        "unit": "646",
+        "tenantName": "The Best Veneer Company LLC",
+        "legacyKey": "The Best Veneer Company LLC__646",
+        "adminDocumentId": "VGhlIEJlc3QgVmVuZWVyIENvbXBhbnkgTExDX182NDY",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#The Best Veneer Company LLC__646"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u646",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9388296549399,
+          41.750362148992075
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u646",
+        "source": [
+          "legacy:office-boundaries.json#The Best Veneer Company LLC__646"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u646",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.9388840125954,
+              41.75039957136723
+            ],
+            [
+              -87.93877667266234,
+              41.75040080730068
+            ],
+            [
+              -87.93877498973875,
+              41.75032837659836
+            ],
+            [
+              -87.9388826363659,
+              41.75032697041338
+            ],
+            [
+              -87.9388840125954,
+              41.75039957136723
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u646",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#The Best Veneer Company LLC__646"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u648",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93860818742124,
+          41.75034087970753
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u648",
+        "unit": "648",
+        "tenantName": "Troop Contracting, Inc.",
+        "legacyKey": "Troop Contracting, Inc.__648",
+        "adminDocumentId": "VHJvb3AgQ29udHJhY3RpbmcsIEluYy5fXzY0OA",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "second-door-dropped"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Troop Contracting, Inc.__648"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dropped-door-u648-2",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.938658,
+          41.750489
+        ]
+      },
+      "properties": {
+        "featureType": "reference-dropped-door",
+        "officeId": "u648",
+        "note": "Second listed door removed by owner decision (one door per office).",
+        "source": [
+          "legacy:new_office_building_entrances#L20"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u648",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93869862034488,
+          41.7503657069613
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u648",
+        "source": [
+          "legacy:office-boundaries.json#Troop Contracting, Inc.__648"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u648",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93888308264289,
+              41.75040301514691
+            ],
+            [
+              -87.93888439724643,
+              41.75046394328893
+            ],
+            [
+              -87.93862512730973,
+              41.75046731960197
+            ],
+            [
+              -87.93862023763873,
+              41.750257828159796
+            ],
+            [
+              -87.93877533360632,
+              41.75025581716596
+            ],
+            [
+              -87.93877882189182,
+              41.75040441103058
+            ],
+            [
+              -87.93888308264289,
+              41.75040301514691
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u648",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Troop Contracting, Inc.__648"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7630",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.937764,
+          41.751064
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7630",
+        "unit": "7630",
+        "tenantName": "Redwood Construction Group LLC",
+        "legacyKey": "Redwood Construction Group LLC__7630",
+        "adminDocumentId": "UmVkd29vZCBDb25zdHJ1Y3Rpb24gR3JvdXAgTExDX183NjMw",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Redwood Construction Group LLC__7630"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7630",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93767625174127,
+          41.75108324625033
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7630",
+        "source": [
+          "legacy:office-boundaries.json#Redwood Construction Group LLC__7630"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7630",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93747587397665,
+              41.751056160406286
+            ],
+            [
+              -87.9374774133124,
+              41.751124553135114
+            ],
+            [
+              -87.93775176944189,
+              41.751120971668335
+            ],
+            [
+              -87.93774893334111,
+              41.75098617456833
+            ],
+            [
+              -87.93762132895736,
+              41.750987879928935
+            ],
+            [
+              -87.9376228819938,
+              41.751054508264104
+            ],
+            [
+              -87.93747587397665,
+              41.751056160406286
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7630",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Redwood Construction Group LLC__7630"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7632",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93775465982769,
+          41.7510463875647
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7632",
+        "unit": "7632",
+        "tenantName": "Advanced Physicians, SC",
+        "legacyKey": "Advanced Physicians, SC__7632",
+        "adminDocumentId": "QWR2YW5jZWQgUGh5c2ljaWFucywgU0NfXzc2MzI",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Advanced Physicians, SC__7632"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7632",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93768065007391,
+          41.75102134670719
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7632",
+        "source": [
+          "legacy:office-boundaries.json#Advanced Physicians, SC__7632"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7632",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93775067276222,
+              41.75105677103811
+            ],
+            [
+              -87.93761194469792,
+              41.75105856533933
+            ],
+            [
+              -87.93761026387598,
+              41.75098722573051
+            ],
+            [
+              -87.93774905243329,
+              41.750985414021024
+            ],
+            [
+              -87.93775067276222,
+              41.75105677103811
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7632",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Advanced Physicians, SC__7632"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7646",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9378008415608,
+          41.75075245003324
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7646",
+        "unit": "7646",
+        "tenantName": "Firmus Medical, LLC",
+        "legacyKey": "Firmus Medical, LLC__7646",
+        "adminDocumentId": "RmlybXVzIE1lZGljYWwsIExMQ19fNzY0Ng",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "second-door-dropped"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Firmus Medical, LLC__7646"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dropped-door-u7646-2",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.937575,
+          41.750766
+        ]
+      },
+      "properties": {
+        "featureType": "reference-dropped-door",
+        "officeId": "u7646",
+        "note": "Second listed door removed by owner decision (one door per office).",
+        "source": [
+          "legacy:new_office_building_entrances#L23"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7646",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93767037577997,
+          41.750736145713205
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7646",
+        "source": [
+          "legacy:office-boundaries.json#Firmus Medical, LLC__7646"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7646",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93779385923715,
+              41.75077057299992
+            ],
+            [
+              -87.9375555902357,
+              41.75077321591165
+            ],
+            [
+              -87.9375538555799,
+              41.75069807427021
+            ],
+            [
+              -87.93779229612576,
+              41.75069496485062
+            ],
+            [
+              -87.93779385923715,
+              41.75077057299992
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7646",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Firmus Medical, LLC__7646"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7648",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93753882489035,
+          41.75064109053827
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7648",
+        "unit": "7648",
+        "tenantName": "Faron and Associates, Inc.",
+        "legacyKey": "Faron and Associates, Inc.__7648",
+        "adminDocumentId": "RmFyb24gYW5kIEFzc29jaWF0ZXMsIEluYy5fXzc2NDg",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "second-door-dropped",
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Faron and Associates, Inc.__7648"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dropped-door-u7648-2",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93784,
+          41.750631
+        ]
+      },
+      "properties": {
+        "featureType": "reference-dropped-door",
+        "officeId": "u7648",
+        "note": "Second listed door removed by owner decision (one door per office).",
+        "source": [
+          "legacy:new_office_building_entrances#L25"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7648",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9376161040693,
+          41.75066314528161
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7648",
+        "source": [
+          "legacy:office-boundaries.json#Faron and Associates, Inc.__7648"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7648",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93755309379384,
+              41.750699029288775
+            ],
+            [
+              -87.93767890754707,
+              41.750697428866914
+            ],
+            [
+              -87.93767735379578,
+              41.75062701761613
+            ],
+            [
+              -87.93755157346094,
+              41.75062866867026
+            ],
+            [
+              -87.93755309379384,
+              41.750699029288775
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7648",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Faron and Associates, Inc.__7648"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7650",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93780255221638,
+          41.75062202857697
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7650",
+        "unit": "7650",
+        "tenantName": "TRP Investments, LLC",
+        "legacyKey": "TRP Investments, LLC__7650",
+        "adminDocumentId": "VFJQIEludmVzdG1lbnRzLCBMTENfXzc2NTA",
+        "doorSource": "firestore-override",
+        "reviewFlags": [
+          "firestore-override-applied",
+          "near-other-door"
+        ],
+        "source": [
+          "firestore:tenantOverrides/VFJQIEludmVzdG1lbnRzLCBMTENfXzc2NTA"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7650",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93773296626068,
+          41.75066256575477
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7650",
+        "source": [
+          "legacy:office-boundaries.json#TRP Investments, LLC__7650"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7650",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.9377924695952,
+              41.75069657305955
+            ],
+            [
+              -87.93767357107743,
+              41.75069862341282
+            ],
+            [
+              -87.93767198978622,
+              41.750629036137404
+            ],
+            [
+              -87.93779063865074,
+              41.75062748668398
+            ],
+            [
+              -87.9377924695952,
+              41.75069657305955
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7650",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#TRP Investments, LLC__7650"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7652",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93754580279385,
+          41.75061838451117
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7652",
+        "unit": "7652",
+        "tenantName": "Ecodrive, Inc.",
+        "legacyKey": "Ecodrive, Inc.__7652",
+        "adminDocumentId": "RWNvZHJpdmUsIEluYy5fXzc2NTI",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Ecodrive, Inc.__7652"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7652",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93761144059805,
+          41.75058652402043
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7652",
+        "source": [
+          "legacy:office-boundaries.json#Ecodrive, Inc.__7652"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7652",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93755070462802,
+              41.750627672325635
+            ],
+            [
+              -87.9376743432089,
+              41.75062592417123
+            ],
+            [
+              -87.93767242550216,
+              41.75054596013146
+            ],
+            [
+              -87.93754890223802,
+              41.75054759489352
+            ],
+            [
+              -87.93755070462802,
+              41.750627672325635
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7652",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Ecodrive, Inc.__7652"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7654",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93780661867359,
+          41.75061583893841
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7654",
+        "unit": "7654",
+        "tenantName": "Donnelly Transportation, Inc",
+        "legacyKey": "Donnelly Transportation, Inc__7654",
+        "adminDocumentId": "RG9ubmVsbHkgVHJhbnNwb3J0YXRpb24sIEluY19fNzY1NA",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "sources-disagree",
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Donnelly Transportation, Inc__7654"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7654",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9377330828325,
+          41.75058988922005
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7654",
+        "source": [
+          "legacy:office-boundaries.json#Donnelly Transportation, Inc__7654"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7654",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93779164386969,
+              41.75062813382429
+            ],
+            [
+              -87.93767232358066,
+              41.75062958558535
+            ],
+            [
+              -87.93767053167204,
+              41.75055449805062
+            ],
+            [
+              -87.93779031466711,
+              41.75055292946023
+            ],
+            [
+              -87.93779164386969,
+              41.75062813382429
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7654",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Donnelly Transportation, Inc__7654"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7656",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93761255614079,
+          41.750492284419664
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7656",
+        "unit": "7656",
+        "tenantName": "Charland, LLC",
+        "legacyKey": "Charland, LLC__7656",
+        "adminDocumentId": "Q2hhcmxhbmQsIExMQ19fNzY1Ng",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Charland, LLC__7656"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7656",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9376871970459,
+          41.75051510575219
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7656",
+        "source": [
+          "legacy:office-boundaries.json#Charland, LLC__7656"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7656",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93762242476986,
+              41.750548373144355
+            ],
+            [
+              -87.93775138487834,
+              41.75054681323961
+            ],
+            [
+              -87.93774991405503,
+              41.75048294787198
+            ],
+            [
+              -87.93762064146638,
+              41.750484640041165
+            ],
+            [
+              -87.93762242476986,
+              41.750548373144355
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7656",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Charland, LLC__7656"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7660",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93761601628566,
+          41.75047432551582
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7660",
+        "unit": "7660",
+        "tenantName": "Thomas Murphy",
+        "legacyKey": "Thomas Murphy__7660",
+        "adminDocumentId": "VGhvbWFzIE11cnBoeV9fNzY2MA",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "near-other-door"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Thomas Murphy__7660"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7660",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93768479686392,
+          41.750439922276236
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7660",
+        "source": [
+          "legacy:office-boundaries.json#Thomas Murphy__7660"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7660",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93762112986825,
+              41.75047862347844
+            ],
+            [
+              -87.93774871477879,
+              41.7504772935078
+            ],
+            [
+              -87.93774709123018,
+              41.7504069003889
+            ],
+            [
+              -87.93761929985126,
+              41.75040857763729
+            ],
+            [
+              -87.93762112986825,
+              41.75047862347844
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7660",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Thomas Murphy__7660"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7664",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93760799087319,
+          41.75035866364809
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7664",
+        "unit": "7664",
+        "tenantName": "Proform Technologies, Inc.",
+        "legacyKey": "Proform Technologies, Inc.__7664",
+        "adminDocumentId": "UHJvZm9ybSBUZWNobm9sb2dpZXMsIEluYy5fXzc2NjQ",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [
+          "second-door-dropped"
+        ],
+        "source": [
+          "legacy:office-boundaries.json#Proform Technologies, Inc.__7664"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "dropped-door-u7664-2",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.937907,
+          41.750342
+        ]
+      },
+      "properties": {
+        "featureType": "reference-dropped-door",
+        "officeId": "u7664",
+        "note": "Second listed door removed by owner decision (one door per office).",
+        "source": [
+          "legacy:new_office_building_entrances#L32"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7664",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93768473640164,
+          41.750371666876994
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7664",
+        "source": [
+          "legacy:office-boundaries.json#Proform Technologies, Inc.__7664"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7664",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93761990929386,
+              41.75040951804484
+            ],
+            [
+              -87.93774871437029,
+              41.75040823920222
+            ],
+            [
+              -87.93774711544907,
+              41.750338898615766
+            ],
+            [
+              -87.93761999955382,
+              41.7503405365068
+            ],
+            [
+              -87.93761990929386,
+              41.75040951804484
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7664",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Proform Technologies, Inc.__7664"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7668",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93760072016401,
+          41.75032941300963
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7668",
+        "unit": "7668",
+        "tenantName": "SFUSA",
+        "legacyKey": "SFUSA__7668",
+        "adminDocumentId": "U0ZVU0FfXzc2Njg",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#SFUSA__7668"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7668",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93768328006156,
+          41.750304333336025
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7668",
+        "source": [
+          "legacy:office-boundaries.json#SFUSA__7668"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7668",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93761708889308,
+              41.750341202118015
+            ],
+            [
+              -87.93775137154346,
+              41.7503391327498
+            ],
+            [
+              -87.93774975003723,
+              41.75026782623827
+            ],
+            [
+              -87.93761595488078,
+              41.75026958604015
+            ],
+            [
+              -87.93761708889308,
+              41.750341202118015
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7668",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#SFUSA__7668"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7670",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9378952643016,
+          41.750307576919965
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7670",
+        "unit": "7670",
+        "tenantName": "Shahid Khwaja",
+        "legacyKey": "Shahid Khwaja__7670",
+        "adminDocumentId": "U2hhaGlkIEtod2FqYV9fNzY3MA",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "legacy:office-boundaries.json#Shahid Khwaja__7670"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7670",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9378066633153,
+          41.75030372977145
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7670",
+        "source": [
+          "legacy:office-boundaries.json#Shahid Khwaja__7670"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7670",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93787153721068,
+              41.75026787831217
+            ],
+            [
+              -87.93773931268505,
+              41.750269568885784
+            ],
+            [
+              -87.93774100480553,
+              41.75034089194022
+            ],
+            [
+              -87.93787489356974,
+              41.75033913092132
+            ],
+            [
+              -87.93787153721068,
+              41.75026787831217
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7670",
+        "blocksWalking": null,
+        "note": "Traced unit footprint, not a verified building obstacle.",
+        "source": [
+          "legacy:office-boundaries.json#Shahid Khwaja__7670"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9386316210123,
+          41.750445923674235
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S1",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S2",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.938629747798,
+          41.750365520430144
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S2",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S3",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93852274374395,
+          41.75031197517248
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S3",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S4",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93831995112046,
+          41.75032979431038
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S4",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S5",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93823567379341,
+          41.75035165357097
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S5",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93813921914038,
+          41.750367983166406
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S6",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S7",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93799083941116,
+          41.75042804258351
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S7",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S8",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9379069720579,
+          41.75047325035494
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S8",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S9",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93791285977184,
+          41.75063241588521
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S9",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S10",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93790865688118,
+          41.75050647368678
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S10",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S11",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93790871435489,
+          41.75064434500341
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S11",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S12",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93790808981116,
+          41.750689050964624
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S12",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S13",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93787531453482,
+          41.75080103413551
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S13",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S14",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93784600469861,
+          41.75088607570387
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S14",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S15",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93783978333184,
+          41.75092046629779
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S15",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S16",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93783009569648,
+          41.75104540367769
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S16",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S17",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93782764943904,
+          41.750979881791054
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S17",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S18",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93783089838844,
+          41.75100649196475
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S18",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S19",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93782710994861,
+          41.751052946886105
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S19",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S20",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93755200302425,
+          41.75062977670847
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S20",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S21",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93761708598252,
+          41.75047133883866
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S21",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S22",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.937624572321,
+          41.750351783994866
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S22",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S23",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93754627804522,
+          41.75023136042119
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S23",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S24",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93774352444832,
+          41.75004652104912
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S24",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S25",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93870902584237,
+          41.750035315943144
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S25",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S26",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93893635645779,
+          41.75005406114093
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S26",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S27",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93893971865157,
+          41.75023484528061
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S27",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S28",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93894030809467,
+          41.750331764642524
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S28",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S29",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93890021744136,
+          41.75049621594158
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S29",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "sidewalk-S30",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93863273701585,
+          41.75034620493217
+        ]
+      },
+      "properties": {
+        "featureType": "reference-sidewalk-point",
+        "label": "S30",
+        "note": "Standalone reference; file order does not imply connectivity.",
+        "source": [
+          "legacy:sidewalk_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9379323,
+          41.7511194
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P1",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P2",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.938074,
+          41.750734
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P2",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P3",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9383613,
+          41.7505959
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P3",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P4",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9385998,
+          41.7505913
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P4",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L1"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P5",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9388395,
+          41.7505951
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P5",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L2"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P6",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.939071,
+          41.7503311
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P6",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L2"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P7",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9390648,
+          41.7501557
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P7",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L2"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P8",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9383599,
+          41.7499133
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P8",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L2"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P9",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9381163,
+          41.7499151
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P9",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L2"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P10",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9376287,
+          41.7499172
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P10",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L2"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P11",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9371575,
+          41.7503195
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P11",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L2"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P12",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9371618,
+          41.7505893
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P12",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L2"
+        ],
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "panorama-P13",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9371685,
+          41.7509454
+        ]
+      },
+      "properties": {
+        "featureType": "reference-panorama-point",
+        "label": "P13",
+        "note": "Street View camera reference; not proof of pedestrian access.",
+        "source": [
+          "legacy:panorama_gps_locations.txt#L2"
+        ],
+        "verification": "unverified"
+      }
+    }
+  ]
+}

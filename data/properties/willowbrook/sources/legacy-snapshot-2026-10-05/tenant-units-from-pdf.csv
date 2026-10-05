@@ -1,0 +1,31 @@
+lease_name,unit_number,confidence,notes
+Airtex Manufacturing Inc.,600,high,Handwritten unit on rent roll; appears clear.
+"Syndem, LLC",604,high,
+"Sam International, LLC",608,high,
+"Clean Slate, Inc",610,high,
+"John Devae Insurance Agency, Inc.",612,high,
+"Donald E. Morris Architect, PC",614,high,
+Equitec Group LLC,618,high,
+Jay Building Group LLC,620,high,
+Armond Cozzi,622,high,
+"Lifetime Restoration, Inc.",624,high,
+The Forest Electric Company,626,high,
+"Nightingale Home Healthcare of Illinois, Inc.",628,high,
+Redwood Construction Group LLC,7630,low,"Handwritten unit looks like 630, but the same PDF still lists unit 630 as VACANT on page 2. Manual check recommended."
+Elevate Hospice LLC,632,medium,Handwritten unit override; appears readable but was not typed in the rent roll.
+Father & Sons Plumbing & Sewer Corp.,636,high,
+"Envirotest Perry Labs, Inc.",638,high,
+Law Office of Robert J. Chio,642,high,
+The Best Veneer Company LLC,646,high,
+"Troop Contracting, Inc.",648,medium,Handwritten unit override; appears readable.
+"Advanced Physicians, SC",7632,high,
+"Firmus Medical, LLC",7646,medium,Handwritten unit override; verify once before updating project files.
+"Faron and Associates, Inc.",7648,high,
+"TRP Investments, LLC",7650,high,
+"Ecodrive, Inc.",7652,high,
+"Donnelly Transportation, Inc",7654,high,
+"Charland, LLC",7656,medium,Handwritten unit override; verify once before updating project files.
+Thomas Murphy,7660,high,
+"Proform Technologies, Inc.",7664,medium,"Handwritten unit override; current repo data appears to use the name 'Perform Technologies, Inc.' instead. Normalize before updating source files."
+SFUSA,7668,high,
+Shahid Khwaja,7670,high,

@@ -1,12 +1,6 @@
 ---
 description: "Use when working on office location data, the offices.json schema, generate-offices.js, building entrances, or sidewalk/panorama waypoints."
-applyTo:
-  - "offices.json"
-  - "generate-offices.js"
-  - "new_office_building_entrances"
-  - "new_office_locations.json"
-  - "panorama_gps_locations.txt"
-  - "sidewalk_locations.txt"
+applyTo: offices.json, generate-offices.js, new_office_building_entrances, new_office_locations.json, panorama_gps_locations.txt, sidewalk_locations.txt
 ---
 # Office Data Guidelines
 

@@ -1,0 +1,31 @@
+lease_name,unit_number,reuse_status,reuse_source_name,icon_lat,icon_lng,entrance_1_lat,entrance_1_lng,entrance_2_lat,entrance_2_lng,entrance_3_lat,entrance_3_lng,confidence,notes
+"Airtex Manufacturing Inc.",600,exact_reuse,"Airtex Manufacturing Inc.",41.750162,-87.937614,41.75022785236671,-87.93755539583547,41.75005177898899,-87.93773303928613,,,high,"Handwritten unit on rent roll; appears clear."
+"Syndem, LLC",604,exact_reuse,"Syndem, LLC",41.750109,-87.937680,41.750062045203144,-87.93777526876156,,,,,high,
+"Sam International, LLC",608,rename_reuse,"Lifetime Restoration, Inc. (Unit 608)",41.750105,-87.937768,41.75005758372081,-87.93793661490287,,,,,high,
+"Clean Slate, Inc",610,exact_reuse,"Clean Slate, Inc",41.750188,-87.937774,41.7502426935211,-87.93779071170579,,,,,high,
+"John Devae Insurance Agency, Inc.",612,exact_reuse,"John Devae Insurance Agency, Inc.",41.750151,-87.937897,41.750241481857415,-87.93794284863885,,,,,high,
+"Donald E. Morris Architect, PC",614,exact_reuse,"Donald E. Morris Architect, PC",41.750150,-87.937977,41.75023932447109,-87.93798513810351,,,,,high,
+"Equitec Group LLC",618,exact_reuse,"Equitec Group LLC",41.750150,-87.938168,41.7502413146349,-87.93814273176567,,,,,high,
+"Jay Building Group LLC",620,exact_reuse,"Jay Building Group LLC",41.75014513538613,-87.9387571728452,41.750049517397905,-87.93869642771517,41.75023403155062,-87.93870921767343,,,high,
+"Armond Cozzi",622,exact_reuse,"Armond Cozzi",41.750185,-87.938375,41.75023913053949,-87.93834800614171,,,,,high,
+"Lifetime Restoration, Inc.",624,exact_reuse,"Lifetime Restoration, Inc.",41.750142,-87.938557,41.750236162629214,-87.93851952320344,,,,,high,
+"The Forest Electric Company",626,exact_reuse,"The Forest Electric Company",41.750143,-87.938458,41.75023670187888,-87.93849439390733,,,,,high,
+"Nightingale Home Healthcare of Illinois, Inc.",628,exact_reuse,"Nightingale Home Healthcare of Illinois, Inc.",41.750097,-87.938663,41.75004975419288,-87.93869447638328,,,,,high,
+"Redwood Construction Group LLC",7630,candidate_visual_reuse,"Precise Bioscience, LLC",41.75105293068326,-87.93762895381508,41.75105449411903,-87.93775206372628,41.75105136724749,-87.93750584390918,,,low,"Handwritten unit looks like 630, but the same PDF still lists unit 630 as VACANT on page 2. Manual check recommended."
+"Elevate Hospice LLC",632,rename_reuse,"Green Home Makeover, LLC",41.750098,-87.938846,41.75005620420816,-87.93889915239004,,,,,medium,"Handwritten unit override; appears readable but was not typed in the rent roll."
+"Father & Sons Plumbing & Sewer Corp.",636,new_capture_needed,,,,,,,,,,high,
+"Envirotest Perry Labs, Inc.",638,exact_reuse,"Envirotest Perry Labs, Inc.",41.7501802267786,-87.93884586603167,41.750220103388344,-87.93890116392828,,,,,high,
+"Law Office of Robert J. Chio",642,exact_reuse,"Law Office of Robert J. Chio",41.750302,-87.938853,41.750322613780995,-87.93890340427834,,,,,high,
+"The Best Veneer Company LLC",646,exact_reuse,"The Best Veneer Company LLC",41.750370,-87.938831,41.75033974786989,-87.9389043549276,,,,,high,
+"Troop Contracting, Inc.",648,exact_reuse,"Troop Contracting, Inc.",41.750408,-87.938720,41.75047508768822,-87.93889530946517,41.750477501546996,-87.93867110104341,41.75034001148625,-87.93866092702801,medium,"Handwritten unit override; appears readable."
+"Advanced Physicians, SC",7632,exact_reuse,"Advanced Physicians, SC",41.750910858247836,-87.93762598779693,41.75091151786369,-87.93774959455097,41.750910198631985,-87.93750238104288,,,high,
+"Firmus Medical, LLC",7646,exact_reuse,"Firmus Medical, LLC",41.750736,-87.937705,41.750732234024795,-87.93782490440809,41.75073166442561,-87.9378235955908,41.75076925924362,-87.937576371582,medium,"Handwritten unit override; verify once before updating project files."
+"Faron and Associates, Inc.",7648,candidate_visual_reuse,"Henrich Electronics Corporation",41.750595,-87.937635,41.750623885117584,-87.9375746756993,,,,,high,
+"TRP Investments, LLC",7650,reuse_from_offices_json_only,"TRP Investments, LLC",41.750666,-87.937768,41.750639875087806,-87.93782783136173,,,,,high,
+"Ecodrive, Inc.",7652,exact_reuse,"Ecodrive, Inc.",41.75080050224713,-87.93776838255869,41.75080586913622,-87.93782966730564,,,,,high,
+"Donnelly Transportation, Inc",7654,exact_reuse,"Donnelly Transportation, Inc",41.750599,-87.937755,41.750601873157436,-87.93782359652893,,,,,high,
+"Charland, LLC",7656,exact_reuse,"Charland, LLC",41.750521,-87.937774,41.75050024575575,-87.93763306554625,41.75050163842362,-87.93789059631246,,,medium,"Handwritten unit override; verify once before updating project files."
+"Thomas Murphy",7660,exact_reuse,"Thomas Murphy",41.750450,-87.937711,41.750462265609734,-87.93764724280851,,,,,high,
+"Proform Technologies, Inc.",7664,rename_reuse,"Perform Technologies, Inc.",41.750379,-87.937771,41.75036020568787,-87.93762971599958,41.750345172837974,-87.9378900740968,,,medium,"Handwritten unit override; current repo data appears to use the name 'Perform Technologies, Inc.' instead. Normalize before updating source files."
+SFUSA,7668,exact_reuse,SFUSA,41.750312,-87.937718,41.750331356400984,-87.93764202219648,,,,,high,
+"Shahid Khwaja",7670,exact_reuse,"Shahid Khwaja",41.750312,-87.937817,41.75030795495643,-87.93788651518841,,,,,high,

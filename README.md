@@ -188,6 +188,18 @@ Optional custom port:
 3. Enter your URL and generate the QR code
 4. Print and place the QR code at building entrances
 
+### 5a. Per-sign QR links and walking directions (pilot)
+
+Each QR sign has its own link: `https://wbc-guide.com/?property=willowbrook&start=<sign-id>`. A link with `start=` gives walking directions along the mapped walkway network from that sign, with no location permission needed. Plain links without `start=` keep the previous behavior until the network is published for everyone.
+
+- **Status:** the walkway network is a *pilot*: drawn from an owner sketch, not yet walked on site. Visitors see "Pilot route: still being verified on site." Automated tests do not prove a path is physically passable.
+- **Starting points:** a sign link starts at that sign; "Change start" offers the other signs or a one-time "Use my current location" (requires a recent, precise fix next to a mapped walkway; it is not live tracking).
+- **No route:** if a door is not connected to the network, was moved without reconnecting, or a walkway is closed, the app says so instead of drawing a straight line or a road route.
+- **Data files:** `data/properties/willowbrook/network.geojson` is what the app loads (coordinates are `[longitude, latitude]`). It is produced by `node tools/publish-network.js` from `draft/walking-network-draft.geojson`, which you edit with the developer **Walkway Editor** (localhost only: developer mode → Walkway Editor). Run `node tools/validate-property.js` to check a draft and `node --test "tests/**/*.test.js"` for software tests.
+- **Publishing:** `node tools/publish-network.js --status pilot` (sign links only) or `--status published` (everyone; requires every walkway to be marked field-verified). To roll back, revert `network.geojson` in git and redeploy.
+- **Admin signs:** in admin mode, the *QR signs* section adds, moves, renames, and removes signs. A sign's ID, and so its printed QR link, never changes when it is renamed or moved. Removing hides it; the link then asks visitors to choose a start. Sign edits are stored in the Firestore `qrSigns` collection, so publish the updated `firestore.rules` first (see `DEPLOYMENT.md`).
+- **Parking lots:** the owner states anywhere in a lot is walkable. Lots are not yet drawn as areas, so a start point only connects to a walkway within 30 m without crossing an office outline.
+
 ## File Structure
 
 ```

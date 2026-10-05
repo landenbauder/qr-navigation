@@ -1,0 +1,16 @@
+{
+  "collection": "tenantOverrides",
+  "fetchedAt": "2026-10-05T02:07:33.215Z",
+  "readOnly": true,
+  "documents": [
+    {
+      "documentId": "VFJQIEludmVzdG1lbnRzLCBMTENfXzc2NTA",
+      "entranceLat": 41.75062202857697,
+      "entranceLng": -87.93780255221638,
+      "name": "TRP Investments, LLC",
+      "sourceKey": "VFJQIEludmVzdG1lbnRzLCBMTENfXzc2NTA",
+      "updatedAt": "2026-09-25T02:00:00.943Z",
+      "updateTime": "2026-09-25T02:00:00.933734Z"
+    }
+  ]
+}

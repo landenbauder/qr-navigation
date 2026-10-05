@@ -15,7 +15,7 @@ Prepare for deployment to GitHub Pages. Perform these checks:
 6. **Mobile readiness**: Confirm responsive meta tag and touch-friendly elements
 7. **HTTPS features**: Geolocation requires HTTPS — confirm GitHub Pages will serve over HTTPS
 
-Reference [DEPLOYMENT.md](../DEPLOYMENT.md) for the full deployment procedure.
+Reference [DEPLOYMENT.md](../../DEPLOYMENT.md) for the full deployment procedure.
 
 Report findings as:
 - **Status**: Ready / Needs Attention / Blocked
