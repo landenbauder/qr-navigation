@@ -16,7 +16,7 @@ A mobile-friendly web application for navigating to office locations using QR co
 - **Browser-Specific Location Handling**: Smart prompts with detailed instructions for Safari, Chrome, Firefox, and Android browsers
 - **Local Testing Tools**: Local-only testing controls can place the user at a fixed demo coordinate and immediately recalculate routes without exposing those controls on the published site
 - **Mobile Optimized**: Responsive design optimized for smartphone use with touch-friendly controls
-- **Light Map Style**: Uses CartoDB Positron tiles for a clean, light grey map appearance ideal for outdoor navigation
+- **Map Style**: Uses Stadia Maps Alidade Bright tiles with required provider attribution
 
 ## Setup Instructions
 
@@ -218,7 +218,7 @@ QRLocation/
 ## Technologies Used
 
 - **Leaflet.js** (v1.9.4): Open-source mapping library
-- **CartoDB Positron**: Light grey map tiles for better outdoor visibility
+- **Stadia Maps Alidade Bright**: Full-color raster map tiles; local development is keyless, while production requires domain-based authentication
 - **Leaflet Routing Machine** (v3.2.12): Route calculation using free OSRM service
 - **OSRM Routing**: Walking route optimization via Project OSRM public API
 - **Browser Geolocation API**: Real-time GPS tracking with high accuracy support
@@ -229,17 +229,12 @@ QRLocation/
 ### Change Map Style
 The app now includes a built-in toggle between the default animated map and a real-world aerial view. If you still want to change the underlying default tiles in code, edit the tile layer configuration in `app.js`:
 ```javascript
-// Current: Light grey CartoDB Positron
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 19
+// Current: Stadia Maps Alidade Bright
+L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_bright/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://stadiamaps.com/attribution/">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  maxZoom: 22,
+  maxNativeZoom: 20
 }).addTo(this.map);
-
-// Alternative: Standard OpenStreetMap
-// L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-//     attribution: '&copy; OpenStreetMap contributors'
-// }).addTo(this.map);
 ```
 
 ### Adjust Initial Zoom Level

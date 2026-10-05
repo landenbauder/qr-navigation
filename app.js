@@ -104,6 +104,7 @@ class NavigationApp {
         this.walkingObstacles = null;
         this.walkStart = null;
         this.walkStartProblem = null;
+        this.walkStartPickActive = false;
         this.walkRouteLayer = null;
         this.qrSigns = new Map();
         this.adminSignPickMode = null;
@@ -222,6 +223,7 @@ class NavigationApp {
         this.startPickerMessage = document.getElementById('startPickerMessage');
         this.startPickerList = document.getElementById('startPickerList');
         this.startPickerGpsBtn = document.getElementById('startPickerGpsBtn');
+        this.startPickerMapPickBtn = document.getElementById('startPickerMapPickBtn');
         this.startPickerCancelBtn = document.getElementById('startPickerCancelBtn');
         this.adminSignSelect = document.getElementById('adminSignSelect');
         this.adminSignNameInput = document.getElementById('adminSignNameInput');
@@ -311,6 +313,10 @@ class NavigationApp {
 
         if (this.startPickerGpsBtn) {
             this.startPickerGpsBtn.addEventListener('click', () => this.useCurrentLocationStart());
+        }
+
+        if (this.startPickerMapPickBtn) {
+            this.startPickerMapPickBtn.addEventListener('click', () => this.beginMapPickedWalkingStart());
         }
 
         if (this.startPickerCancelBtn) {
@@ -451,6 +457,11 @@ class NavigationApp {
             }
 
             if (event.key === 'Escape') {
+                if (this.walkStartPickActive) {
+                    this.cancelMapPickedWalkingStart();
+                    return;
+                }
+
                 if (this.startPicker && this.startPicker.style.display !== 'none') {
                     this.hideStartPicker();
                     return;
@@ -910,10 +921,10 @@ class NavigationApp {
         this.map.on('mouseout', () => this.handleMapMouseLeave());
         
         this.baseTileLayers = {
-            animated: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            animated: L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_bright/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://stadiamaps.com/attribution/">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
                 maxZoom: 22,
-                maxNativeZoom: 19
+                maxNativeZoom: 20
             }),
             'real-world': L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community',
@@ -2042,6 +2053,11 @@ class NavigationApp {
             return;
         }
 
+        if (this.walkStartPickActive) {
+            this.handleMapPickedWalkingStart(event);
+            return;
+        }
+
         if (this.adminModeActive) {
             this.handleAdminMapClick(event);
             return;
@@ -2398,7 +2414,9 @@ class NavigationApp {
         const start = this.walkStart;
         let text = 'Choose where you are starting.';
         if (start && start.kind === 'gps') {
-            text = `Starting from where you were when you tapped (${start.accuracyText}). Not live tracking.`;
+            text = start.source === 'test-map'
+                ? `Test start: map-picked location (${start.accuracyText}). Not live GPS.`
+                : `Starting from where you were when you tapped (${start.accuracyText}). Not live tracking.`;
         } else if (start && start.source === 'sign') {
             text = `Starting at: ${start.label}`;
         } else if (start) {
@@ -2432,6 +2450,9 @@ class NavigationApp {
         if (this.startPickerGpsBtn) {
             this.startPickerGpsBtn.disabled = false;
         }
+        if (this.startPickerMapPickBtn) {
+            this.startPickerMapPickBtn.style.display = this.isLocalTestMode ? 'block' : 'none';
+        }
         this.startPicker.style.display = 'flex';
     }
 
@@ -2449,6 +2470,69 @@ class NavigationApp {
         if (this.selectedOffice) {
             this.computeWalkingRoute(this.selectedOffice);
         }
+    }
+
+    beginMapPickedWalkingStart() {
+        if (!this.isLocalTestMode || !this.selectedOffice) {
+            return;
+        }
+
+        this.walkStartPickActive = true;
+        this.hideStartPicker();
+        if (document.body) {
+            document.body.classList.add('walking-start-pick-active');
+        }
+        this.showStatus('Test mode: tap a point next to a mapped walkway. Press Esc to cancel.');
+    }
+
+    cancelMapPickedWalkingStart() {
+        this.walkStartPickActive = false;
+        if (document.body) {
+            document.body.classList.remove('walking-start-pick-active');
+        }
+        this.showStartPicker('Map selection cancelled. Choose a sign or try another test point.');
+    }
+
+    handleMapPickedWalkingStart(event) {
+        if (!this.isLocalTestMode || !event || !event.latlng) {
+            this.cancelMapPickedWalkingStart();
+            return;
+        }
+
+        const lat = event.latlng.lat;
+        const lng = event.latlng.lng;
+        const core = this.getWalkingCore();
+        const attachment = core && this.walkingNetwork
+            ? core.graph.attachPoint(this.walkingNetwork.graph, [lng, lat], {
+                obstacles: this.getWalkingObstacles(),
+                maxAttachM: this.walkingConfig.maxAttachM
+            })
+            : { ok: false, reason: 'data-unavailable', message: 'Walking directions are not available right now.' };
+
+        if (!attachment.ok) {
+            this.showStatus(`${attachment.message} Tap near a mapped walkway, or press Esc to cancel.`);
+            return;
+        }
+
+        this.walkStartPickActive = false;
+        if (document.body) {
+            document.body.classList.remove('walking-start-pick-active');
+        }
+        this.walkStart = {
+            kind: 'gps',
+            source: 'test-map',
+            id: null,
+            label: 'Test map point',
+            lngLat: [lng, lat],
+            accuracyText: 'simulated ±5 m accuracy'
+        };
+        this.walkStartProblem = null;
+        this.applyTestingModePosition(lat, lng, { announce: false, centerMap: false });
+        this.updateLandingStartNote();
+        if (this.selectedOffice) {
+            this.computeWalkingRoute(this.selectedOffice);
+        }
+        this.showStatus('Simulated test location set. This does not read or change your device GPS.');
     }
 
     // One-time position check, not live tracking: it must be fresh, precise, and match a reachable walkway.

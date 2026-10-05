@@ -100,6 +100,10 @@ https://yourusername.github.io/qr-navigation/
 
 **Note**: It may take 1-5 minutes for the site to be available after enabling Pages.
 
+### Stadia Maps authentication for Alidade Bright
+
+The default Alidade Bright raster map works without authentication on `localhost` and `127.0.0.1`. Before production use, open the [Stadia Maps dashboard](https://client.stadiamaps.com/dashboard/), add `wbc-guide.com` under **Manage Properties → Authentication Configuration**, and include any other hostname visitors use (for example, `www.wbc-guide.com`). Use domain-based authentication; do not put an API key in the public `app-config.js`. The map credits Stadia Maps, OpenMapTiles, and OpenStreetMap automatically.
+
 ### Step 7: Test Your Site
 1. Visit your GitHub Pages URL
 2. The site should load with the map

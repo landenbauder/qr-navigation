@@ -1925,10 +1925,23 @@ body.panorama-split-active .walk-start-banner {
     cursor: wait;
 }
 
+.start-picker__gps--test {
+    border-style: dashed;
+}
+
 .start-picker__cancel {
     border-color: transparent;
     text-align: center;
     font-weight: 600;
+}
+
+body.walking-start-pick-active #map,
+body.walking-start-pick-active #map * {
+    cursor: crosshair !important;
+}
+
+body.walking-start-pick-active .status-message {
+    pointer-events: none;
 }
 
 .admin-panel {
