@@ -31,6 +31,19 @@
         { id: 'barrier', label: 'Barrier', hint: 'Tap along a fence, wall, curb, or planter, then press Finish.' }
     ];
 
+    // Map layers the developer can show or hide. Demo view shows only 'edges'.
+    const LAYER_TOGGLES = [
+        { id: 'edges', label: 'Walkways' },
+        { id: 'nodes', label: 'Points' },
+        { id: 'doors', label: 'Doors' },
+        { id: 'places', label: 'QR & parking' },
+        { id: 'areas', label: 'Areas' },
+        { id: 'barriers', label: 'Barriers' },
+        { id: 'references', label: 'References' },
+        { id: 'issues', label: 'Check markers' }
+    ];
+    const DEMO_EXIT_IDLE_MS = 2000;
+
     const LABELS = {
         edgeKind: { sidewalk: 'Sidewalk', path: 'Path', crosswalk: 'Crosswalk', 'parking-crossing': 'Parking crossing', 'entrance-connector': 'Door connector', 'gate-passage': 'Gate passage', ramp: 'Ramp', stairs: 'Stairs' },
         status: { open: 'Open', closed: 'Closed', 'temporarily-closed': 'Temporarily closed' },
@@ -110,7 +123,11 @@
             this.moveNodeId = null;
             this.validation = null;
             this.referenceFeatures = [];
-            this.showReferences = true;
+            this.layerVisibility = Object.fromEntries(LAYER_TOGGLES.map(layer => [layer.id, true]));
+            this.demoView = false;
+            this.demoExitButton = null;
+            this.demoIdleTimer = null;
+            this.onDemoActivity = () => this.showDemoExitButton();
             this.edgeDefaults = { edgeKind: 'sidewalk', status: 'open', access: 'public' };
             this.areaKind = 'building';
             this.barrierKind = 'fence';
@@ -160,11 +177,13 @@
                 barriers: L.layerGroup().addTo(this.map),
                 edges: L.layerGroup().addTo(this.map),
                 nodes: L.layerGroup().addTo(this.map),
+                doors: L.layerGroup().addTo(this.map),
                 places: L.layerGroup().addTo(this.map),
                 issues: L.layerGroup().addTo(this.map),
                 drawing: L.layerGroup().addTo(this.map)
             };
             this.buildPanel();
+            this.applyLayerVisibility();
             document.addEventListener('keydown', this.onKeyDown);
 
             await Promise.all([this.loadDraft(), this.loadReferences()]);
@@ -177,6 +196,7 @@
             if (!this.panel) {
                 return;
             }
+            this.setDemoView(false);
             this.drawing = null;
             this.moveNodeId = null;
             document.removeEventListener('keydown', this.onKeyDown);
@@ -476,7 +496,7 @@
         }
 
         hitReferenceDoor(point) {
-            if (!this.showReferences) return null;
+            if (!this.layerVisibility.references) return null;
             let best = null;
             this.referenceFeatures.filter(f => f.properties.featureType === 'reference-door').forEach((ref) => {
                 const distance = this.containerPoint(ref.geometry.coordinates).distanceTo(point);
@@ -489,6 +509,7 @@
 
         handleMapClick(event) {
             if (!event || !event.latlng || !event.containerPoint) return;
+            if (this.demoView) return;
             const coord = toCoord(event.latlng);
             const point = event.containerPoint;
             try {
@@ -510,13 +531,20 @@
         }
 
         handleMapMouseMove(event) {
-            if (!this.drawing || !event || !event.latlng) return;
+            if (this.demoView || !this.drawing || !event || !event.latlng) return;
             this.renderDrawing(toCoord(event.latlng));
         }
 
         handleKeyDown(event) {
             if (isTextTarget(event.target)) return;
             const key = event.key;
+            if (this.demoView) {
+                if (key === 'Escape') {
+                    event.preventDefault();
+                    this.setDemoView(false);
+                }
+                return;
+            }
             if ((event.ctrlKey || event.metaKey) && key.toLowerCase() === 'z') {
                 event.preventDefault();
                 this.undo();
@@ -922,7 +950,7 @@
                     color: selected ? '#ffd600' : style.color,
                     weight: selected ? 4 : style.weight,
                     interactive: false
-                }).addTo(this.layers.nodes);
+                }).addTo(kind === 'entrance' ? this.layers.doors : this.layers.nodes);
                 if (kind === 'entrance' && node.properties.officeId) {
                     marker.bindTooltip(labelElement(node.properties.officeId.replace(/^u/, '')), { permanent: true, direction: 'right', offset: [8, 0], className: 'nwe-label' });
                 }
@@ -963,7 +991,6 @@
         }
 
         renderReferences() {
-            if (!this.showReferences) return;
             this.referenceFeatures.forEach((ref) => {
                 const type = ref.properties.featureType;
                 if (type === 'reference-unit-footprint') {
@@ -1037,13 +1064,38 @@
             this.contextEl = el('div', { className: 'nwe-section' });
             this.hintEl = el('p', { className: 'nwe-hint', 'aria-live': 'polite' });
             this.inspectorEl = el('div', { className: 'nwe-section' });
+
+            this.layerInputs = new Map();
+            const layerList = el('div', { className: 'nwe-layers' });
+            LAYER_TOGGLES.forEach((layer) => {
+                const input = el('input', { type: 'checkbox', onchange: event => this.setLayerVisible(layer.id, event.target.checked) });
+                this.layerInputs.set(layer.id, input);
+                layerList.appendChild(el('label', { className: 'nwe-check' }, [input, el('span', { text: layer.label })]));
+            });
+            this.layersSummaryEl = el('summary');
+            const layers = el('details', { className: 'nwe-disclosure nwe-section' }, [
+                this.layersSummaryEl,
+                layerList,
+                el('div', { className: 'nwe-row' }, [
+                    el('button', { className: 'nwe-button nwe-button--small', type: 'button', text: 'Walkways only', onclick: () => this.setLayersOnly(['edges']) }),
+                    el('button', { className: 'nwe-button nwe-button--small', type: 'button', text: 'Show all', onclick: () => this.setLayersOnly(LAYER_TOGGLES.map(layer => layer.id)) })
+                ])
+            ]);
+
             this.issuesSummaryEl = el('summary');
             this.issuesListEl = el('ol');
-            const issues = el('details', { className: 'nwe-issues nwe-section', open: true }, [this.issuesSummaryEl, this.issuesListEl]);
+            this.issuesEl = el('details', { className: 'nwe-disclosure nwe-issues nwe-section' }, [this.issuesSummaryEl, this.issuesListEl]);
+            this.lastErrorCount = 0;
 
             this.fileInput = el('input', { type: 'file', accept: '.geojson,.json,application/geo+json,application/json', hidden: true, onchange: event => this.importFile(event) });
-            this.undoButton = el('button', { className: 'nwe-button', type: 'button', text: 'Undo', onclick: () => this.undo() });
-            this.referencesButton = el('button', { className: 'nwe-button', type: 'button', text: 'References', onclick: () => { this.showReferences = !this.showReferences; this.render(); this.renderPanel(); } });
+            this.undoButton = el('button', { className: 'nwe-button', type: 'button', text: 'Undo', title: 'Undo (Ctrl+Z)', onclick: () => this.undo() });
+            this.demoButton = el('button', {
+                className: 'nwe-button nwe-button--small',
+                type: 'button',
+                text: 'Demo view',
+                title: 'Hide everything except the walkway lines. Press Esc to return.',
+                onclick: () => this.setDemoView(true)
+            });
             this.aerialButton = el('button', {
                 className: 'nwe-button',
                 type: 'button',
@@ -1053,27 +1105,28 @@
                     this.renderPanel();
                 }
             });
-            const footer = el('div', { className: 'nwe-footer nwe-section' }, [
+            const footer = el('div', { className: 'nwe-footer' }, [
                 this.undoButton,
+                el('button', { className: 'nwe-button', type: 'button', text: 'Fit', title: 'Zoom to the whole draft', onclick: () => this.fitToContent() }),
                 this.aerialButton,
-                this.referencesButton,
-                el('button', { className: 'nwe-button', type: 'button', text: 'Fit', onclick: () => this.fitToContent() }),
                 el('button', { className: 'nwe-button', type: 'button', text: 'Import', onclick: () => this.fileInput.click() }),
-                el('button', { className: 'nwe-button nwe-button--primary', type: 'button', text: 'Export', onclick: () => this.exportFile() }),
                 el('button', { className: 'nwe-button nwe-button--danger', type: 'button', text: 'Clear', onclick: () => this.clearDraft() }),
+                el('button', { className: 'nwe-button nwe-button--primary', type: 'button', text: 'Export', onclick: () => this.exportFile() }),
                 this.fileInput
             ]);
 
             this.panel = el('section', { className: 'nwe-panel', 'aria-label': 'Walkway editor' }, [
                 el('div', { className: 'nwe-header' }, [
-                    el('div', {}, [el('span', { className: 'nwe-eyebrow', text: 'Developer tool' }), el('span', { className: 'nwe-title', text: 'Walkway Editor' })]),
-                    el('button', { className: 'nwe-button', type: 'button', text: 'Close', onclick: () => this.close() })
+                    el('span', { className: 'nwe-title', text: 'Walkway Editor' }),
+                    this.demoButton,
+                    el('button', { className: 'nwe-button nwe-button--icon', type: 'button', text: '✕', title: 'Close editor', 'aria-label': 'Close walkway editor', onclick: () => this.close() })
                 ]),
                 tools,
                 this.hintEl,
                 this.contextEl,
                 this.inspectorEl,
-                issues,
+                layers,
+                this.issuesEl,
                 footer
             ]);
             // Stop panel taps from reaching the map underneath.
@@ -1087,6 +1140,73 @@
             this.app.showStatus(message);
         }
 
+        // ---------- layer visibility and demo view ----------
+
+        applyLayerVisibility() {
+            if (!this.layers) return;
+            const isVisible = id => (this.demoView ? id === 'edges' : id === 'drawing' || this.layerVisibility[id] !== false);
+            // Re-add in declaration order so walkways stay above areas and below points.
+            Object.values(this.layers).forEach(layer => this.map.removeLayer(layer));
+            Object.entries(this.layers).forEach(([id, layer]) => {
+                if (isVisible(id)) layer.addTo(this.map);
+            });
+        }
+
+        setLayerVisible(id, visible) {
+            this.layerVisibility[id] = !!visible;
+            this.applyLayerVisibility();
+            this.renderPanel();
+        }
+
+        setLayersOnly(ids) {
+            LAYER_TOGGLES.forEach((layer) => { this.layerVisibility[layer.id] = ids.includes(layer.id); });
+            this.applyLayerVisibility();
+            this.renderPanel();
+        }
+
+        setDemoView(active) {
+            if (!this.panel || this.demoView === !!active) return;
+            this.demoView = !!active;
+            if (this.demoView) {
+                this.drawing = null;
+                this.moveNodeId = null;
+                this.selectedId = null;
+                this.render();
+                this.demoExitButton = el('button', {
+                    className: 'nwe-demo-exit',
+                    type: 'button',
+                    text: 'Exit demo view (Esc)',
+                    onclick: () => this.setDemoView(false)
+                });
+                L.DomEvent.disableClickPropagation(this.demoExitButton);
+                document.body.appendChild(this.demoExitButton);
+                document.addEventListener('mousemove', this.onDemoActivity);
+                document.addEventListener('touchstart', this.onDemoActivity, { passive: true });
+                this.showDemoExitButton();
+            } else {
+                clearTimeout(this.demoIdleTimer);
+                this.demoIdleTimer = null;
+                document.removeEventListener('mousemove', this.onDemoActivity);
+                document.removeEventListener('touchstart', this.onDemoActivity);
+                if (this.demoExitButton) this.demoExitButton.remove();
+                this.demoExitButton = null;
+            }
+            document.body.classList.toggle('nwe-demo-view', this.demoView);
+            this.applyLayerVisibility();
+            this.renderPanel();
+            if (!this.demoView && this.demoButton) this.demoButton.focus();
+        }
+
+        // The exit button fades out after a moment so it stays out of screenshots.
+        showDemoExitButton() {
+            if (!this.demoExitButton) return;
+            this.demoExitButton.classList.remove('is-idle');
+            clearTimeout(this.demoIdleTimer);
+            this.demoIdleTimer = setTimeout(() => {
+                if (this.demoExitButton) this.demoExitButton.classList.add('is-idle');
+            }, DEMO_EXIT_IDLE_MS);
+        }
+
         renderPanel() {
             if (!this.panel) return;
             this.toolButtons.forEach((button, id) => {
@@ -1098,8 +1218,14 @@
                 ? `Tap the new location for ${this.moveNodeId}. Esc cancels.`
                 : (this.drawing && this.drawing.type === 'drive-to' ? 'Tap where map apps should send drivers, or press Skip.' : tool.hint);
             this.undoButton.disabled = this.history.length === 0;
-            this.referencesButton.classList.toggle('is-active', this.showReferences);
             this.aerialButton.classList.toggle('is-active', this.app.activeMapViewMode === 'real-world');
+            this.aerialButton.setAttribute('aria-pressed', this.app.activeMapViewMode === 'real-world' ? 'true' : 'false');
+            this.layerInputs.forEach((input, id) => { input.checked = this.layerVisibility[id] !== false; });
+            const visibleCount = LAYER_TOGGLES.filter(layer => this.layerVisibility[layer.id] !== false).length;
+            this.layersSummaryEl.replaceChildren(
+                el('span', { text: 'Show on map' }),
+                el('span', { className: 'nwe-badge', text: `${visibleCount}/${LAYER_TOGGLES.length}` })
+            );
             this.renderContext();
             this.renderInspector();
             this.renderIssues();
@@ -1163,10 +1289,16 @@
             const feature = this.selectedId ? this.get(this.selectedId) : null;
             if (!feature) {
                 const s = this.validation ? this.validation.stats : null;
-                box.appendChild(el('span', { className: 'nwe-section-title', text: 'Draft' }));
-                box.appendChild(el('span', { className: 'nwe-muted', text: s
-                    ? `${s.edges} walkways (${Math.round(s.totalEdgeLengthM)} m), ${s.nodes} points, ${s.entrances} doors, ${s.starts} QR signs, ${s.arrivals} parking, ${s.areas} areas, ${s.barriers} barriers.`
-                    : 'Empty.' }));
+                const parts = s ? [
+                    `${s.edges} walkways (${Math.round(s.totalEdgeLengthM)} m)`,
+                    s.nodes && `${s.nodes} points`,
+                    s.entrances && `${s.entrances} doors`,
+                    s.starts && `${s.starts} QR signs`,
+                    s.arrivals && `${s.arrivals} parking`,
+                    s.areas && `${s.areas} areas`,
+                    s.barriers && `${s.barriers} barriers`
+                ].filter(Boolean) : [];
+                box.appendChild(el('span', { className: 'nwe-muted', text: parts.length ? `Draft: ${parts.join(' · ')}` : 'Draft: empty.' }));
                 return;
             }
             const props = feature.properties;
@@ -1236,10 +1368,19 @@
             const result = this.validation;
             this.issuesListEl.replaceChildren();
             if (!result) {
-                this.issuesSummaryEl.textContent = 'Checks';
+                this.issuesSummaryEl.replaceChildren(el('span', { text: 'Checks' }));
                 return;
             }
-            this.issuesSummaryEl.textContent = `Checks: ${result.errors.length} error(s), ${result.warnings.length} warning(s)`;
+            const errorCount = result.errors.length;
+            const warningCount = result.warnings.length;
+            const badges = [];
+            if (errorCount) badges.push(el('span', { className: 'nwe-badge nwe-badge--error', text: `${errorCount} error${errorCount === 1 ? '' : 's'}` }));
+            if (warningCount) badges.push(el('span', { className: 'nwe-badge nwe-badge--warning', text: `${warningCount} warning${warningCount === 1 ? '' : 's'}` }));
+            if (!errorCount && !warningCount) badges.push(el('span', { className: 'nwe-badge nwe-badge--ok', text: 'All clear' }));
+            this.issuesSummaryEl.replaceChildren(el('span', { text: 'Checks' }), ...badges);
+            // Open the list when new errors appear; otherwise leave it as the developer set it.
+            if (errorCount > 0 && this.lastErrorCount === 0) this.issuesEl.open = true;
+            this.lastErrorCount = errorCount;
             [...result.errors, ...result.warnings].forEach((issue) => {
                 const button = el('button', {
                     className: `nwe-issue${issue.severity === 'warning' ? ' nwe-issue--warning' : ''}`,

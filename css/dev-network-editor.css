@@ -10,7 +10,9 @@ body.network-editor-active .status-message {
 body.network-editor-active .office-trace-panel,
 body.network-editor-active .test-location-panel,
 body.network-editor-active .destination-panel,
-body.network-editor-active .street-view-legend {
+body.network-editor-active .street-view-legend,
+body.network-editor-active .developer-mode-button,
+body.network-editor-active .mobile-test-button {
     display: none !important;
 }
 
@@ -18,16 +20,18 @@ body.network-editor-active .street-view-legend {
     position: fixed;
     top: max(12px, env(safe-area-inset-top, 0px) + 12px);
     left: max(12px, env(safe-area-inset-left, 0px) + 12px);
-    bottom: max(12px, env(safe-area-inset-bottom, 0px) + 12px);
-    width: min(380px, calc(100% - 24px));
+    width: min(320px, calc(100% - 24px));
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 14px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.97);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+    gap: 8px;
+    padding: 12px;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
     overflow-y: auto;
+    overscroll-behavior: contain;
     z-index: 1250;
     font-size: 13px;
     color: #243127;
@@ -35,47 +39,63 @@ body.network-editor-active .street-view-legend {
 
 .nwe-header {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.nwe-eyebrow {
-    display: block;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(65, 75, 67, 0.62);
-}
-
-.nwe-title {
-    font-size: 17px;
-    font-weight: 700;
-}
-
-.nwe-tools,
-.nwe-footer,
-.nwe-row {
-    display: flex;
-    flex-wrap: wrap;
+    align-items: center;
     gap: 6px;
 }
 
+.nwe-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.nwe-tools {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.nwe-footer {
+    position: sticky;
+    bottom: -12px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    margin: 0 -12px -12px;
+    padding: 8px 12px 12px;
+    border-top: 1px solid rgba(65, 75, 67, 0.12);
+    background: #ffffff;
+}
+
+.nwe-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
 .nwe-button {
-    min-height: 40px;
+    min-height: 36px;
     border: none;
-    border-radius: 12px;
-    padding: 8px 11px;
-    background: rgba(65, 75, 67, 0.1);
+    border-radius: 10px;
+    padding: 6px 10px;
+    background: rgba(65, 75, 67, 0.08);
     color: #243127;
     font: inherit;
     font-weight: 700;
     cursor: pointer;
+    touch-action: manipulation;
 }
 
 .nwe-button:hover {
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+    background: rgba(65, 75, 67, 0.15);
+}
+
+.nwe-button:focus-visible,
+.nwe-demo-exit:focus-visible,
+.nwe-disclosure summary:focus-visible {
+    outline: 2px solid #1565c0;
+    outline-offset: 2px;
 }
 
 .nwe-button.is-active,
@@ -85,28 +105,46 @@ body.network-editor-active .street-view-legend {
 }
 
 .nwe-button--danger {
-    background: rgba(198, 40, 40, 0.12);
+    background: rgba(198, 40, 40, 0.1);
     color: #8e1b1b;
 }
 
+.nwe-button--danger:hover {
+    background: rgba(198, 40, 40, 0.18);
+}
+
+.nwe-button--small {
+    min-height: 32px;
+    padding: 4px 10px;
+    font-size: 12px;
+}
+
+.nwe-button--icon {
+    width: 32px;
+    min-height: 32px;
+    padding: 0;
+    font-size: 15px;
+    line-height: 1;
+}
+
 .nwe-button:disabled {
-    opacity: 0.45;
+    opacity: 0.4;
     cursor: default;
-    box-shadow: none;
 }
 
 .nwe-hint {
     margin: 0;
-    padding: 9px 11px;
-    border-radius: 12px;
-    background: rgba(21, 101, 192, 0.08);
-    line-height: 1.45;
+    padding: 7px 9px;
+    border-radius: 10px;
+    background: rgba(21, 101, 192, 0.07);
+    font-size: 12px;
+    line-height: 1.4;
 }
 
 .nwe-section {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     padding-top: 8px;
     border-top: 1px solid rgba(65, 75, 67, 0.12);
 }
@@ -117,51 +155,127 @@ body.network-editor-active .street-view-legend {
 
 .nwe-field {
     display: grid;
-    grid-template-columns: 120px 1fr;
+    grid-template-columns: 104px 1fr;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .nwe-field select,
 .nwe-field input {
-    min-height: 36px;
+    min-height: 34px;
     min-width: 0;
     border: 1px solid rgba(65, 75, 67, 0.25);
-    border-radius: 10px;
-    padding: 6px 8px;
+    border-radius: 8px;
+    padding: 4px 8px;
     font: inherit;
     background: #ffffff;
 }
 
 .nwe-muted {
     color: #5f6761;
+    line-height: 1.4;
 }
 
-.nwe-issues summary {
+.nwe-disclosure {
+    display: block;
+}
+
+.nwe-disclosure > :not(summary) {
+    margin-top: 6px;
+}
+
+.nwe-disclosure summary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
     cursor: pointer;
+    font-weight: 800;
+    list-style: none;
+}
+
+.nwe-disclosure summary::-webkit-details-marker {
+    display: none;
+}
+
+.nwe-disclosure summary::before {
+    content: '▸';
+    width: 10px;
+    color: #5f6761;
+    transition: transform 0.15s ease;
+}
+
+.nwe-disclosure[open] summary::before {
+    transform: rotate(90deg);
+}
+
+.nwe-badge {
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: rgba(65, 75, 67, 0.1);
+    color: #414b43;
+    font-size: 11px;
     font-weight: 800;
 }
 
+.nwe-badge--error {
+    background: rgba(198, 40, 40, 0.12);
+    color: #8e1b1b;
+}
+
+.nwe-badge--warning {
+    background: rgba(249, 168, 37, 0.18);
+    color: #7a5200;
+}
+
+.nwe-badge--ok {
+    background: rgba(46, 125, 50, 0.12);
+    color: #1b5e20;
+}
+
+.nwe-layers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px 8px;
+}
+
+.nwe-check {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 30px;
+    cursor: pointer;
+}
+
+.nwe-check input {
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: #414b43;
+}
+
 .nwe-issues ol {
-    margin: 8px 0 0;
+    margin: 6px 0 0;
     padding: 0;
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    max-height: 260px;
+    gap: 4px;
+    max-height: 220px;
     overflow-y: auto;
 }
 
 .nwe-issue {
     width: 100%;
     border: none;
-    border-left: 4px solid #c62828;
-    border-radius: 8px;
-    padding: 7px 9px;
+    border-left: 3px solid #c62828;
+    border-radius: 6px;
+    padding: 5px 8px;
     background: rgba(198, 40, 40, 0.07);
     color: inherit;
     font: inherit;
+    font-size: 12px;
+    line-height: 1.35;
     text-align: left;
     cursor: pointer;
 }
@@ -173,8 +287,9 @@ body.network-editor-active .street-view-legend {
 
 .nwe-issue-code {
     display: block;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
+    letter-spacing: 0.02em;
     color: #5f6761;
 }
 
@@ -208,16 +323,67 @@ body.network-editor-active .street-view-legend {
     color: #ffffff;
 }
 
+/* Demo view: only the map tiles, attribution, and walkway lines stay on screen. */
+body.nwe-demo-view .nwe-panel,
+body.nwe-demo-view .container > :not(#map):not(#googleMapBase),
+body.nwe-demo-view #map .leaflet-marker-pane,
+body.nwe-demo-view #map .leaflet-shadow-pane,
+body.nwe-demo-view #map .leaflet-tooltip-pane,
+body.nwe-demo-view #map .leaflet-popup-pane,
+body.nwe-demo-view #map .leaflet-top,
+body.nwe-demo-view #map .leaflet-bottom.leaflet-left {
+    display: none !important;
+}
+
+body.nwe-demo-view #map {
+    cursor: grab;
+}
+
+.nwe-demo-exit {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top, 0px) + 12px);
+    right: max(12px, env(safe-area-inset-right, 0px) + 12px);
+    z-index: 1260;
+    min-height: 40px;
+    border: none;
+    border-radius: 999px;
+    padding: 8px 16px;
+    background: rgba(36, 49, 39, 0.88);
+    color: #ffffff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.3s ease;
+    touch-action: manipulation;
+}
+
+.nwe-demo-exit.is-idle {
+    opacity: 0;
+    pointer-events: none;
+}
+
 @media (max-width: 640px) {
     .nwe-panel {
         top: auto;
+        bottom: max(8px, env(safe-area-inset-bottom, 0px) + 8px);
         left: max(8px, env(safe-area-inset-left, 0px) + 8px);
         right: max(8px, env(safe-area-inset-right, 0px) + 8px);
         width: auto;
         max-height: 48dvh;
     }
 
+    .nwe-tools {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .nwe-tools .nwe-button {
+        padding: 4px;
+        font-size: 12px;
+    }
+
     .nwe-field {
-        grid-template-columns: 100px 1fr;
+        grid-template-columns: 96px 1fr;
     }
 }
