@@ -26,7 +26,7 @@ Make sure you have all these files ready:
 - Set your Google Maps key in `app-config.js` (used for 360° Street View)
 - Configure Firebase Authentication and Firestore before enabling live tenant administration; see `README.md`
 - Restrict that key to Maps JavaScript API + your allowed HTTP referrer domains
-- If `GOOGLE_MAPS_API_KEY` is blank, navigation still works but Street View will show: `360° Street View needs a Google Maps API key. Set GOOGLE_MAPS_API_KEY in app-config.js.`
+- If `GOOGLE_MAPS_API_KEY` is blank, navigation still works; Street View shows visitors `Street View is not available right now. Directions still work.` and logs `Google Maps API key not configured` to the browser console.
 - GitHub Pages automatically provides HTTPS, which is required for geolocation to work
 - Deploy the rules in `firestore.rules` from the Firebase console and replace its admin email placeholder before publishing
 - The `_headers` file is not needed for GitHub Pages (it's Netlify-specific)
@@ -167,7 +167,8 @@ git push
 - Open browser console (F12) to check for errors
 - Verify Leaflet CDN links are accessible
 
-**Street View says it needs a Google Maps API key?**
+**Street View says it is not available?**
+- Open the browser console (F12). `Google Maps API key not configured` means `GOOGLE_MAPS_API_KEY` is blank; `Google Maps rejected the API key for this site` means the key or its referrer restrictions need fixing.
 - Open `app-config.js` and set `GOOGLE_MAPS_API_KEY`
 - In Google Cloud Console, enable the Maps JavaScript API for that project
 - Add the deployed GitHub Pages URL and any local test URL you use, such as `http://127.0.0.1:4173/*`, to the key's allowed HTTP referrers

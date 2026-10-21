@@ -5,9 +5,9 @@ A mobile-friendly web application for navigating to office locations using QR co
 ## Features
 
 - **QR Code Access**: Scan a QR code to instantly access the navigation interface
-- **Office Search**: Search for offices with autocomplete functionality and "View All" button
+- **Office Search**: Search by unit number or company name with keyboard support (arrow keys, Enter, Escape), plus a **Browse all tenants** directory button
 - **Tenant Administration**: Authorized property managers can update tenant names and move front-door coordinates directly on the property map
-- **Real-time GPS Tracking**: Your current position is continuously tracked and displayed on the map with accuracy indicator
+- **Real-time GPS Tracking**: Your current position is continuously tracked and displayed on the map; the label shows the reported accuracy (for example `±8 m`), the shaded circle shows the full uncertainty, and fixes worse than ±50 m are shown in amber as approximate
 - **Dynamic Route Updates**: Routes automatically update as you move (updates every 15+ meters)
 - **Walking Directions**: Get optimized walking routes directly to the selected office entrance using OSRM routing
 - **Split-Screen 360 Preview**: Open Street View in the top half of the screen with an interactive context map in the bottom half showing the camera location, viewing direction, and front door target
@@ -98,9 +98,22 @@ The `tenantOverrides` collection permits public reads so visitors receive curren
 1. Tap the small lock below the tenant search box.
 2. Enter the admin passcode.
 3. Choose a tenant and edit its name.
-4. To update the entrance, tap **Move front door**, then tap the exact location on the map.
+4. To update the entrance, tap **Move front door**. The editor minimizes to an instruction strip so you can pan, zoom, and tap the exact location on the map. The editor returns after placement.
 5. Tap **Save changes** and confirm. The update is immediately available to all visitors.
 6. Use the close button to exit admin mode.
+
+**Map placement and cancellation**
+- **Move front door**, **Add sign**, **Move** sign, and **Change spot** minimize the editor while you choose a map location.
+- Tap **Cancel** in the instruction strip, or press **Escape**, to return to the editor without changing a location or publishing anything. Existing names, selections, and unsaved edits are kept.
+- Invalid sign locations show an error in the strip so you can try another spot or cancel.
+- Front-door placement remains a draft until **Save changes**.
+- When no placement is active, **Escape** retains the existing exit-admin behavior.
+
+**QR sign previews**
+- A map tap for **Add sign** or **Move** only places an orange *preview* marker; nothing is published yet.
+- New signs are named **New sign** automatically (then **New sign 1**, **New sign 2**, … if that name is taken). Edit the name before saving if you like; the sign's permanent link ID is based on the name at the time you first save it.
+- Tap **Save sign** to publish, **Change spot** to re-place the preview, or **Discard** to drop it. Exiting admin with an unsaved preview asks for confirmation.
+- If a save fails or times out (20 seconds), the preview is kept so you can retry.
 
 ### 3. Test Locally
 
@@ -142,9 +155,8 @@ Optional custom port:
 - Set `ENABLE_LOCAL_TEST_MODE: false` again before publishing.
 
 **Street View access**
-- After selecting an office, the map shows all saved Street View points as camera icons.
-- Tap any camera icon to open that exact Street View location.
-- The bottom legend `Street View Buttons` indicates those camera markers are interactive.
+- After selecting an office, the map shows all saved Street View points as Street View icons.
+- Tap any Street View icon (a person standing on a circular arrow) to open that exact Street View location. Hovering or long-pressing an icon shows "Open Street View here".
 
 **Office boundary tracing**
 - Open the map first, then use the `Trace Offices` panel in the lower-left corner.
@@ -192,12 +204,13 @@ Optional custom port:
 
 Each QR sign has its own link: `https://wbc-guide.com/?property=willowbrook&start=<sign-id>`. A link with `start=` gives walking directions along the mapped walkway network from that sign, with no location permission needed. Plain links without `start=` keep the previous behavior until the network is published for everyone.
 
-- **Status:** the walkway network is a *pilot*: drawn from an owner sketch, not yet walked on site. Visitors see "Pilot route: still being verified on site." Automated tests do not prove a path is physically passable.
+- **Status:** the walkway network is a *pilot*: drawn from an owner sketch, not yet walked on site. Visitors no longer see a pilot notice on the route, so field-verify walkways before relying on them. Automated tests do not prove a path is physically passable.
+- **Display:** route distances show in feet (miles beyond 1,000 ft). Visitors see sign names with "sign" added, for example "Main parking lot sign"; names already ending in "sign" (such as "New sign 2") are shown unchanged, and the stored names and QR links are not affected.
 - **Starting points:** a sign link starts at that sign; "Change start" offers the other signs or a one-time "Use my current location" (requires a recent, precise fix next to a mapped walkway; it is not live tracking).
 - **No route:** if a door is not connected to the network, was moved without reconnecting, or a walkway is closed, the app says so instead of drawing a straight line or a road route.
 - **Data files:** `data/properties/willowbrook/network.geojson` is what the app loads (coordinates are `[longitude, latitude]`). It is produced by `node tools/publish-network.js` from `draft/walking-network-draft.geojson`, which you edit with the developer **Walkway Editor** (localhost only: developer mode → Walkway Editor). Run `node tools/validate-property.js` to check a draft and `node --test "tests/**/*.test.js"` for software tests.
 - **Publishing:** `node tools/publish-network.js --status pilot` (sign links only) or `--status published` (everyone; requires every walkway to be marked field-verified). To roll back, revert `network.geojson` in git and redeploy.
-- **Admin signs:** in admin mode, the *QR signs* section adds, moves, renames, and removes signs. A sign's ID, and so its printed QR link, never changes when it is renamed or moved. Removing hides it; the link then asks visitors to choose a start. Sign edits are stored in the Firestore `qrSigns` collection, so publish the updated `firestore.rules` first (see `DEPLOYMENT.md`).
+- **Admin signs:** in admin mode, the *QR signs* section adds, moves, renames, and removes signs. Adding or moving a sign shows a preview that must be saved with **Save sign**. A sign's ID, and so its printed QR link, never changes when it is renamed or moved. Removing hides it; the link then asks visitors to choose a start. Sign edits are stored in the Firestore `qrSigns` collection, so publish the updated `firestore.rules` first (see `DEPLOYMENT.md`).
 - **Parking lots:** the owner states anywhere in a lot is walkable. Lots are not yet drawn as areas, so a start point only connects to a walkway within 30 m without crossing an office outline.
 
 ## File Structure
@@ -274,7 +287,10 @@ lineOptions: {
 **360° Street View not opening:**
 - Check `app-config.js` and confirm `GOOGLE_MAPS_API_KEY` is set to a valid Google Maps JavaScript API key
 - In Google Cloud Console, make sure the key allows the Maps JavaScript API and your current site referrer
-- If you see `360° Street View needs a Google Maps API key. Set GOOGLE_MAPS_API_KEY in app-config.js.`, the key is missing or blank rather than the office panorama coordinates being the first problem
+- Visitors see a friendly message such as `Street View is not available right now. Directions still work.` The technical cause is logged to the browser console (F12):
+  - `Google Maps API key not configured` means `GOOGLE_MAPS_API_KEY` is missing or blank.
+  - `Google Maps rejected the API key for this site` (with Google's `RefererNotAllowedMapError` or similar) means the key is invalid or the current site URL is not an allowed HTTP referrer.
+- `Street View imagery is not available for this spot` means Google has no outdoor panorama near that point; the key itself is working.
 
 **Map not loading:**
 - Check internet connection (needed for map tiles)
@@ -297,4 +313,3 @@ lineOptions: {
 ## License
 
 This project is open source and free to use.
-

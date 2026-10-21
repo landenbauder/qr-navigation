@@ -48,9 +48,16 @@
                         id="officeSearch" 
                         placeholder="Search..."
                         autocomplete="off"
+                        role="combobox"
+                        aria-label="Search by unit number or company name"
+                        aria-autocomplete="list"
+                        aria-expanded="false"
+                        aria-controls="searchResults"
                     >
-                    <div id="searchResults" class="search-results"></div>
+                    <div id="searchResults" class="search-results" role="listbox" aria-label="Tenants"></div>
+                    <p id="searchStatus" class="visually-hidden" role="status" aria-live="polite"></p>
                 </div>
+                <button id="browseTenantsBtn" class="browse-tenants-button" type="button" aria-controls="searchResults" aria-expanded="false">Browse all tenants</button>
                 <p id="landingStartNote" class="landing-start-note" aria-live="polite" style="display: none;"></p>
                 <button id="adminModeBtn" class="admin-mode-button" type="button" aria-label="Enter tenant admin mode" title="Tenant administration">
                     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -145,13 +152,9 @@
             </div>
         </div>
 
-        <div id="streetViewLegend" class="street-view-legend" style="display: none;">
-            <span class="street-view-point-marker map-banner-marker__icon map-banner-marker__icon--camera" aria-hidden="true" style="--panorama-camera-heading: 0deg;">
-                <span class="map-banner-marker__camera-pulse"></span>
-                <span class="map-banner-marker__camera-core"></span>
-                <span class="map-banner-marker__camera-lens"></span>
-            </span>
-            <span class="street-view-legend__copy">- Street View Buttons</span>
+        <div id="adminMapAction" class="admin-map-action" aria-label="Map placement" style="display: none;">
+            <p id="adminMapActionText" class="admin-map-action__text" role="status" aria-live="polite"></p>
+            <button id="adminMapCancelBtn" class="admin-map-action__cancel" type="button" aria-describedby="adminMapActionText">Cancel</button>
         </div>
 
         <section id="adminPanel" class="admin-panel" aria-label="Tenant administration" style="display: none;">
@@ -189,7 +192,12 @@
                     <input id="adminSignNameInput" type="text" maxlength="60" autocomplete="off" placeholder="e.g. North parking lot">
                 </label>
                 <p id="adminSignInfo" class="admin-panel__status" aria-live="polite"></p>
-                <div class="admin-panel__row">
+                <div id="adminSignDraftActions" class="admin-panel__row admin-panel__row--draft" style="display: none;">
+                    <button id="adminSignSaveBtn" class="admin-panel__action admin-panel__action--primary" type="button">Save sign</button>
+                    <button id="adminSignRepickBtn" class="admin-panel__action admin-panel__action--secondary" type="button">Change spot</button>
+                    <button id="adminSignDiscardBtn" class="admin-panel__action admin-panel__action--secondary" type="button">Discard</button>
+                </div>
+                <div id="adminSignActions" class="admin-panel__row">
                     <button id="adminSignAddBtn" class="admin-panel__action admin-panel__action--secondary" type="button" aria-pressed="false">Add sign</button>
                     <button id="adminSignMoveBtn" class="admin-panel__action admin-panel__action--secondary" type="button" aria-pressed="false">Move</button>
                     <button id="adminSignRenameBtn" class="admin-panel__action admin-panel__action--secondary" type="button">Rename</button>
@@ -263,4 +271,3 @@
     <script src="app.js"></script>
 </body>
 </html>
-

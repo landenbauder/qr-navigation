@@ -14,6 +14,7 @@ class NavigationApp {
         this.preciseLocationWarningShown = false;
         this.lastRouteUpdatePosition = null; // Track last position used for route update
         this.minRouteUpdateDistance = 15; // Minimum distance in meters to trigger route update
+        this.lowLocationAccuracyM = 50; // Display-only: above this, the location is labeled approximate
         this.routeDestinationName = null; // Store destination name to avoid showing status repeatedly
         this.pannellumViewer = null;
         this.googleStreetView = null;
@@ -52,7 +53,6 @@ class NavigationApp {
         this.entranceLabelMarker = null;
         this.streetViewMarkerGroup = null;
         this.streetViewMarkers = [];
-        this.streetViewLegend = null;
         this.manualPanoramaPoint = null;
         this.adminModeActive = false;
         this.adminIdToken = null;
@@ -69,6 +69,10 @@ class NavigationApp {
         this.adminExitBtn = null;
         this.adminStatus = null;
         this.adminHasUnsavedChanges = false;
+        this.adminMapAction = null;
+        this.adminMapActionText = null;
+        this.adminMapCancelBtn = null;
+        this.adminMapPickState = null;
         this.developerModeBtn = null;
         this.mobileTestLocationBtn = null;
         this.mapViewToggle = null;
@@ -110,6 +114,14 @@ class NavigationApp {
         this.adminSignPickMode = null;
         this.adminSelectedSignId = null;
         this.adminSignLayer = null;
+        this.adminSignDraft = null;
+        this.adminSignSaving = false;
+        this.adminSaveTimeoutMs = 20000;
+        this.searchActiveIndex = -1;
+        this.searchResultsShowAll = false;
+        this.browseTenantsBtn = null;
+        this.googleMapsAuthFailed = false;
+        this.googleMapsAuthHandlerInstalled = false;
         this.officeTraceStorageKey = 'qr-navigation-office-trace-v3';
         this.legacyOfficeTraceStorageKeys = [
             'qr-navigation-office-trace-v1',
@@ -183,6 +195,9 @@ class NavigationApp {
         this.adminSaveBtn = document.getElementById('adminSaveBtn');
         this.adminExitBtn = document.getElementById('adminExitBtn');
         this.adminStatus = document.getElementById('adminStatus');
+        this.adminMapAction = document.getElementById('adminMapAction');
+        this.adminMapActionText = document.getElementById('adminMapActionText');
+        this.adminMapCancelBtn = document.getElementById('adminMapCancelBtn');
         this.developerModeBtn = document.getElementById('developerModeBtn');
         this.mobileTestLocationBtn = document.getElementById('mobileTestLocationBtn');
         this.landingMenu = document.getElementById('landingMenu');
@@ -193,7 +208,6 @@ class NavigationApp {
         this.testSearchOfficeBtn = document.getElementById('testSearchOfficeBtn');
         this.testModePickPointBtn = document.getElementById('testPickPointBtn');
         this.exitTestModeBtn = document.getElementById('exitTestModeBtn');
-        this.streetViewLegend = document.getElementById('streetViewLegend');
         this.mapViewToggle = document.getElementById('mapViewToggle');
         this.animatedViewBtn = document.getElementById('animatedViewBtn');
         this.realWorldViewBtn = document.getElementById('realWorldViewBtn');
@@ -232,6 +246,12 @@ class NavigationApp {
         this.adminSignMoveBtn = document.getElementById('adminSignMoveBtn');
         this.adminSignRenameBtn = document.getElementById('adminSignRenameBtn');
         this.adminSignRemoveBtn = document.getElementById('adminSignRemoveBtn');
+        this.adminSignActions = document.getElementById('adminSignActions');
+        this.adminSignDraftActions = document.getElementById('adminSignDraftActions');
+        this.adminSignSaveBtn = document.getElementById('adminSignSaveBtn');
+        this.adminSignRepickBtn = document.getElementById('adminSignRepickBtn');
+        this.adminSignDiscardBtn = document.getElementById('adminSignDiscardBtn');
+        this.browseTenantsBtn = document.getElementById('browseTenantsBtn');
 
         this.configureDeveloperControls();
 
@@ -346,6 +366,26 @@ class NavigationApp {
             this.adminSignRemoveBtn.addEventListener('click', () => this.removeAdminSign());
         }
 
+        if (this.adminSignSaveBtn) {
+            this.adminSignSaveBtn.addEventListener('click', () => this.saveAdminSignDraft());
+        }
+
+        if (this.adminSignRepickBtn) {
+            this.adminSignRepickBtn.addEventListener('click', () => this.startAdminSignRepick());
+        }
+
+        if (this.adminSignDiscardBtn) {
+            this.adminSignDiscardBtn.addEventListener('click', () => this.discardAdminSignDraft());
+        }
+
+        if (this.adminSignNameInput) {
+            this.adminSignNameInput.addEventListener('input', () => {
+                if (this.adminSignDraft) {
+                    this.updateAdminSignMarkers();
+                }
+            });
+        }
+
         if (this.developerModeBtn) {
             this.developerModeBtn.addEventListener('click', () => {
                 this.handleDeveloperModeToggle();
@@ -374,8 +414,16 @@ class NavigationApp {
 
         if (this.adminPickEntranceBtn) {
             this.adminPickEntranceBtn.addEventListener('click', () => {
-                this.setAdminEntrancePickActive(!this.adminEntrancePickActive);
+                if (this.adminEntrancePickActive) {
+                    this.cancelAdminMapAction();
+                } else {
+                    this.setAdminEntrancePickActive(true);
+                }
             });
+        }
+
+        if (this.adminMapCancelBtn) {
+            this.adminMapCancelBtn.addEventListener('click', () => this.cancelAdminMapAction());
         }
 
         if (this.adminSaveBtn) {
@@ -468,7 +516,12 @@ class NavigationApp {
                 }
 
                 if (this.adminModeActive) {
-                    this.exitAdminMode();
+                    if (this.adminEntrancePickActive || this.adminSignPickMode) {
+                        event.preventDefault();
+                        this.cancelAdminMapAction();
+                    } else {
+                        this.exitAdminMode();
+                    }
                 } else if (this.panoOverlay && this.panoOverlay.style.display === 'block') {
                     this.closePanorama();
                 } else if (this.landingMenu && this.landingMenu.style.display === 'none') {
@@ -2283,7 +2336,33 @@ class NavigationApp {
     }
 
     buildSignStart(sign, source) {
-        return { kind: 'sign', source, id: sign.id, label: sign.label, lngLat: [sign.lng, sign.lat] };
+        return { kind: 'sign', source, id: sign.id, label: this.formatSignName(sign.label), lngLat: [sign.lng, sign.lat] };
+    }
+
+    // Display-only: stored sign names stay unchanged; "Main parking lot" shows as "Main parking lot sign".
+    formatSignName(label) {
+        const name = String(label || '').trim();
+        if (!name) {
+            return 'Sign';
+        }
+        return /\bsign(\s+\d+)?$/i.test(name) ? name : `${name} sign`;
+    }
+
+    // Under 1,000 ft shows feet (rounded to 5 or 10 ft); longer routes show miles.
+    formatDistanceImperial(meters) {
+        if (!Number.isFinite(meters) || meters < 0) {
+            return '--';
+        }
+
+        const feet = meters * 3.28084;
+        const step = feet < 100 ? 5 : 10;
+        const roundedFeet = Math.max(step, Math.round(feet / step) * step);
+        if (roundedFeet < 1000) {
+            return `${roundedFeet} ft`;
+        }
+
+        const miles = feet / 5280;
+        return `${miles < 10 ? miles.toFixed(1) : Math.round(miles)} mi`;
     }
 
     updateLandingStartNote() {
@@ -2373,11 +2452,8 @@ class NavigationApp {
         }
 
         const latlngs = route.coords.map(coord => [coord[1], coord[0]]);
-        const lineBase = { lineCap: 'round', lineJoin: 'round', interactive: false };
         this.walkRouteLayer = L.layerGroup([
-            L.polyline(latlngs, { ...lineBase, color: this.routeCasingColor, opacity: 0.94, weight: 10 }),
-            L.polyline(latlngs, { ...lineBase, color: this.brandColor, opacity: 0.95, weight: 7 }),
-            L.polyline(latlngs, { ...lineBase, color: this.routeAccentColor, opacity: 0.9, weight: 2.5, dashArray: '10 14' }),
+            L.polyline(latlngs, { color: this.brandColor, opacity: 0.9, weight: 4, lineCap: 'round', lineJoin: 'round', interactive: false }),
             L.circleMarker(latlngs[0], { radius: 9, color: '#ffffff', weight: 3, fillColor: '#2e7d32', fillOpacity: 1 })
                 .bindTooltip(start.label, { permanent: true, direction: 'right', offset: [12, 0], className: 'map-caption-tooltip map-caption-tooltip--user' })
         ]).addTo(this.map);
@@ -2386,12 +2462,12 @@ class NavigationApp {
         this.lastRouteEndpoint = { lat: end[1], lng: end[0] };
         this.map.fitBounds(L.latLngBounds(latlngs), { paddingTopLeft: [30, 150], paddingBottomRight: [30, 110] });
 
-        const distanceText = route.lengthM >= 1000 ? `${(route.lengthM / 1000).toFixed(1)} km` : `${Math.round(route.lengthM)} m`;
+        const distanceText = this.formatDistanceImperial(route.lengthM);
         const minutes = Math.max(1, Math.round(route.estimatedSeconds / 60));
         if (this.destinationRouteEl) {
             this.destinationRouteEl.textContent = `${distanceText} | ~${minutes} min walk (est.)`;
         }
-        this.updateWalkBanner(network.status === 'pilot' ? 'Pilot route: still being verified on site.' : '');
+        this.updateWalkBanner('');
     }
 
     clearWalkingRoute() {
@@ -2438,7 +2514,7 @@ class NavigationApp {
             const button = document.createElement('button');
             button.type = 'button';
             button.className = 'start-picker__option';
-            button.textContent = sign.label;
+            button.textContent = this.formatSignName(sign.label);
             button.classList.toggle('is-active', !!this.walkStart && this.walkStart.id === sign.id);
             button.addEventListener('click', () => this.chooseWalkStart(sign));
             this.startPickerList.appendChild(button);
@@ -2612,6 +2688,9 @@ class NavigationApp {
         if (this.adminSignInfo) {
             this.adminSignInfo.textContent = text;
         }
+        if (this.adminSignPickMode && this.adminMapActionText) {
+            this.adminMapActionText.textContent = text;
+        }
     }
 
     populateAdminSignSelect(selectedId = null) {
@@ -2669,27 +2748,17 @@ class NavigationApp {
         if (mode) {
             this.setAdminEntrancePickActive(false);
         }
+        this.updateAdminMapAction();
     }
 
     startAdminSignAdd() {
         if (this.adminSignPickMode === 'add') {
-            this.setAdminSignPick(null);
-            return;
-        }
-
-        const name = this.adminSignNameInput ? this.adminSignNameInput.value.trim() : '';
-        const selected = this.adminSelectedSignId ? this.qrSigns.get(this.adminSelectedSignId) : null;
-        if (!name || (selected && selected.label === name)) {
-            this.setAdminSignInfo('Type a new name for the new sign first, then press Add sign.');
-            if (this.adminSignNameInput) {
-                this.adminSignNameInput.focus();
-                this.adminSignNameInput.select();
-            }
+            this.cancelAdminMapAction();
             return;
         }
 
         this.setAdminSignPick('add');
-        this.setAdminSignInfo(`Tap the map where "${name}" stands. It must be within ${this.walkingConfig.maxAttachM} m of a mapped walkway.`);
+        this.setAdminSignInfo(`Tap the map where the new sign stands. It must be within ${this.walkingConfig.maxAttachM} m of a mapped walkway.`);
     }
 
     startAdminSignMove() {
@@ -2700,12 +2769,120 @@ class NavigationApp {
         }
 
         if (this.adminSignPickMode === 'move') {
-            this.setAdminSignPick(null);
+            this.cancelAdminMapAction();
             return;
         }
 
         this.setAdminSignPick('move');
         this.setAdminSignInfo(`Tap the map where "${sign.label}" now stands.`);
+    }
+
+    startAdminSignRepick() {
+        const draft = this.adminSignDraft;
+        if (!draft || this.adminSignSaving) {
+            return;
+        }
+
+        this.setAdminSignPick(draft.mode);
+        this.setAdminSignInfo(`Tap the new spot for "${this.getAdminSignDraftLabel() || 'the sign'}". It must be within ${this.walkingConfig.maxAttachM} m of a mapped walkway.`);
+    }
+
+    getDefaultSignName() {
+        const used = new Set(this.getActiveQrSigns().map(sign => String(sign.label).trim().toLowerCase()));
+        if (!used.has('new sign')) {
+            return 'New sign';
+        }
+
+        let suffix = 1;
+        while (used.has(`new sign ${suffix}`)) {
+            suffix += 1;
+        }
+        return `New sign ${suffix}`;
+    }
+
+    getAdminSignDraftLabel() {
+        return this.adminSignNameInput ? this.adminSignNameInput.value.trim() : '';
+    }
+
+    updateAdminSignDraftControls() {
+        const hasDraft = !!this.adminSignDraft;
+        if (this.adminSignActions) {
+            this.adminSignActions.style.display = hasDraft ? 'none' : 'grid';
+        }
+        if (this.adminSignDraftActions) {
+            this.adminSignDraftActions.style.display = hasDraft ? 'grid' : 'none';
+        }
+        if (this.adminSignSelect) {
+            this.adminSignSelect.disabled = hasDraft;
+        }
+        [this.adminSignSaveBtn, this.adminSignRepickBtn, this.adminSignDiscardBtn].forEach((button) => {
+            if (button) {
+                button.disabled = this.adminSignSaving;
+            }
+        });
+        if (this.adminSignSaveBtn) {
+            this.adminSignSaveBtn.textContent = this.adminSignSaving ? 'Saving...' : 'Save sign';
+        }
+    }
+
+    async saveAdminSignDraft() {
+        const draft = this.adminSignDraft;
+        if (!draft || this.adminSignSaving) {
+            return;
+        }
+
+        const label = this.getAdminSignDraftLabel();
+        if (!label || label.length > 60) {
+            this.setAdminSignInfo('Enter a sign name of up to 60 characters, then Save sign.');
+            if (this.adminSignNameInput) {
+                this.adminSignNameInput.focus();
+            }
+            return;
+        }
+
+        const duplicate = this.getActiveQrSigns().some(sign => sign.id !== draft.id
+            && String(sign.label).trim().toLowerCase() === label.toLowerCase());
+        if (duplicate) {
+            this.setAdminSignInfo(`Another sign is already named "${label}". Choose a different name.`);
+            if (this.adminSignNameInput) {
+                this.adminSignNameInput.focus();
+            }
+            return;
+        }
+
+        const id = draft.mode === 'add' ? this.makeSignId(label) : draft.id;
+        this.adminSignSaving = true;
+        this.updateAdminSignDraftControls();
+        this.setAdminSignInfo('Saving sign...');
+        let saved = false;
+        try {
+            saved = await this.saveQrSign({ id, label, lat: draft.lat, lng: draft.lng, status: draft.status }, 'Sign saved.');
+        } finally {
+            this.adminSignSaving = false;
+        }
+
+        if (!saved) {
+            this.updateAdminSignDraftControls();
+            return;
+        }
+
+        this.adminSignDraft = null;
+        this.updateAdminSignDraftControls();
+        this.populateAdminSignSelect(id);
+        this.setAdminSignInfo(draft.mode === 'add'
+            ? `Sign added. QR link: ${this.buildSignLink(id)}`
+            : `Sign saved. QR link (unchanged): ${this.buildSignLink(id)}`);
+    }
+
+    discardAdminSignDraft() {
+        if (!this.adminSignDraft || this.adminSignSaving) {
+            return;
+        }
+
+        this.adminSignDraft = null;
+        this.updateAdminSignDraftControls();
+        this.selectAdminSign(this.adminSelectedSignId, { recenter: false });
+        this.setAdminSignInfo('Sign changes discarded. Nothing was published.');
     }
 
     checkSignPlacement(lat, lng) {
@@ -2741,7 +2918,8 @@ class NavigationApp {
         return id;
     }
 
-    async handleAdminSignMapClick(event) {
+    // Stages a previewed location; nothing is published until Save sign.
+    handleAdminSignMapClick(event) {
         const mode = this.adminSignPickMode;
         if (!mode || !event || !event.latlng) {
             return;
@@ -2755,22 +2933,29 @@ class NavigationApp {
             return;
         }
 
-        this.setAdminSignPick(null);
-        if (mode === 'add') {
-            const label = this.adminSignNameInput ? this.adminSignNameInput.value.trim() : '';
-            const id = this.makeSignId(label);
-            if (await this.saveQrSign({ id, label, lat, lng, status: 'active' }, 'Sign added.')) {
-                this.populateAdminSignSelect(id);
-                this.setAdminSignInfo(`Sign added. QR link: ${this.buildSignLink(id)}`);
+        if (this.adminSignDraft) {
+            this.adminSignDraft = { ...this.adminSignDraft, lat, lng };
+        } else if (mode === 'add') {
+            this.adminSignDraft = { mode: 'add', id: null, lat, lng, status: 'active' };
+            if (this.adminSignNameInput) {
+                this.adminSignNameInput.value = this.getDefaultSignName();
             }
-            return;
+        } else {
+            const sign = this.qrSigns.get(this.adminSelectedSignId);
+            if (!sign) {
+                this.cancelAdminMapAction();
+                return;
+            }
+            this.adminSignDraft = { mode: 'move', id: sign.id, lat, lng, status: sign.status };
         }
 
-        const sign = this.qrSigns.get(this.adminSelectedSignId);
-        if (sign && await this.saveQrSign({ ...sign, lat, lng }, 'Sign moved.')) {
-            this.populateAdminSignSelect(sign.id);
-            this.setAdminSignInfo(`Sign moved. QR link (unchanged): ${this.buildSignLink(sign.id)}`);
-        }
+        this.setAdminSignPick(null);
+        this.updateAdminSignDraftControls();
+        this.updateAdminSignMarkers();
+        const label = this.getAdminSignDraftLabel();
+        this.setAdminSignInfo(this.adminSignDraft.mode === 'add'
+            ? `Preview placed for "${label}". Edit the name if needed, then Save sign to publish it, or Discard.`
+            : `Preview of the new spot for "${label}". Save sign to publish it, or Discard.`);
     }
 
     async renameAdminSign() {
@@ -2824,9 +3009,12 @@ class NavigationApp {
             updatedAt: { timestampValue: new Date().toISOString() }
         };
 
+        const controller = typeof AbortController === 'function' ? new AbortController() : null;
+        const timeoutId = controller ? setTimeout(() => controller.abort(), this.adminSaveTimeoutMs) : null;
         try {
             const response = await fetch(`${this.getQrSignsCollectionUrl(config)}/${encodeURIComponent(sign.id)}?key=${encodeURIComponent(config.apiKey)}`, {
                 method: 'PATCH',
+                signal: controller ? controller.signal : undefined,
                 headers: {
                     'Authorization': `Bearer ${this.adminIdToken}`,
                     'Content-Type': 'application/json'
@@ -2842,10 +3030,18 @@ class NavigationApp {
             return true;
         } catch (error) {
             console.error('Unable to save QR sign:', error);
-            this.setAdminSignInfo(error.message === '403'
-                ? 'Saving signs is not allowed yet. Publish the updated firestore.rules in Firebase, then try again.'
-                : 'Save failed. Exit admin mode, sign in again, and retry.');
+            let message = 'Save failed. Exit admin mode, sign in again, and retry.';
+            if (error.name === 'AbortError') {
+                message = 'Save timed out. Check your connection and try again. Nothing was changed.';
+            } else if (error.message === '403') {
+                message = 'Saving signs is not allowed yet. Publish the updated firestore.rules in Firebase, then try again.';
+            }
+            this.setAdminSignInfo(message);
             return false;
+        } finally {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
         }
     }
 
@@ -2860,18 +3056,35 @@ class NavigationApp {
         }
 
         this.adminSignLayer = L.layerGroup().addTo(this.map);
+        const draft = this.adminSignDraft;
         this.getActiveQrSigns().forEach((sign) => {
             const selected = sign.id === this.adminSelectedSignId;
+            const beingMoved = !!draft && draft.id === sign.id;
             L.circleMarker([sign.lat, sign.lng], {
                 radius: selected ? 11 : 8,
                 color: '#ffffff',
                 weight: 3,
+                opacity: beingMoved ? 0.5 : 1,
                 fillColor: selected ? '#2e7d32' : '#66bb6a',
-                fillOpacity: 1,
+                fillOpacity: beingMoved ? 0.35 : 1,
                 interactive: false
-            }).bindTooltip(sign.label, { permanent: true, direction: 'right', offset: [12, 0], className: 'map-caption-tooltip' })
+            }).bindTooltip(beingMoved ? `${this.formatSignName(sign.label)} (current spot)` : this.formatSignName(sign.label), { permanent: true, direction: 'right', offset: [12, 0], className: 'map-caption-tooltip' })
                 .addTo(this.adminSignLayer);
         });
+
+        if (draft) {
+            const label = this.formatSignName(this.getAdminSignDraftLabel() || 'Sign');
+            L.circleMarker([draft.lat, draft.lng], {
+                radius: 11,
+                color: '#713d0c',
+                weight: 3,
+                dashArray: '4 3',
+                fillColor: '#f2a23a',
+                fillOpacity: 1,
+                interactive: false
+            }).bindTooltip(`${label} (preview, not saved)`, { permanent: true, direction: 'right', offset: [12, 0], className: 'map-caption-tooltip' })
+                .addTo(this.adminSignLayer);
+        }
     }
 
     clearAdminSignMarkers() {
@@ -2996,6 +3209,69 @@ class NavigationApp {
         this.updateAdminEntranceMarker();
     }
 
+    updateAdminMapAction() {
+        const picking = this.adminModeActive && (this.adminEntrancePickActive || this.adminSignPickMode);
+        if (picking) {
+            const returnFocus = this.adminEntrancePickActive
+                ? this.adminPickEntranceBtn
+                : (this.adminSignDraft
+                    ? this.adminSignRepickBtn
+                    : (this.adminSignPickMode === 'add' ? this.adminSignAddBtn : this.adminSignMoveBtn));
+            if (!this.adminMapPickState) {
+                this.adminMapPickState = {
+                    scrollTop: this.adminPanel ? this.adminPanel.scrollTop : 0,
+                    returnFocus
+                };
+                if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                    document.activeElement.blur();
+                }
+                document.body.classList.add('admin-map-pick-active');
+                if (this.adminMapAction) {
+                    this.adminMapAction.style.display = 'flex';
+                }
+                if (this.adminMapCancelBtn) {
+                    this.adminMapCancelBtn.focus({ preventScroll: true });
+                }
+            }
+            this.adminMapPickState.returnFocus = returnFocus;
+            const status = this.adminEntrancePickActive ? this.adminStatus : this.adminSignInfo;
+            if (this.adminMapActionText && status) {
+                this.adminMapActionText.textContent = status.textContent;
+            }
+            return;
+        }
+
+        const previousState = this.adminMapPickState;
+        this.adminMapPickState = null;
+        document.body.classList.remove('admin-map-pick-active');
+        if (this.adminMapAction) {
+            this.adminMapAction.style.display = 'none';
+        }
+        if (previousState && this.adminModeActive) {
+            if (previousState.returnFocus) {
+                previousState.returnFocus.focus({ preventScroll: true });
+            }
+            if (this.adminPanel) {
+                this.adminPanel.scrollTop = previousState.scrollTop;
+            }
+        }
+    }
+
+    cancelAdminMapAction() {
+        const entrancePick = this.adminEntrancePickActive;
+        const signPick = this.adminSignPickMode;
+        this.setAdminEntrancePickActive(false);
+        this.setAdminSignPick(null);
+        if (entrancePick && this.adminStatus) {
+            this.adminStatus.textContent = 'Front-door placement cancelled. Existing edits have been kept.';
+        }
+        if (signPick) {
+            this.setAdminSignInfo(this.adminSignDraft
+                ? 'Placement cancelled. The previewed spot was kept; Save sign or Discard.'
+                : 'Sign placement cancelled. Existing edits and the selected sign have been kept.');
+        }
+    }
+
     setAdminEntrancePickActive(active) {
         this.adminEntrancePickActive = !!active && this.adminModeActive;
         if (this.adminEntrancePickActive && this.adminSignPickMode) {
@@ -3009,6 +3285,7 @@ class NavigationApp {
         if (this.adminEntrancePickActive && this.adminStatus) {
             this.adminStatus.textContent = 'Tap the exact front-door location on the map.';
         }
+        this.updateAdminMapAction();
     }
 
     handleAdminMapClick(event) {
@@ -3142,7 +3419,7 @@ class NavigationApp {
     }
 
     exitAdminMode() {
-        if (this.adminHasUnsavedChanges && !window.confirm('Exit without saving your changes?')) {
+        if ((this.adminHasUnsavedChanges || this.adminSignDraft) && !window.confirm('Exit without saving your changes?')) {
             return;
         }
 
@@ -3151,8 +3428,10 @@ class NavigationApp {
         this.adminSelectedOffice = null;
         this.adminPendingEntrance = null;
         this.adminHasUnsavedChanges = false;
+        this.adminSignDraft = null;
         this.setAdminEntrancePickActive(false);
         this.setAdminSignPick(null);
+        this.updateAdminSignDraftControls();
         this.clearAdminSignMarkers();
         if (this.adminEntranceMarker && this.map) {
             this.map.removeLayer(this.adminEntranceMarker);
@@ -3737,12 +4016,19 @@ class NavigationApp {
         const normalizedHeading = this.normalizeHeading(heading);
         const coneMarkup = active ? '<span class="map-banner-marker__camera-cone"></span>' : '';
 
+        // Person standing on a circular arrow: "look around from here".
         return `
             <span class="street-view-point-marker map-banner-marker__icon map-banner-marker__icon--camera${active ? ' is-active' : ''}" aria-hidden="true" style="--panorama-camera-heading: ${normalizedHeading}deg;">
-                <span class="map-banner-marker__camera-pulse"></span>
                 ${coneMarkup}
-                <span class="map-banner-marker__camera-core"></span>
-                <span class="map-banner-marker__camera-lens"></span>
+                <span class="street-view-point-marker__disc">
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <path d="M18.88 17.79A8.4 2.8 0 1 0 16.2 21.82" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"></path>
+                        <polygon points="18.66,21.35 16.46,23.15 15.94,20.49" fill="currentColor"></polygon>
+                        <circle cx="12" cy="4.4" r="2.7" fill="currentColor"></circle>
+                        <rect x="8.8" y="7.9" width="6.4" height="6.8" rx="2.2" fill="currentColor"></rect>
+                        <path d="M9.9 13.8H14.1L13.2 20.4H10.8Z" fill="currentColor"></path>
+                    </svg>
+                </span>
             </span>
         `;
     }
@@ -3854,7 +4140,8 @@ class NavigationApp {
         this.navigationNodeIndex.panoramas.forEach(point => {
             const marker = L.marker([point.lat, point.lng], {
                 icon: this.createPanoramaContextIcon('camera', 0, { compact: true }),
-                title: 'Street View',
+                title: 'Open Street View here',
+                alt: 'Open Street View here',
                 zIndexOffset: 640
             });
 
@@ -3891,20 +4178,12 @@ class NavigationApp {
             this.streetViewMarkerGroup.addTo(this.map);
         }
 
-        if (this.streetViewLegend) {
-            this.streetViewLegend.style.display = 'flex';
-        }
-
         this.refreshStreetViewMarkers();
     }
 
     hideStreetViewMarkers() {
         if (this.map && this.streetViewMarkerGroup && this.map.hasLayer(this.streetViewMarkerGroup)) {
             this.map.removeLayer(this.streetViewMarkerGroup);
-        }
-
-        if (this.streetViewLegend) {
-            this.streetViewLegend.style.display = 'none';
         }
     }
 
@@ -3979,58 +4258,194 @@ class NavigationApp {
     setupSearch() {
         const searchInput = document.getElementById('officeSearch');
         const searchResults = document.getElementById('searchResults');
-
-        // Search filtering logic
-        const filterOffices = (query) => {
-            query = query.toLowerCase().trim();
-            return this.offices.filter(office => {
-                const nameMatch = office.name.toLowerCase().includes(query);
-                const descMatch = office.description && office.description.toLowerCase().includes(query);
-                const unitMatch = office.unit && office.unit.toLowerCase().includes(query);
-                return nameMatch || descMatch || unitMatch;
-            });
-        };
+        if (!searchInput || !searchResults) {
+            return;
+        }
 
         searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            const searchResults = document.getElementById('searchResults');
-            
+            const query = e.target.value.trim();
             if (query.length === 0) {
-                // Hide results when search is cleared
-                searchResults.classList.remove('active');
+                this.closeSearchResults();
                 return;
             }
 
-            this.displaySearchResults(filterOffices(query));
+            this.displaySearchResults(this.filterOffices(query));
         });
+
+        searchInput.addEventListener('keydown', (event) => this.handleSearchKeydown(event));
+
+        if (this.browseTenantsBtn) {
+            this.browseTenantsBtn.addEventListener('click', (event) => {
+                if (this.isSearchResultsOpen() && this.searchResultsShowAll) {
+                    this.closeSearchResults();
+                    return;
+                }
+
+                searchInput.value = '';
+                this.showAllOffices();
+                // Keyboard activation (detail 0) moves focus to the list; taps avoid opening the on-screen keyboard.
+                if (event.detail === 0) {
+                    searchInput.focus();
+                }
+            });
+        }
 
         // Close search results when clicking outside
         document.addEventListener('click', (e) => {
-            if (!searchInput.contains(e.target) && 
-                !searchResults.contains(e.target)) {
-                searchResults.classList.remove('active');
+            if (!searchInput.contains(e.target)
+                && !searchResults.contains(e.target)
+                && !(this.browseTenantsBtn && this.browseTenantsBtn.contains(e.target))) {
+                this.closeSearchResults();
             }
         });
     }
 
-    showAllOffices() {
+    filterOffices(query) {
+        const normalized = String(query || '').toLowerCase().trim();
+        const includes = value => typeof value === 'string' && value.toLowerCase().includes(normalized);
+        return this.offices.filter(office => includes(office.name) || includes(office.description) || includes(office.unit));
+    }
+
+    isSearchResultsOpen() {
         const searchResults = document.getElementById('searchResults');
-        searchResults.innerHTML = '';
-        
-        if (this.offices.length === 0) {
-            searchResults.innerHTML = '<div class="search-result-item" style="color: #999; cursor: default;">No offices available</div>';
+        return !!searchResults && searchResults.classList.contains('active');
+    }
+
+    getSearchOptions() {
+        const searchResults = document.getElementById('searchResults');
+        return searchResults ? Array.from(searchResults.querySelectorAll('[role="option"]')) : [];
+    }
+
+    setActiveSearchOption(index) {
+        const searchInput = document.getElementById('officeSearch');
+        const options = this.getSearchOptions();
+        this.searchActiveIndex = index >= 0 && index < options.length ? index : -1;
+        options.forEach((option, optionIndex) => {
+            const active = optionIndex === this.searchActiveIndex;
+            option.classList.toggle('is-active', active);
+            option.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+
+        const activeOption = options[this.searchActiveIndex];
+        if (searchInput) {
+            if (activeOption) {
+                searchInput.setAttribute('aria-activedescendant', activeOption.id);
+            } else {
+                searchInput.removeAttribute('aria-activedescendant');
+            }
+        }
+        if (activeOption && typeof activeOption.scrollIntoView === 'function') {
+            activeOption.scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    handleSearchKeydown(event) {
+        const searchInput = event.target;
+        const isOpen = this.isSearchResultsOpen();
+        const openForQuery = () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                this.displaySearchResults(this.filterOffices(query));
+            } else {
+                this.showAllOffices();
+            }
+        };
+
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            if (!isOpen) {
+                openForQuery();
+            }
+            const count = this.getSearchOptions().length;
+            if (count === 0) {
+                return;
+            }
+            const current = isOpen ? this.searchActiveIndex : -1;
+            const next = event.key === 'ArrowDown'
+                ? (current + 1) % count
+                : (current <= 0 ? count - 1 : current - 1);
+            this.setActiveSearchOption(next);
+            return;
+        }
+
+        if (event.key === 'Enter' && isOpen) {
+            const options = this.getSearchOptions();
+            const chosen = options[this.searchActiveIndex] || (options.length === 1 ? options[0] : null);
+            if (chosen) {
+                event.preventDefault();
+                chosen.click();
+            }
+            return;
+        }
+
+        if (event.key === 'Escape' && isOpen) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.closeSearchResults();
+        }
+    }
+
+    closeSearchResults() {
+        const searchResults = document.getElementById('searchResults');
+        const searchInput = document.getElementById('officeSearch');
+        if (searchResults) {
+            searchResults.classList.remove('active');
+        }
+        if (searchInput) {
+            searchInput.setAttribute('aria-expanded', 'false');
+            searchInput.removeAttribute('aria-activedescendant');
+        }
+        if (this.browseTenantsBtn) {
+            this.browseTenantsBtn.setAttribute('aria-expanded', 'false');
+        }
+        this.searchActiveIndex = -1;
+        this.searchResultsShowAll = false;
+    }
+
+    renderSearchResults(offices, headerText, emptyText) {
+        const searchResults = document.getElementById('searchResults');
+        const searchInput = document.getElementById('officeSearch');
+        const searchStatus = document.getElementById('searchStatus');
+        if (!searchResults) {
+            return;
+        }
+
+        searchResults.replaceChildren();
+        this.searchActiveIndex = -1;
+        if (searchInput) {
+            searchInput.removeAttribute('aria-activedescendant');
+            searchInput.setAttribute('aria-expanded', 'true');
+        }
+
+        if (offices.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'search-result-empty';
+            empty.setAttribute('aria-hidden', 'true');
+            empty.textContent = emptyText;
+            searchResults.appendChild(empty);
         } else {
-            // Add header
             const header = document.createElement('div');
             header.className = 'search-result-header';
-            header.innerHTML = `<strong>All Offices (${this.offices.length})</strong>`;
+            header.setAttribute('aria-hidden', 'true');
+            const strong = document.createElement('strong');
+            strong.textContent = headerText;
+            header.appendChild(strong);
             searchResults.appendChild(header);
-            
-            // Show all offices
-            this.offices.forEach(office => this.createSearchResultItem(office, searchResults));
+            offices.forEach((office, index) => this.createSearchResultItem(office, searchResults, index));
         }
-        
+
+        if (this.browseTenantsBtn) {
+            this.browseTenantsBtn.setAttribute('aria-expanded', this.searchResultsShowAll ? 'true' : 'false');
+        }
+        if (searchStatus) {
+            searchStatus.textContent = offices.length ? `${headerText}. Use the up and down arrow keys to choose.` : emptyText;
+        }
         searchResults.classList.add('active');
+    }
+
+    showAllOffices() {
+        this.searchResultsShowAll = true;
+        this.renderSearchResults(this.offices, `All Offices (${this.offices.length})`, 'No offices available');
     }
 
             openOfficeSearch() {
@@ -4048,41 +4463,40 @@ class NavigationApp {
             }
 
     displaySearchResults(results) {
-        const searchResults = document.getElementById('searchResults');
-        searchResults.innerHTML = '';
-
-        if (results.length === 0) {
-            searchResults.innerHTML = '<div class="search-result-item" style="color: #999; cursor: default;">No offices found</div>';
-        } else {
-            // Add header showing count
-            const header = document.createElement('div');
-            header.className = 'search-result-header';
-            header.innerHTML = `<strong>Found ${results.length} ${results.length === 1 ? 'office' : 'offices'}</strong>`;
-            searchResults.appendChild(header);
-            
-            results.forEach(office => this.createSearchResultItem(office, searchResults));
-        }
-
-        searchResults.classList.add('active');
+        this.searchResultsShowAll = false;
+        this.renderSearchResults(results, `Found ${results.length} ${results.length === 1 ? 'office' : 'offices'}`, 'No offices found');
     }
 
-    createSearchResultItem(office, container) {
+    createSearchResultItem(office, container, index) {
         const item = document.createElement('div');
         item.className = 'search-result-item';
-        
-        const displayName = office.unit
-            ? `<span style="font-weight: 700; color: #2c2c2c;">Unit ${office.unit}:</span> ${this.getBaseOfficeName(office)}`
-            : this.getBaseOfficeName(office);
+        item.id = `search-option-${index}`;
+        item.setAttribute('role', 'option');
+        item.setAttribute('aria-selected', 'false');
 
-        item.innerHTML = `
-            <div class="search-result-name">${displayName}</div>
-            ${office.description ? `<div class="search-result-description">${office.description}</div>` : ''}
-        `;
-        
+        const name = document.createElement('div');
+        name.className = 'search-result-name';
+        if (office.unit) {
+            const unit = document.createElement('span');
+            unit.className = 'search-result-unit';
+            unit.textContent = `Unit ${office.unit}:`;
+            name.append(unit, ` ${this.getBaseOfficeName(office)}`);
+        } else {
+            name.textContent = this.getBaseOfficeName(office);
+        }
+        item.appendChild(name);
+
+        if (office.description) {
+            const description = document.createElement('div');
+            description.className = 'search-result-description';
+            description.textContent = office.description;
+            item.appendChild(description);
+        }
+
         item.addEventListener('click', () => {
             this.selectOffice(office);
             document.getElementById('officeSearch').value = this.formatOfficeLabel(office);
-            document.getElementById('searchResults').classList.remove('active');
+            this.closeSearchResults();
         });
         container.appendChild(item);
     }
@@ -4699,6 +5113,17 @@ class NavigationApp {
         `);
     }
 
+    getUserLocationLabel(accuracy) {
+        if (!Number.isFinite(accuracy) || accuracy <= 0) {
+            return 'You Are Here';
+        }
+
+        const meters = Math.round(accuracy);
+        return accuracy > this.lowLocationAccuracyM
+            ? `You Are Here (approx. ±${meters} m)`
+            : `You Are Here (±${meters} m)`;
+    }
+
     updateUserLocation(position) {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
@@ -4723,7 +5148,7 @@ class NavigationApp {
                 })
             }).addTo(this.map);
 
-            this.userMarker.bindTooltip('You Are Here', {
+            this.userMarker.bindTooltip(this.getUserLocationLabel(accuracy), {
                 permanent: true,
                 direction: 'right',
                 offset: [26, 0],
@@ -4733,20 +5158,27 @@ class NavigationApp {
             this.map.setView([lat, lng], 18);
         } else {
             this.userMarker.setLatLng([lat, lng]);
+            this.userMarker.setTooltipContent(this.getUserLocationLabel(accuracy));
         }
 
         if (this.accuracyCircle) {
             this.map.removeLayer(this.accuracyCircle);
+            this.accuracyCircle = null;
         }
-        
-        this.accuracyCircle = L.circle([lat, lng], {
-            radius: Math.min(accuracy, 20),
-            fillColor: this.brandColor,
-            fillOpacity: 0.15,
-            color: this.brandColor,
-            weight: 1.5,
-            opacity: 0.4
-        }).addTo(this.map);
+
+        // Draw the full reported uncertainty so a poor fix looks as uncertain as it is.
+        if (Number.isFinite(accuracy) && accuracy > 0) {
+            const accuracyColor = accuracy > this.lowLocationAccuracyM ? '#b26a00' : this.brandColor;
+            this.accuracyCircle = L.circle([lat, lng], {
+                radius: accuracy,
+                fillColor: accuracyColor,
+                fillOpacity: 0.15,
+                color: accuracyColor,
+                weight: 1.5,
+                opacity: 0.5,
+                interactive: false
+            }).addTo(this.map);
+        }
 
         if (this.pendingDestination) {
             this.startLocationWaitLoop();
@@ -5035,13 +5467,7 @@ class NavigationApp {
             return;
         }
 
-        let distanceText;
-        if (distanceMeters >= 1000) {
-            distanceText = `${(distanceMeters / 1000).toFixed(1)} km`;
-        } else {
-            distanceText = `${Math.round(distanceMeters)} m`;
-        }
-
+        const distanceText = this.formatDistanceImperial(distanceMeters);
         const minutes = Math.max(1, Math.round(durationSeconds / 60));
         this.destinationRouteEl.textContent = `${distanceText} | ${minutes} min walk`;
     }
@@ -5120,6 +5546,7 @@ class NavigationApp {
 
         switch (provider) {
             case 'google':
+                this.showPanoramaLoading();
                 this.openGooglePanorama(destination, panoramaConfig, options);
                 break;
             case 'local':
@@ -5144,6 +5571,11 @@ class NavigationApp {
     }
 
     async ensureGoogleMapsApiLoaded() {
+        if (this.googleMapsAuthFailed) {
+            this.showStatus(this.getStreetViewUnavailableMessage());
+            return false;
+        }
+
         if (window.google && window.google.maps && window.google.maps.StreetViewService) {
             return true;
         }
@@ -5151,9 +5583,16 @@ class NavigationApp {
         const apiKey = this.getGoogleMapsApiKey();
         if (!apiKey) {
             console.warn('Google Maps API key not configured. Set GOOGLE_MAPS_API_KEY in app-config.js');
-            this.showStatus('360° Street View needs a Google Maps API key. Set GOOGLE_MAPS_API_KEY in app-config.js.');
+            this.showStatus(this.getStreetViewUnavailableMessage());
             return false;
         }
+
+        if (navigator.onLine === false) {
+            this.showStatus('You appear to be offline. Street View needs an internet connection; directions still work.');
+            return false;
+        }
+
+        this.installGoogleMapsAuthFailureHandler();
 
         if (this.googleMapsApiLoadPromise) {
             try {
@@ -5197,8 +5636,56 @@ class NavigationApp {
         } catch (error) {
             console.error('Google Maps API load error:', error);
             this.googleMapsApiLoadPromise = null;
-            this.showStatus('Unable to load Google Maps 360° view. Check API key and network.');
+            this.showStatus('Street View could not load. Check your connection and try again; directions still work.');
             return false;
+        }
+    }
+
+    getStreetViewUnavailableMessage() {
+        return 'Street View is not available right now. Directions still work.';
+    }
+
+    // Google calls window.gm_authFailure when the key is invalid or this site is not an allowed referrer.
+    installGoogleMapsAuthFailureHandler() {
+        if (this.googleMapsAuthHandlerInstalled) {
+            return;
+        }
+
+        const previousHandler = typeof window.gm_authFailure === 'function' ? window.gm_authFailure : null;
+        window.gm_authFailure = () => {
+            this.handleGoogleMapsAuthFailure();
+            if (previousHandler) {
+                previousHandler();
+            }
+        };
+        this.googleMapsAuthHandlerInstalled = true;
+    }
+
+    handleGoogleMapsAuthFailure() {
+        this.googleMapsAuthFailed = true;
+        console.error('Google Maps rejected the API key for this site. Check the key and its allowed HTTP referrers in Google Cloud Console.');
+        if (this.panoOverlay && this.panoOverlay.style.display === 'block') {
+            this.closePanorama();
+        }
+        this.showStatus(this.getStreetViewUnavailableMessage());
+    }
+
+    showPanoramaLoading() {
+        if (!this.panoOverlay) {
+            return;
+        }
+
+        const loading = document.createElement('div');
+        loading.className = 'pano-loading';
+        loading.setAttribute('role', 'status');
+        loading.textContent = 'Loading Street View...';
+        this.panoOverlay.appendChild(loading);
+    }
+
+    hidePanoramaLoading() {
+        const loading = this.panoOverlay ? this.panoOverlay.querySelector('.pano-loading') : null;
+        if (loading) {
+            loading.remove();
         }
     }
 
@@ -5265,7 +5752,7 @@ class NavigationApp {
                 return;
             }
             if (status !== google.maps.StreetViewStatus.OK || !data) {
-                this.showStatus('No Street View coverage at this location');
+                this.showStatus('Street View imagery is not available for this spot. Directions still work.');
                 this.closePanorama();
                 return;
             }
@@ -5287,6 +5774,7 @@ class NavigationApp {
                 ? dynamicHeading
                 : (panoramaConfig.heading !== undefined ? panoramaConfig.heading : dynamicHeading);
 
+            this.hidePanoramaLoading();
             this.googleStreetView = new google.maps.StreetViewPanorama(panoContainer, {
                 position: data.location.latLng,
                 pov: {
@@ -5379,8 +5867,8 @@ class NavigationApp {
                 return L.divIcon({
                     className: 'panorama-context-marker panorama-context-marker--compact',
                     html: this.getStreetViewIconHtml(normalizedHeading, { active: !!options.active }),
-                    iconSize: isNarrow ? [30, 30] : [42, 42],
-                    iconAnchor: isNarrow ? [15, 15] : [21, 21]
+                    iconSize: isNarrow ? [40, 40] : [44, 44],
+                    iconAnchor: isNarrow ? [20, 20] : [22, 22]
                 });
             }
 
@@ -5627,11 +6115,7 @@ class NavigationApp {
                 arrowPointer.style.transformOrigin = '30px 30px';
                 
                 // Update distance display
-                if (distance < 1000) {
-                    distanceDisplay.textContent = `${Math.round(distance)}m`;
-                } else {
-                    distanceDisplay.textContent = `${(distance / 1000).toFixed(2)}km`;
-                }
+                distanceDisplay.textContent = this.formatDistanceImperial(distance);
 
                 if (cameraDisplay) {
                     cameraDisplay.textContent = this.formatCoordinateText(currentLat, currentLng);
@@ -5774,5 +6258,3 @@ class NavigationApp {
 document.addEventListener('DOMContentLoaded', () => {
     new NavigationApp();
 });
-
-
