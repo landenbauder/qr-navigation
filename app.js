@@ -2600,7 +2600,7 @@ class NavigationApp {
             id: null,
             label: 'Test map point',
             lngLat: [lng, lat],
-            accuracyText: 'simulated ±5 m accuracy'
+            accuracyText: 'simulated ±15 ft accuracy'
         };
         this.walkStartProblem = null;
         this.applyTestingModePosition(lat, lng, { announce: false, centerMap: false });
@@ -2640,7 +2640,8 @@ class NavigationApp {
                 return;
             }
             if (!(accuracy <= this.walkingConfig.gpsMaxAccuracyM)) {
-                setMessage(`Your location is not precise enough (about ${Math.round(accuracy)} m). Choose a sign instead.`);
+                const feet = Math.round(accuracy * 3.28084);
+                setMessage(`Your location is not precise enough (about ${feet} ft). Choose a sign instead.`);
                 return;
             }
 
@@ -2657,13 +2658,14 @@ class NavigationApp {
                 return;
             }
 
+            const feet = Math.round(accuracy * 3.28084);
             this.walkStart = {
                 kind: 'gps',
                 source: 'gps',
                 id: null,
                 label: 'Your location',
                 lngLat: [longitude, latitude],
-                accuracyText: `about ${Math.round(accuracy)} m accuracy`
+                accuracyText: `about ${feet} ft accuracy`
             };
             this.walkStartProblem = null;
             this.hideStartPicker();
@@ -2758,7 +2760,8 @@ class NavigationApp {
         }
 
         this.setAdminSignPick('add');
-        this.setAdminSignInfo(`Tap the map where the new sign stands. It must be within ${this.walkingConfig.maxAttachM} m of a mapped walkway.`);
+        const maxAttachFt = Math.round(this.walkingConfig.maxAttachM * 3.28084);
+        this.setAdminSignInfo(`Tap the map where the new sign stands. It must be within ${maxAttachFt} ft of a mapped walkway.`);
     }
 
     startAdminSignMove() {
@@ -2784,7 +2787,8 @@ class NavigationApp {
         }
 
         this.setAdminSignPick(draft.mode);
-        this.setAdminSignInfo(`Tap the new spot for "${this.getAdminSignDraftLabel() || 'the sign'}". It must be within ${this.walkingConfig.maxAttachM} m of a mapped walkway.`);
+        const maxAttachFt = Math.round(this.walkingConfig.maxAttachM * 3.28084);
+        this.setAdminSignInfo(`Tap the new spot for "${this.getAdminSignDraftLabel() || 'the sign'}". It must be within ${maxAttachFt} ft of a mapped walkway.`);
     }
 
     getDefaultSignName() {
@@ -2899,10 +2903,11 @@ class NavigationApp {
             return { ok: true };
         }
 
+        const maxAttachFt = Math.round(this.walkingConfig.maxAttachM * 3.28084);
         return {
             ok: false,
             message: attachment.reason === 'start-not-on-network'
-                ? `That spot is more than ${this.walkingConfig.maxAttachM} m from a mapped walkway. Tap closer to one.`
+                ? `That spot is more than ${maxAttachFt} ft from a mapped walkway. Tap closer to one.`
                 : attachment.message
         };
     }
@@ -3108,7 +3113,8 @@ class NavigationApp {
             return null;
         }
 
-        return `This door is ${distance.toFixed(0)} m from its mapped walkway connection. Walking directions to this office will say "being updated" until a developer reconnects it. Save anyway?`;
+        const feet = Math.round(distance * 3.28084);
+        return `This door is ${feet} ft from its mapped walkway connection. Walking directions to this office will say "being updated" until a developer reconnects it. Save anyway?`;
     }
 
     async enterAdminMode() {
@@ -5118,10 +5124,10 @@ class NavigationApp {
             return 'You Are Here';
         }
 
-        const meters = Math.round(accuracy);
+        const feet = Math.max(1, Math.round(accuracy * 3.28084));
         return accuracy > this.lowLocationAccuracyM
-            ? `You Are Here (approx. ±${meters} m)`
-            : `You Are Here (±${meters} m)`;
+            ? `You Are Here (approx. ±${feet} ft)`
+            : `You Are Here (±${feet} ft)`;
     }
 
     updateUserLocation(position) {
@@ -5133,7 +5139,8 @@ class NavigationApp {
         const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome|CriOS|FxiOS/.test(navigator.userAgent);
         
         if (accuracy > 50 && isIOS && isSafari && !this.preciseLocationWarningShown) {
-            this.showStatus(`Location accuracy is +/-${Math.round(accuracy)}m. For better navigation, enable Precise Location in Safari settings.`);
+            const feet = Math.round(accuracy * 3.28084);
+            this.showStatus(`Location accuracy is +/-${feet} ft. For better navigation, enable Precise Location in Safari settings.`);
             this.preciseLocationWarningShown = true;
         }
 

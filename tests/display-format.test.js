@@ -29,3 +29,11 @@ test('route distances are shown in feet, then miles', () => {
     assert.equal(app.formatDistanceImperial(NaN), '--');
     assert.equal(app.formatDistanceImperial(-1), '--');
 });
+
+test('user location accuracy label formats in feet', () => {
+    app.lowLocationAccuracyM = 50;
+    assert.equal(app.getUserLocationLabel(8), 'You Are Here (±26 ft)');
+    assert.equal(app.getUserLocationLabel(85), 'You Are Here (approx. ±279 ft)');
+    assert.equal(app.getUserLocationLabel(undefined), 'You Are Here');
+    assert.equal(app.getUserLocationLabel(-1), 'You Are Here');
+});
