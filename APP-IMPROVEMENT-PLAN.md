@@ -6,7 +6,7 @@ Status: Release A is implemented locally: admin map actions minimize the editor,
 
 The audit findings below describe the original, pre-implementation behavior. Later releases remain proposals.
 
-Update (same day): Release B's sign previews (explicit Save sign / Change spot / Discard, default "New sign" naming, 20-second save timeout) and Release C's keyboard search, Browse all tenants directory, truthful accuracy display, and friendlier Street View errors are implemented locally. The walking route now draws as a single thin solid line. 68 tests pass.
+Update (same day): Release B's sign previews (explicit Save sign / Change spot / Discard, default "New sign" naming, 20-second save timeout) and Release C's keyboard search, Browse all tenants directory, and friendlier Street View errors are implemented locally. The accuracy ring and ± label were later removed at the owner's request in favor of a simple branded "You Are Here" marker. The walking route now draws as a single thin solid line.
 
 ## 1. Scope and evidence
 

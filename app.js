@@ -14,7 +14,6 @@ class NavigationApp {
         this.preciseLocationWarningShown = false;
         this.lastRouteUpdatePosition = null; // Track last position used for route update
         this.minRouteUpdateDistance = 15; // Minimum distance in meters to trigger route update
-        this.lowLocationAccuracyM = 50; // Display-only: above this, the location is labeled approximate
         this.routeDestinationName = null; // Store destination name to avoid showing status repeatedly
         this.pannellumViewer = null;
         this.googleStreetView = null;
@@ -1988,11 +1987,6 @@ class NavigationApp {
             this.map.removeLayer(this.userMarker);
         }
         this.userMarker = null;
-
-        if (this.accuracyCircle && this.map && this.map.hasLayer(this.accuracyCircle)) {
-            this.map.removeLayer(this.accuracyCircle);
-        }
-        this.accuracyCircle = null;
         this.lastRouteUpdatePosition = null;
     }
 
@@ -3508,10 +3502,6 @@ class NavigationApp {
         return `Unit ${office.unit}${separator}${baseName}`;
     }
 
-    createSvgDataUrl(svgMarkup) {
-        return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svgMarkup)}`;
-    }
-
     escapeHtml(text) {
         if (text === null || text === undefined) {
             return '';
@@ -4871,9 +4861,8 @@ class NavigationApp {
             
             // Only show status message on initial route calculation
             if (isFirstRouteFound) {
-                const distanceKm = (distanceMeters / 1000).toFixed(2);
                 const durationMin = Math.round(durationSeconds / 60);
-                this.showStatus(`Route to ${destinationName}: ${distanceKm} km, ~${durationMin} min walk`);
+                this.showStatus(`Route to ${destinationName}: ${this.formatDistanceImperial(distanceMeters)}, ~${durationMin} min walk`);
                 isFirstRouteFound = false;
                 
                 // Fit map to show entire route only on initial route
@@ -5101,33 +5090,20 @@ class NavigationApp {
     }
 
     createUserLocationIcon() {
-        return this.createSvgDataUrl(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 52 52">
-                <defs>
-                    <filter id="userShadow" x="-50%" y="-50%" width="200%" height="200%">
-                        <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="#182019" flood-opacity="0.25"/>
-                    </filter>
-                </defs>
-                <circle cx="26" cy="26" r="22" fill="#243127" fill-opacity="0.14"/>
-                <circle cx="26" cy="26" r="18" fill="#414b43" filter="url(#userShadow)"/>
-                <circle cx="26" cy="26" r="14" fill="#5f7065"/>
-                <circle cx="26" cy="26" r="9.5" fill="#ffffff"/>
-                <path d="M20.8 31.6c0-3.2 2.3-5.6 5.2-5.6s5.2 2.4 5.2 5.6v1.3h-2.5v-1.1c0-1.9-1.1-3.3-2.7-3.3s-2.7 1.4-2.7 3.3v1.1h-2.5v-1.3Zm5.2-14.1a3.7 3.7 0 1 1 0 7.4a3.7 3.7 0 0 1 0-7.4Z" fill="#2e352f"/>
-                <path d="M17.1 21.4c-1.4 1.6-2 3.4-2 5.3c0 2.6 1.1 5.1 3 7.3" fill="none" stroke="#2e352f" stroke-width="2.2" stroke-linecap="round"/>
-                <path d="M34.9 21.4c1.4 1.6 2 3.4 2 5.3c0 2.6-1.1 5.1-3 7.3" fill="none" stroke="#2e352f" stroke-width="2.2" stroke-linecap="round"/>
-            </svg>
-        `);
-    }
-
-    getUserLocationLabel(accuracy) {
-        if (!Number.isFinite(accuracy) || accuracy <= 0) {
-            return 'You Are Here';
-        }
-
-        const feet = Math.max(1, Math.round(accuracy * 3.28084));
-        return accuracy > this.lowLocationAccuracyM
-            ? `You Are Here (approx. ±${feet} ft)`
-            : `You Are Here (±${feet} ft)`;
+        return L.divIcon({
+            className: 'user-location-marker',
+            html: `
+                <span class="user-location-marker__puck" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                        <circle cx="12" cy="7.6" r="3.4" fill="currentColor"></circle>
+                        <path d="M5.6 19.2c0-3.7 2.9-6.4 6.4-6.4s6.4 2.7 6.4 6.4c0 .6-.4.9-.9.9H6.5c-.5 0-.9-.3-.9-.9Z" fill="currentColor"></path>
+                    </svg>
+                </span>
+            `,
+            iconSize: [40, 40],
+            iconAnchor: [20, 20],
+            tooltipAnchor: [20, 0]
+        });
     }
 
     updateUserLocation(position) {
@@ -5145,46 +5121,22 @@ class NavigationApp {
         }
 
         if (!this.userMarker) {
-            const iconUrl = this.createUserLocationIcon();
             this.userMarker = L.marker([lat, lng], {
-                icon: L.icon({
-                    iconUrl: iconUrl,
-                    iconSize: [52, 52],
-                    iconAnchor: [26, 26],
-                    popupAnchor: [0, -26]
-                })
+                icon: this.createUserLocationIcon(),
+                keyboard: false,
+                zIndexOffset: 900
             }).addTo(this.map);
 
-            this.userMarker.bindTooltip(this.getUserLocationLabel(accuracy), {
+            this.userMarker.bindTooltip('You Are Here', {
                 permanent: true,
                 direction: 'right',
-                offset: [26, 0],
+                offset: [6, 0],
                 className: 'map-caption-tooltip map-caption-tooltip--user'
             });
             
             this.map.setView([lat, lng], 18);
         } else {
             this.userMarker.setLatLng([lat, lng]);
-            this.userMarker.setTooltipContent(this.getUserLocationLabel(accuracy));
-        }
-
-        if (this.accuracyCircle) {
-            this.map.removeLayer(this.accuracyCircle);
-            this.accuracyCircle = null;
-        }
-
-        // Draw the full reported uncertainty so a poor fix looks as uncertain as it is.
-        if (Number.isFinite(accuracy) && accuracy > 0) {
-            const accuracyColor = accuracy > this.lowLocationAccuracyM ? '#b26a00' : this.brandColor;
-            this.accuracyCircle = L.circle([lat, lng], {
-                radius: accuracy,
-                fillColor: accuracyColor,
-                fillOpacity: 0.15,
-                color: accuracyColor,
-                weight: 1.5,
-                opacity: 0.5,
-                interactive: false
-            }).addTo(this.map);
         }
 
         if (this.pendingDestination) {

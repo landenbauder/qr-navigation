@@ -7,7 +7,7 @@ A mobile-friendly web application for navigating to office locations using QR co
 - **QR Code Access**: Scan a QR code to instantly access the navigation interface
 - **Office Search**: Search by unit number or company name with keyboard support (arrow keys, Enter, Escape), plus a **Browse all tenants** directory button
 - **Tenant Administration**: Authorized property managers can update tenant names and move front-door coordinates directly on the property map
-- **Real-time GPS Tracking**: Your current position is continuously tracked and displayed on the map; the label shows the reported accuracy (for example `±25 ft`), the shaded circle shows the full uncertainty, and fixes worse than ±160 ft are shown in amber as approximate
+- **Real-time GPS Tracking**: Your current position is continuously tracked and shown on the map as a "You Are Here" marker in the site's brand colors (no accuracy ring or ± label)
 - **Dynamic Route Updates**: Routes automatically update as you move (updates every 15+ meters)
 - **Walking Directions**: Get optimized walking routes directly to the selected office entrance using OSRM routing
 - **Split-Screen 360 Preview**: Open Street View in the top half of the screen with an interactive context map in the bottom half showing the camera location, viewing direction, and front door target

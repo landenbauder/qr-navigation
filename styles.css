@@ -1420,6 +1420,29 @@ body.panorama-split-active #panoClose {
     margin-top: 0;
 }
 
+.user-location-marker {
+    background: transparent;
+    border: none;
+}
+
+.user-location-marker__puck {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--brand-light), var(--brand-dark) 75%);
+    color: #ffffff;
+    box-shadow: 0 0 0 1px rgba(46, 53, 47, 0.18), 0 6px 14px rgba(24, 32, 25, 0.28);
+}
+
+.user-location-marker__puck svg {
+    width: 22px;
+    height: 22px;
+}
+
 @media (max-width: 640px) {
     body.panorama-split-active #panoClose {
         top: 10px;
