@@ -339,6 +339,10 @@ body.nwe-demo-view #map {
     cursor: grab;
 }
 
+body.nwe-demo-view #map .leaflet-overlay-pane path {
+    stroke: #1565c0 !important;
+}
+
 .nwe-demo-exit {
     position: fixed;
     top: max(12px, env(safe-area-inset-top, 0px) + 12px);
