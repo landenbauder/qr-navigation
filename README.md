@@ -46,6 +46,8 @@ If `office-boundaries.json` is present, the app also merges those saved office-c
 
 If you make more edits in the tracer later, export the JSON again and replace `office-boundaries.json` with the new file contents. The app reads that file at runtime, so the latest saved export becomes the live override for office centers, entrances, and polygons.
 
+**New offices (2026-10-21):** Birth Pray Love (616) and Real Property Advisors, LLC. (7628) have owner-traced outlines and updated office/entrance coordinates in `office-boundaries.json` (exported 2026-10-22 at 03:56 UTC). Source coordinates and Walkway Editor references are synchronized with those locations; the import also includes outline updates to units 7630 and 7632. The updated walkway draft includes both door connectors and the east-building sidewalk connection. The owner confirmed all three new segments as publicly walkable on 2026-10-22. Both routing doors match the saved entrances exactly. The generated network retains **pilot** status; these paths are owner-confirmed, not field-verified.
+
 **How to get coordinates:**
 1. Use Google Maps: Right-click on a location → Click coordinates → Copy lat/lng
 2. Or use an online tool like [LatLong.net](https://www.latlong.net/)
@@ -140,6 +142,7 @@ Optional custom port:
 
 **Important notes for local testing**
 - Local edits show up after a normal browser refresh because the app reads files directly from your workspace through the local server.
+- Office and boundary data bypass the browser cache on page load, so newly added offices appear in search and Trace Offices after refreshing. Saved browser-local tracing progress is preserved.
 - GitHub Pages will not reflect changes until you commit and push.
 - Testing on `127.0.0.1` or `localhost` is ideal for quick data checks, search behavior, and route rendering.
 - `127.0.0.1` on your phone points back to the phone itself. For mobile testing, open the PC's `LAN URL` from the terminal, such as `http://10.0.0.150:4173/`.
@@ -162,6 +165,7 @@ Optional custom port:
 - Open the map first, then use the `Trace Offices` panel in the lower-left corner.
 - The tracer starts on the first office without a saved shape.
 - Entering trace mode shows the current office center as a black dot and the current entrance coordinate as an orange dot.
+- Other saved office outlines remain visible as gray, unfilled reference shapes while tracing. Browser-local saved outlines take precedence over the loaded boundaries; the office being edited stays blue. Reference outlines do not intercept map taps.
 - Click each corner in sequence around the office perimeter.
 - Press `Z` to toggle axis snap on or off while tracing.
 - Use `Set Office Dot` and `Set Entrance Dot`, then click the map to update those coordinates for the current office.

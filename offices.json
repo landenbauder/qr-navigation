@@ -174,6 +174,34 @@
       ]
     },
     {
+      "name": "Birth Pray Love",
+      "unit": "616",
+      "lat": 41.75013376749687,
+      "lng": -87.93808283886817,
+      "panorama": {
+        "provider": "google",
+        "lat": 41.7505959,
+        "lng": -87.9383613,
+        "heading": 147,
+        "pitch": 0,
+        "radius": 60
+      },
+      "walkingPath": [
+        {
+          "lat": 41.7505959,
+          "lng": -87.9383613
+        },
+        {
+          "lat": 41.750367983166406,
+          "lng": -87.93813921914038
+        },
+        {
+          "lat": 41.7502598352559,
+          "lng": -87.9380667484076
+        }
+      ]
+    },
+    {
       "name": "Equitec Group LLC",
       "unit": "618",
       "lat": 41.75015,
@@ -548,6 +576,34 @@
           }
         ]
       }
+    },
+    {
+      "name": "Real Property Advisors, LLC.",
+      "unit": "7628",
+      "lat": 41.751021239298105,
+      "lng": -87.93755045948782,
+      "panorama": {
+        "provider": "google",
+        "lat": 41.7511194,
+        "lng": -87.9379323,
+        "heading": 107,
+        "pitch": 0,
+        "radius": 60
+      },
+      "walkingPath": [
+        {
+          "lat": 41.7511194,
+          "lng": -87.9379323
+        },
+        {
+          "lat": 41.751052946886105,
+          "lng": -87.93782710994861
+        },
+        {
+          "lat": 41.75101723719831,
+          "lng": -87.93747134805666
+        }
+      ]
     },
     {
       "name": "Redwood Construction Group LLC",

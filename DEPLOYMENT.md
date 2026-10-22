@@ -144,6 +144,7 @@ git push
 ### Publishing the walkway network and sign rules
 
 - **Network data:** after editing `draft/walking-network-draft.geojson`, run `node tools/publish-network.js --status pilot` and commit `data/properties/willowbrook/network.geojson`. Roll back by reverting that file. Browsers revalidate it on each visit.
+- **2026-10-22 office update:** the pilot includes 32 connected office doors, including units 616 and 7628, with owner-confirmed new connectors. Deploy the office data, boundaries, reference points, draft, and generated network together. This does not promote the network to field-verified or enable network routing for plain links.
 - **Firestore rules (one-time, needed for admin sign editing):** open Firebase console → Firestore Database → Rules, paste the contents of `firestore.rules`, and click Publish. Until this is done, admin sign changes fail with "Saving signs is not allowed yet"; visitors and the three built-in signs are unaffected.
 
 ## Troubleshooting

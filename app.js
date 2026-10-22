@@ -747,8 +747,8 @@ class NavigationApp {
     async loadOffices() {
         try {
             const [officesResponse, boundariesResponse] = await Promise.all([
-                fetch('offices.json'),
-                fetch('office-boundaries.json').catch(() => null)
+                fetch('offices.json', { cache: 'no-store' }),
+                fetch('office-boundaries.json', { cache: 'no-store' }).catch(() => null)
             ]);
 
             const data = await officesResponse.json();
@@ -1612,6 +1612,28 @@ class NavigationApp {
         const office = this.getCurrentTraceOffice();
         if (!office) {
             return;
+        }
+
+        if (this.traceModeActive) {
+            const currentKey = this.getOfficeKey(office);
+            this.offices.forEach((referenceOffice) => {
+                if (this.getOfficeKey(referenceOffice) === currentKey) {
+                    return;
+                }
+
+                const polygon = this.getEffectiveTraceRecord(referenceOffice)?.polygon;
+                if (!Array.isArray(polygon) || polygon.length < 3) {
+                    return;
+                }
+
+                L.polygon(polygon.map(point => [point.lat, point.lng]), {
+                    color: '#546e7a',
+                    weight: 2,
+                    opacity: 0.8,
+                    fill: false,
+                    interactive: false
+                }).addTo(this.traceReferenceLayerGroup);
+            });
         }
 
         const officeCenter = this.getTraceWorkingOfficeCenter(office);

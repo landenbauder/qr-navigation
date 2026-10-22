@@ -5,12 +5,11 @@
     "schemaVersion": 1,
     "status": "draft",
     "coordinateOrder": "[longitude, latitude] WGS84",
-    "source": "owner-sketch:2026-10-04",
-    "notes": [
-      "Walkway shapes follow the owner sketch; positions are anchored to reference doors and sidewalk points S1-S30.",
-      "Owner statement 2026-10-04: anywhere in the parking lots is walkable. Parking lots are not drawn yet.",
-      "Buildings and the navigation boundary are not drawn yet; trace them in the walkway editor on aerial imagery."
-    ]
+    "exportedAt": "2026-10-22T04:01:55.492Z",
+    "validation": {
+      "errors": 0,
+      "warnings": 3
+    }
   },
   "features": [
     {
@@ -823,7 +822,7 @@
       },
       "properties": {
         "featureType": "node",
-        "nodeKind": "junction",
+        "nodeKind": "endpoint",
         "verification": "owner-confirmed",
         "source": [
           "owner-sketch:2026-10-04"
@@ -3071,14 +3070,14 @@
           ],
           [
             -87.93746325,
-            41.75083102
+            41.75102475
           ]
         ]
       },
       "properties": {
         "featureType": "edge",
         "from": "n-nNE",
-        "to": "n-wbSE",
+        "to": "n3",
         "status": "open",
         "access": "public",
         "hasSteps": null,
@@ -4345,6 +4344,181 @@
         "verification": "owner-confirmed",
         "source": [
           "owner-sketch:2026-10-04"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e85",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93746325,
+            41.75083102
+          ],
+          [
+            -87.93753075,
+            41.7507276
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n-wbSE",
+        "to": "n-eTop",
+        "edgeKind": "sidewalk",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-confirmation:2026-10-22"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n1",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9380667484076,
+          41.7502598352559
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "verification": "owner-confirmed",
+        "officeId": "u616"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n2",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93747134805666,
+          41.75101723719831
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "entrance",
+        "verification": "owner-confirmed",
+        "officeId": "u7628"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e86",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.9380667484076,
+            41.7502598352559
+          ],
+          [
+            -87.93811418,
+            41.75027074
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n1",
+        "to": "n-cW",
+        "edgeKind": "entrance-connector",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-confirmation:2026-10-22"
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "n3",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93746325,
+          41.75102475
+        ]
+      },
+      "properties": {
+        "featureType": "node",
+        "nodeKind": "junction",
+        "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e87",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93746325,
+            41.75102475
+          ],
+          [
+            -87.93746325,
+            41.75083102
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n3",
+        "to": "n-wbSE",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-sketch:2026-10-04"
+        ],
+        "edgeKind": "sidewalk",
+        "notes": "East walkway connected to the existing network by e85; owner confirmed this connection on 2026-10-22. Not field-verified."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "e88",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            -87.93746325,
+            41.75102475
+          ],
+          [
+            -87.93747134805666,
+            41.75101723719831
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "edge",
+        "from": "n3",
+        "to": "n2",
+        "edgeKind": "entrance-connector",
+        "status": "open",
+        "access": "public",
+        "hasSteps": null,
+        "curbRamps": null,
+        "verification": "owner-confirmed",
+        "source": [
+          "owner-confirmation:2026-10-22"
         ]
       }
     }

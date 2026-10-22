@@ -31,6 +31,11 @@
       "lng": -87.937977
     },
     {
+      "name": "Birth Pray Love",
+      "lat": 41.75013376749687,
+      "lng": -87.93808283886817
+    },
+    {
       "name": "Equitec Group LLC",
       "lat": 41.75015,
       "lng": -87.938168
@@ -48,17 +53,22 @@
     {
       "name": "Lifetime Restoration, Inc.",
       "lat": 41.750141,
-      "lng": -87.938470
+      "lng": -87.93847
     },
     {
       "name": "The Forest Electric Company",
       "lat": 41.750143,
-      "lng": -87.938560
+      "lng": -87.93856
     },
     {
       "name": "Nightingale Home Healthcare of Illinois, Inc.",
       "lat": 41.750097,
       "lng": -87.938663
+    },
+    {
+      "name": "Real Property Advisors, LLC.",
+      "lat": 41.751021239298105,
+      "lng": -87.93755045948782
     },
     {
       "name": "Redwood Construction Group LLC",

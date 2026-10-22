@@ -11,6 +11,90 @@
   "features": [
     {
       "type": "Feature",
+      "id": "door-u616",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.9380667484076,
+          41.7502598352559
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u616",
+        "unit": "616",
+        "tenantName": "Birth Pray Love",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "office-boundaries.json#Birth Pray Love__616"
+        ],
+        "verification": "owner-confirmed"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u616",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93808283886817,
+          41.75013376749687
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u616",
+        "source": [
+          "office-boundaries.json#Birth Pray Love__616"
+        ],
+        "verification": "owner-confirmed"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "door-u7628",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93747134805666,
+          41.75101723719831
+        ]
+      },
+      "properties": {
+        "featureType": "reference-door",
+        "officeId": "u7628",
+        "unit": "7628",
+        "tenantName": "Real Property Advisors, LLC.",
+        "doorSource": "office-boundaries",
+        "reviewFlags": [],
+        "source": [
+          "office-boundaries.json#Real Property Advisors, LLC.__7628"
+        ],
+        "verification": "owner-confirmed"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "icon-u7628",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -87.93755045948782,
+          41.751021239298105
+        ]
+      },
+      "properties": {
+        "featureType": "reference-office-icon",
+        "officeId": "u7628",
+        "source": [
+          "office-boundaries.json#Real Property Advisors, LLC.__7628"
+        ],
+        "verification": "owner-confirmed"
+      }
+    },
+    {
+      "type": "Feature",
       "id": "door-u600",
       "geometry": {
         "type": "Point",
@@ -1609,11 +1693,9 @@
         "legacyKey": "Redwood Construction Group LLC__7630",
         "adminDocumentId": "UmVkd29vZCBDb25zdHJ1Y3Rpb24gR3JvdXAgTExDX183NjMw",
         "doorSource": "office-boundaries",
-        "reviewFlags": [
-          "near-other-door"
-        ],
+        "reviewFlags": [],
         "source": [
-          "legacy:office-boundaries.json#Redwood Construction Group LLC__7630"
+          "office-boundaries.json#Redwood Construction Group LLC__7630"
         ],
         "verification": "unverified"
       }
@@ -1632,7 +1714,7 @@
         "featureType": "reference-office-icon",
         "officeId": "u7630",
         "source": [
-          "legacy:office-boundaries.json#Redwood Construction Group LLC__7630"
+          "office-boundaries.json#Redwood Construction Group LLC__7630"
         ],
         "verification": "unverified"
       }
@@ -1669,6 +1751,10 @@
               41.751054508264104
             ],
             [
+              -87.93747581344245,
+              41.751056423429866
+            ],
+            [
               -87.93747587397665,
               41.751056160406286
             ]
@@ -1681,7 +1767,7 @@
         "blocksWalking": null,
         "note": "Traced unit footprint, not a verified building obstacle.",
         "source": [
-          "legacy:office-boundaries.json#Redwood Construction Group LLC__7630"
+          "office-boundaries.json#Redwood Construction Group LLC__7630"
         ],
         "verification": "unverified"
       }
@@ -1704,11 +1790,9 @@
         "legacyKey": "Advanced Physicians, SC__7632",
         "adminDocumentId": "QWR2YW5jZWQgUGh5c2ljaWFucywgU0NfXzc2MzI",
         "doorSource": "office-boundaries",
-        "reviewFlags": [
-          "near-other-door"
-        ],
+        "reviewFlags": [],
         "source": [
-          "legacy:office-boundaries.json#Advanced Physicians, SC__7632"
+          "office-boundaries.json#Advanced Physicians, SC__7632"
         ],
         "verification": "unverified"
       }
@@ -1727,7 +1811,7 @@
         "featureType": "reference-office-icon",
         "officeId": "u7632",
         "source": [
-          "legacy:office-boundaries.json#Advanced Physicians, SC__7632"
+          "office-boundaries.json#Advanced Physicians, SC__7632"
         ],
         "verification": "unverified"
       }
@@ -1756,6 +1840,10 @@
               41.750985414021024
             ],
             [
+              -87.93775073930995,
+              41.751057012416226
+            ],
+            [
               -87.93775067276222,
               41.75105677103811
             ]
@@ -1768,7 +1856,7 @@
         "blocksWalking": null,
         "note": "Traced unit footprint, not a verified building obstacle.",
         "source": [
-          "legacy:office-boundaries.json#Advanced Physicians, SC__7632"
+          "office-boundaries.json#Advanced Physicians, SC__7632"
         ],
         "verification": "unverified"
       }
@@ -3560,6 +3648,96 @@
           "legacy:panorama_gps_locations.txt#L2"
         ],
         "verification": "unverified"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u616",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93813111024991,
+              41.750245827739356
+            ],
+            [
+              -87.93804395358845,
+              41.75024682827634
+            ],
+            [
+              -87.9380399309733,
+              41.75004171786565
+            ],
+            [
+              -87.93812440589136,
+              41.750042718405815
+            ],
+            [
+              -87.93813245112162,
+              41.75024382666531
+            ],
+            [
+              -87.93813111024991,
+              41.750245827739356
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u616",
+        "source": [
+          "office-boundaries.json#Birth Pray Love__616"
+        ],
+        "verification": "owner-confirmed",
+        "blocksWalking": null,
+        "note": "Owner-traced unit footprint, not a verified building obstacle."
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "footprint-u7628",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -87.93761134658565,
+              41.7510552571128
+            ],
+            [
+              -87.93747994115759,
+              41.751056257637195
+            ],
+            [
+              -87.93747860028586,
+              41.75098772168097
+            ],
+            [
+              -87.9376106761498,
+              41.75098672115551
+            ],
+            [
+              -87.9376106761498,
+              41.7510552571128
+            ],
+            [
+              -87.93761134658565,
+              41.7510552571128
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "featureType": "reference-unit-footprint",
+        "officeId": "u7628",
+        "source": [
+          "office-boundaries.json#Real Property Advisors, LLC.__7628"
+        ],
+        "verification": "owner-confirmed",
+        "blocksWalking": null,
+        "note": "Owner-traced unit footprint, not a verified building obstacle."
       }
     }
   ]
